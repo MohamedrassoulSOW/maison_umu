@@ -1,0 +1,2567 @@
+/* Maison UMU — design system */
+:root {
+    --umu-ink: #1a211c;
+    --umu-forest: #2a4534;
+    --umu-moss: #4a6b56;
+    --umu-leaf: #6f917a;
+    --umu-sand: #e4e7df;
+    --umu-mist: #f2f4ef;
+    --umu-paper: #fafbf8;
+    --umu-copper: #b86b3a;
+    --umu-copper-deep: #94542c;
+    --umu-line: rgba(26, 33, 28, 0.12);
+    --umu-shadow: 0 18px 40px rgba(26, 33, 28, 0.08);
+    --umu-radius: 14px;
+    --umu-radius-sm: 10px;
+    --umu-nav-h: 72px;
+    --font-display: "Syne", sans-serif;
+    --font-body: "Figtree", sans-serif;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font-body);
+    color: var(--umu-ink);
+    background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(111, 145, 122, 0.22), transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, rgba(184, 107, 58, 0.12), transparent 50%),
+        linear-gradient(180deg, var(--umu-mist) 0%, var(--umu-paper) 45%, var(--umu-sand) 100%);
+    background-attachment: fixed;
+    line-height: 1.55;
+    padding-top: var(--umu-nav-h);
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image:
+        linear-gradient(var(--umu-ink) 1px, transparent 1px),
+        linear-gradient(90deg, var(--umu-ink) 1px, transparent 1px);
+    background-size: 48px 48px;
+    z-index: 0;
+}
+
+main.umu-main,
+.umu-page {
+    position: relative;
+    z-index: 1;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+a {
+    color: var(--umu-forest);
+    text-decoration: none;
+    transition: color 0.2s var(--ease-out);
+}
+
+a:hover {
+    color: var(--umu-copper);
+}
+
+h1, h2, h3, h4,
+.umu-display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-top: 0;
+}
+
+/* ---------- Nav ---------- */
+.umu-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    min-height: var(--umu-nav-h);
+    display: flex;
+    align-items: center;
+    backdrop-filter: blur(16px);
+    background: rgba(250, 251, 248, 0.92);
+    border-bottom: 1px solid transparent;
+    transition: background 0.3s var(--ease-out), border-color 0.3s, box-shadow 0.3s;
+    overflow: visible;
+}
+
+.umu-nav.is-scrolled {
+    background: rgba(250, 251, 248, 0.97);
+    border-bottom-color: var(--umu-line);
+    box-shadow: 0 8px 24px rgba(26, 33, 28, 0.06);
+}
+
+.umu-nav__inner {
+    width: min(1200px, calc(100% - 2rem));
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+}
+
+.umu-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--umu-ink);
+    white-space: nowrap;
+    z-index: 1002;
+    text-decoration: none;
+}
+
+.umu-brand:hover {
+    color: var(--umu-forest);
+}
+
+.umu-brand__logo {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    background: #0d0d0d;
+    flex-shrink: 0;
+}
+
+.umu-brand__text {
+    display: grid;
+    gap: 0.05rem;
+    line-height: 1.1;
+}
+
+.umu-brand__text strong {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.umu-brand__text small {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(26, 33, 28, 0.55);
+    font-weight: 600;
+}
+
+.umu-nav__toolbar {
+    display: flex;
+    margin-left: auto;
+    align-items: center;
+    gap: 0.55rem;
+    z-index: 1002;
+    flex-shrink: 0;
+}
+
+.umu-nav__auth {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* Profile avatar circle + dropdown */
+.umu-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid rgba(42, 69, 52, 0.2);
+    background: linear-gradient(145deg, var(--umu-forest), var(--umu-moss));
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.2s var(--ease-out), box-shadow 0.2s;
+}
+
+.umu-avatar:hover,
+.umu-profile-menu.is-open .umu-avatar {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(42, 69, 52, 0.22);
+    border-color: var(--umu-forest);
+}
+
+.umu-avatar--sm {
+    width: 36px;
+    height: 36px;
+    font-size: 0.75rem;
+    cursor: default;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.umu-profile-menu {
+    position: relative;
+}
+
+.umu-profile-menu__dropdown {
+    position: absolute;
+    top: calc(100% + 0.55rem);
+    right: 0;
+    width: min(280px, 86vw);
+    background: rgba(250, 251, 248, 0.98);
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    box-shadow: var(--umu-shadow);
+    padding: 0.65rem;
+    z-index: 1003;
+    animation: umuRise 0.2s var(--ease-out);
+}
+
+.umu-profile-menu__head {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.45rem 0.45rem 0.75rem;
+    border-bottom: 1px solid var(--umu-line);
+    margin-bottom: 0.35rem;
+}
+
+.umu-profile-menu__head strong {
+    display: block;
+    font-size: 0.95rem;
+    line-height: 1.2;
+}
+
+.umu-profile-menu__head small {
+    display: block;
+    color: rgba(26, 33, 28, 0.55);
+    font-size: 0.78rem;
+    margin-top: 0.15rem;
+    word-break: break-all;
+}
+
+.umu-profile-menu__dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.umu-profile-menu__dropdown a {
+    display: block;
+    padding: 0.55rem 0.65rem;
+    border-radius: 8px;
+    color: var(--umu-ink);
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+
+.umu-profile-menu__dropdown a:hover,
+.umu-profile-menu__dropdown a.is-active {
+    background: rgba(42, 69, 52, 0.1);
+    color: var(--umu-forest);
+}
+
+.umu-profile-menu__dropdown hr {
+    border: none;
+    border-top: 1px solid var(--umu-line);
+    margin: 0.35rem 0;
+}
+
+.umu-profile-menu__logout {
+    color: #8a2424 !important;
+}
+
+.umu-profile-menu__logout:hover {
+    background: rgba(179, 58, 58, 0.1) !important;
+    color: #8a2424 !important;
+}
+
+.umu-profile {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    padding: 1.5rem;
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.umu-profile--edit {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.umu-profile__aside {
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.umu-profile__aside h2 {
+    margin: 0.85rem 0 0.25rem;
+    font-size: 1.25rem;
+}
+
+.umu-profile__aside > p {
+    margin: 0;
+    color: rgba(26, 33, 28, 0.62);
+    word-break: break-all;
+}
+
+.umu-profile__role {
+    display: inline-block;
+    margin: 0.75rem 0 1rem !important;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    background: rgba(42, 69, 52, 0.1);
+    color: var(--umu-forest);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.umu-profile__aside .umu-content__cta {
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.umu-profile__form-wrap {
+    padding: 0.25rem 0.25rem 0.25rem 0.5rem;
+    border-left: 1px solid var(--umu-line);
+    padding-left: 1.5rem;
+}
+
+.umu-profile__form-wrap h2 {
+    margin: 0 0 0.35rem;
+    font-size: 1.35rem;
+}
+
+.umu-profile__hint {
+    margin: 0 0 1.25rem;
+    color: rgba(26, 33, 28, 0.58);
+    font-size: 0.92rem;
+}
+
+.umu-profile__section {
+    margin: 1.5rem 0 0.85rem;
+    font-size: 1.05rem;
+}
+
+.umu-form__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+}
+
+.umu-profile__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 1.25rem;
+}
+
+.umu-profile__avatar {
+    width: 84px;
+    height: 84px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--umu-forest), var(--umu-moss));
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.umu-profile__info h2 {
+    margin: 0 0 0.25rem;
+}
+
+.umu-profile__info > p {
+    margin: 0 0 1rem;
+    color: rgba(26, 33, 28, 0.62);
+}
+
+.umu-profile__meta {
+    list-style: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+}
+
+.umu-profile__meta li {
+    display: grid;
+    gap: 0.15rem;
+}
+
+.umu-profile__meta strong {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--umu-moss);
+}
+
+.umu-nav__toggle {
+    display: none;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid var(--umu-line);
+    background: var(--umu-paper);
+    color: var(--umu-ink);
+    border-radius: 8px;
+    padding: 0.5rem 0.85rem;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+
+.umu-nav__toggle:hover {
+    border-color: var(--umu-forest);
+    color: var(--umu-forest);
+}
+
+.umu-nav__burger {
+    width: 16px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    box-shadow: 0 -5px 0 currentColor, 0 5px 0 currentColor;
+}
+
+.umu-nav__panel {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.umu-nav__links {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.umu-nav__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--umu-ink);
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s var(--ease-out), color 0.2s;
+}
+
+.umu-nav__link:hover,
+.umu-nav__links .dropdown-item:hover {
+    background: rgba(42, 69, 52, 0.08);
+    color: var(--umu-forest);
+}
+
+.umu-nav__link.is-active {
+    background: rgba(42, 69, 52, 0.12);
+    color: var(--umu-forest);
+}
+
+.umu-nav__chevron {
+    font-size: 0.7rem;
+    opacity: 0.7;
+    transition: transform 0.2s var(--ease-out);
+}
+
+.umu-nav__item--mega.is-open .umu-nav__chevron {
+    transform: rotate(180deg);
+}
+
+.umu-nav .dropdown-menu {
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius-sm);
+    box-shadow: var(--umu-shadow);
+    padding: 0.4rem;
+    background: var(--umu-paper);
+}
+
+.umu-nav .dropdown-item {
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.umu-nav__backdrop {
+    position: fixed;
+    inset: 0;
+    top: var(--umu-nav-h);
+    background: rgba(26, 33, 28, 0.35);
+    z-index: 997;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s var(--ease-out);
+}
+
+.umu-nav__backdrop.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.umu-nav__cart {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: var(--umu-ink);
+    border-radius: 50%;
+    transition: color 0.2s var(--ease-out), background 0.2s;
+}
+
+.umu-nav__cart:hover {
+    color: var(--umu-forest);
+    background: rgba(42, 69, 52, 0.08);
+}
+
+.umu-nav__item--mega {
+    position: relative;
+}
+
+.umu-mega {
+    position: absolute;
+    top: calc(100% + 0.65rem);
+    left: 0;
+    min-width: min(720px, 88vw);
+    background: rgba(250, 251, 248, 0.98);
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    box-shadow: var(--umu-shadow);
+    padding: 1.1rem;
+    z-index: 1001;
+    animation: umuRise 0.25s var(--ease-out);
+}
+
+.umu-mega__inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem 1.25rem;
+}
+
+.umu-mega__title {
+    margin: 0 0 0.45rem;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--umu-forest);
+}
+
+.umu-mega__col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.umu-mega__col a {
+    display: block;
+    padding: 0.35rem 0.45rem;
+    border-radius: 6px;
+    color: var(--umu-ink);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.umu-mega__col a:hover {
+    background: rgba(42, 69, 52, 0.08);
+    color: var(--umu-forest);
+}
+
+.umu-mega__empty {
+    font-size: 0.85rem;
+    color: rgba(26, 33, 28, 0.45);
+}
+
+.umu-nav__search {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-left: auto;
+    margin-right: 0.35rem;
+    flex: 0 1 200px;
+}
+
+.umu-nav__search input {
+    width: 100%;
+    border: 1px solid var(--umu-line);
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 999px;
+    padding: 0.45rem 0.9rem;
+    font: inherit;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.umu-nav__search input:focus {
+    border-color: var(--umu-moss);
+    box-shadow: 0 0 0 3px rgba(74, 107, 86, 0.15);
+}
+
+.umu-nav__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.umu-nav__hello {
+    font-size: 0.88rem;
+    color: var(--umu-moss);
+    font-weight: 600;
+    padding: 0 0.35rem;
+}
+
+/* ---------- Buttons ---------- */
+.umu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.7rem 1.25rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-decoration: none !important;
+    transition: transform 0.2s var(--ease-out), background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.umu-btn:hover {
+    transform: translateY(-1px);
+}
+
+.umu-btn:active {
+    transform: translateY(0);
+}
+
+.umu-btn--primary {
+    background: var(--umu-forest);
+    color: #fff !important;
+}
+
+.umu-btn--primary:hover {
+    background: var(--umu-ink);
+    color: #fff !important;
+}
+
+.umu-btn--copper {
+    background: var(--umu-copper);
+    color: #fff !important;
+}
+
+.umu-btn--copper:hover {
+    background: var(--umu-copper-deep);
+    color: #fff !important;
+}
+
+.umu-btn--ghost {
+    background: transparent;
+    border-color: var(--umu-line);
+    color: var(--umu-ink) !important;
+}
+
+.umu-btn--ghost:hover {
+    border-color: var(--umu-forest);
+    color: var(--umu-forest) !important;
+}
+
+.umu-btn--danger {
+    background: #b33a3a;
+    color: #fff !important;
+}
+
+.umu-btn--sm {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+}
+
+.umu-btn--icon {
+    min-width: 42px;
+    height: 42px;
+    padding: 0 0.75rem;
+    border-radius: 10px;
+    background: var(--umu-forest);
+    color: #fff !important;
+    position: relative;
+}
+
+.umu-cart-count {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.1rem;
+    height: 1.1rem;
+    padding: 0 0.28rem;
+    border-radius: 999px;
+    background: var(--umu-copper);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1;
+    pointer-events: none;
+}
+
+/* ---------- Hero ---------- */
+.umu-hero {
+    position: relative;
+    min-height: calc(100vh - var(--umu-nav-h));
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+.umu-hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.umu-hero__media img,
+.umu-hero__fallback {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.06);
+    animation: umuZoom 1.6s var(--ease-out) forwards;
+}
+
+.umu-hero__media-logo {
+    object-fit: contain !important;
+    background:
+        radial-gradient(circle at 30% 20%, rgba(212, 175, 55, 0.28), transparent 45%),
+        linear-gradient(135deg, #0d0d0d, #1a1a1a 55%, #2a2118);
+    padding: clamp(2rem, 8vw, 6rem);
+    transform: none !important;
+    animation: none !important;
+}
+
+.umu-hero__fallback {
+    display: block;
+    background:
+        linear-gradient(145deg, #2a4534 0%, #4a6b56 45%, #b86b3a 100%);
+}
+
+.umu-hero__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(26, 33, 28, 0.15) 0%, rgba(26, 33, 28, 0.55) 55%, rgba(26, 33, 28, 0.82) 100%);
+}
+
+.umu-hero__content {
+    position: relative;
+    z-index: 1;
+    width: min(1200px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: clamp(2.5rem, 8vh, 5rem) 0;
+}
+
+.umu-hero__brand {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 9vw, 6rem);
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    line-height: 0.92;
+    color: #f7f8f4;
+    margin: 0 0 1rem;
+    opacity: 0;
+    transform: translateY(24px);
+    animation: umuRise 0.9s var(--ease-out) 0.1s forwards;
+}
+
+.umu-hero__headline {
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2.4vw, 1.65rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.75rem;
+    color: rgba(247, 248, 244, 0.92);
+    opacity: 0;
+    transform: translateY(24px);
+    animation: umuRise 0.9s var(--ease-out) 0.25s forwards;
+}
+
+.umu-hero__text {
+    font-size: 1.05rem;
+    color: rgba(247, 248, 244, 0.78);
+    margin: 0 0 1.75rem;
+    max-width: 38ch;
+    opacity: 0;
+    transform: translateY(24px);
+    animation: umuRise 0.9s var(--ease-out) 0.4s forwards;
+}
+
+.umu-hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    opacity: 0;
+    transform: translateY(24px);
+    animation: umuRise 0.9s var(--ease-out) 0.55s forwards;
+}
+
+.umu-hero .umu-btn--primary {
+    background: #f7f8f4;
+    color: var(--umu-ink) !important;
+}
+
+.umu-hero .umu-btn--primary:hover {
+    background: #fff;
+    color: var(--umu-ink) !important;
+}
+
+.umu-hero .umu-btn--ghost {
+    border-color: rgba(247, 248, 244, 0.45);
+    color: #f7f8f4 !important;
+}
+
+.umu-hero .umu-btn--ghost:hover {
+    border-color: #f7f8f4;
+    background: rgba(247, 248, 244, 0.1);
+    color: #fff !important;
+}
+
+@keyframes umuRise {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes umuZoom {
+    to {
+        transform: scale(1);
+    }
+}
+
+/* ---------- Sections ---------- */
+.umu-section {
+    width: min(1200px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 4.5rem 0 3rem;
+}
+
+.umu-section__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.umu-section__title {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    margin: 0 0 0.35rem;
+}
+
+.umu-section__lead {
+    margin: 0;
+    color: rgba(26, 33, 28, 0.65);
+    max-width: 42ch;
+}
+
+/* ---------- Product grid / cards (interaction) ---------- */
+.umu-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+}
+
+.umu-card {
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    overflow: hidden;
+    transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out), border-color 0.35s;
+    opacity: 0;
+    transform: translateY(28px);
+}
+
+.umu-card.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.umu-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--umu-shadow);
+    border-color: rgba(42, 69, 52, 0.28);
+}
+
+.umu-card__media {
+    aspect-ratio: 1 / 1.05;
+    overflow: hidden;
+    background: var(--umu-sand);
+}
+
+.umu-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s var(--ease-out);
+}
+
+.umu-card:hover .umu-card__media img {
+    transform: scale(1.04);
+}
+
+.umu-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 1rem 1.05rem 1.15rem;
+    flex: 1;
+}
+
+.umu-card__title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    margin: 0;
+    color: var(--umu-ink);
+}
+
+.umu-card__title a {
+    color: inherit;
+}
+
+.umu-card__title a:hover {
+    color: var(--umu-forest);
+}
+
+.umu-card__desc {
+    margin: 0;
+    font-size: 0.88rem;
+    color: rgba(26, 33, 28, 0.62);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.umu-card__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.65rem;
+}
+
+.umu-price {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--umu-forest);
+}
+
+.umu-stock {
+    font-size: 0.78rem;
+    color: rgba(26, 33, 28, 0.55);
+    font-weight: 600;
+}
+
+.umu-card__actions {
+    margin-top: 0.75rem;
+}
+
+.umu-card__actions .umu-btn {
+    width: 100%;
+}
+
+/* ---------- Product detail ---------- */
+.umu-product {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+    width: min(1100px, calc(100% - 2rem));
+    margin: 2.5rem auto 3rem;
+}
+
+.umu-product__media {
+    border-radius: calc(var(--umu-radius) + 4px);
+    overflow: hidden;
+    background: var(--umu-sand);
+    border: 1px solid var(--umu-line);
+    aspect-ratio: 1 / 1.05;
+}
+
+.umu-product__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.umu-product__info h1 {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    margin-bottom: 0.75rem;
+}
+
+.umu-product__info p {
+    color: rgba(26, 33, 28, 0.75);
+}
+
+.umu-product__price {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    color: var(--umu-copper);
+    margin: 1.25rem 0 0.35rem;
+}
+
+.umu-slider-wrap {
+    position: relative;
+    width: min(1200px, calc(100% - 2rem));
+    margin: 0 auto 4rem;
+}
+
+.umu-slider {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    padding: 0.5rem 0 1rem;
+    scrollbar-width: none;
+}
+
+.umu-slider::-webkit-scrollbar {
+    display: none;
+}
+
+.umu-slider .umu-card {
+    flex: 0 0 min(260px, 78vw);
+    scroll-snap-align: start;
+    opacity: 1;
+    transform: none;
+}
+
+.umu-slider__btn {
+    position: absolute;
+    top: 40%;
+    z-index: 5;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid var(--umu-line);
+    background: rgba(250, 251, 248, 0.92);
+    color: var(--umu-ink);
+    cursor: pointer;
+    font-size: 1.4rem;
+    line-height: 1;
+    transition: background 0.2s;
+}
+
+.umu-slider__btn:hover {
+    background: var(--umu-forest);
+    color: #fff;
+    border-color: var(--umu-forest);
+}
+
+.umu-slider__btn--prev { left: -0.25rem; }
+.umu-slider__btn--next { right: -0.25rem; }
+
+/* ---------- Auth ---------- */
+.umu-auth {
+    min-height: calc(100vh - var(--umu-nav-h));
+    display: grid;
+    place-items: center;
+    padding: 2rem 1rem;
+}
+
+.umu-auth__panel {
+    width: min(420px, 100%);
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid var(--umu-line);
+    border-radius: calc(var(--umu-radius) + 4px);
+    padding: 2rem 1.75rem;
+    box-shadow: var(--umu-shadow);
+    backdrop-filter: blur(10px);
+}
+
+.umu-auth__panel h1 {
+    text-align: center;
+    font-size: 1.85rem;
+    margin-bottom: 1.25rem;
+}
+
+.umu-auth__panel label {
+    display: block;
+    margin: 0.85rem 0 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.umu-auth__panel .form-control,
+.umu-auth__panel input[type="email"],
+.umu-auth__panel input[type="password"],
+.umu-auth__panel input[type="text"] {
+    width: 100%;
+    border: 1px solid var(--umu-line);
+    border-radius: 10px;
+    padding: 0.7rem 0.85rem;
+    font: inherit;
+    background: #fff;
+}
+
+.umu-password {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.umu-password .form-control,
+.umu-password input {
+    width: 100%;
+    padding-right: 2.6rem;
+}
+
+.umu-password__toggle {
+    position: absolute;
+    right: 0.35rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border: none;
+    background: transparent;
+    color: var(--umu-moss);
+    padding: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.umu-password__toggle:hover {
+    background: rgba(42, 69, 52, 0.1);
+    color: var(--umu-forest);
+}
+
+.umu-password__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.umu-auth__panel .btn,
+.umu-auth__panel button[type="submit"] {
+    width: 100%;
+    margin-top: 1.25rem;
+    background: var(--umu-forest);
+    border: none;
+    color: #fff;
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    font-weight: 600;
+    font-family: var(--font-body);
+}
+
+.umu-auth__panel .btn:hover,
+.umu-auth__panel button[type="submit"]:hover {
+    background: var(--umu-ink);
+}
+
+.umu-alert {
+    border-radius: 10px;
+    padding: 0.75rem 0.9rem;
+    margin-bottom: 1rem;
+    font-size: 0.92rem;
+}
+
+.umu-alert--danger {
+    background: #fde8e8;
+    color: #8a2424;
+    border: 1px solid #f3c1c1;
+}
+
+.umu-alert--success {
+    background: #e7f3eb;
+    color: #1f4d32;
+    border: 1px solid #b9d8c4;
+}
+
+/* ---------- Cart / tables ---------- */
+.umu-page-title {
+    width: min(1100px, calc(100% - 2rem));
+    margin: 2rem auto 1.25rem;
+}
+
+.umu-page-title h1 {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    margin: 0 0 0.35rem;
+}
+
+.umu-page-title p {
+    margin: 0;
+    color: rgba(26, 33, 28, 0.62);
+}
+
+.umu-cart {
+    width: min(1100px, calc(100% - 2rem));
+    margin: 0 auto 3.5rem;
+}
+
+.umu-cart__empty {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    border: 1px dashed var(--umu-line);
+    border-radius: var(--umu-radius);
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.umu-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.umu-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 680px;
+}
+
+.umu-table th,
+.umu-table td {
+    padding: 0.95rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--umu-line);
+    vertical-align: middle;
+}
+
+.umu-table th {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: rgba(26, 33, 28, 0.55);
+    background: rgba(42, 69, 52, 0.05);
+}
+
+.umu-table tr:last-child td {
+    border-bottom: none;
+}
+
+.umu-thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.umu-qty {
+    display: inline-flex;
+    border: 1px solid var(--umu-line);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.umu-qty a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    color: var(--umu-ink);
+    background: transparent;
+    font-weight: 700;
+}
+
+.umu-qty a:hover {
+    background: var(--umu-forest);
+    color: #fff;
+}
+
+.umu-cart__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.umu-cart__total {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    margin: 0;
+}
+
+.umu-cart__total span {
+    color: var(--umu-copper);
+}
+
+/* ---------- Checkout ---------- */
+.umu-checkout {
+    width: min(1100px, calc(100% - 2rem));
+    margin: 2rem auto 3.5rem;
+    display: grid;
+    grid-template-columns: 1.4fr 0.8fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.umu-checkout__form,
+.umu-checkout__summary {
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    padding: 1.5rem;
+}
+
+.umu-checkout__summary h3 {
+    margin: 0.35rem 0 1rem;
+    font-size: 1.5rem;
+}
+
+.umu-checkout label {
+    font-weight: 600;
+    margin-top: 0.75rem;
+}
+
+.umu-checkout .form-control,
+.umu-checkout select,
+.umu-checkout input,
+.umu-checkout textarea {
+    border-radius: 10px;
+    border: 1px solid var(--umu-line);
+}
+
+.umu-checkout button[type="submit"] {
+    margin-top: 1rem;
+    width: 100%;
+    background: var(--umu-forest);
+    border: none;
+    color: #fff;
+    border-radius: 10px;
+    padding: 0.85rem;
+    font-weight: 600;
+}
+
+/* ---------- Pagination ---------- */
+.umu-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.35rem;
+    list-style: none;
+    padding: 2rem 0 0;
+    margin: 0;
+}
+
+.umu-pagination a,
+.umu-pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--umu-line);
+    color: var(--umu-ink);
+    background: rgba(255, 255, 255, 0.55);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.umu-pagination .active span,
+.umu-pagination a:hover {
+    background: var(--umu-forest);
+    border-color: var(--umu-forest);
+    color: #fff;
+}
+
+.umu-pagination .disabled span {
+    opacity: 0.45;
+}
+
+/* ---------- Footer ---------- */
+.umu-footer {
+    position: relative;
+    z-index: 1;
+    margin-top: 2rem;
+    border-top: 1px solid var(--umu-line);
+    background: rgba(42, 69, 52, 0.06);
+}
+
+.umu-footer__inner {
+    width: min(1200px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 2.5rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.umu-footer__brand-link {
+    display: inline-block;
+    margin-bottom: 0.65rem;
+}
+
+.umu-footer__logo {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    background: #0d0d0d;
+}
+
+.umu-footer__brand {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0 0 0.35rem;
+}
+
+.umu-footer p {
+    margin: 0;
+    color: rgba(26, 33, 28, 0.6);
+    max-width: 36ch;
+}
+
+.umu-footer__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    align-items: center;
+}
+
+.umu-footer__nav a {
+    font-weight: 600;
+    color: var(--umu-ink);
+}
+
+.umu-footer__nav a:hover {
+    color: var(--umu-forest);
+}
+
+.umu-footer__copy {
+    width: 100%;
+    padding-top: 1rem;
+    border-top: 1px solid var(--umu-line);
+    font-size: 0.85rem;
+    color: rgba(26, 33, 28, 0.5);
+}
+
+/* ---------- Content pages (About / Contact) ---------- */
+.umu-content {
+    width: min(1100px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 3rem 0 4rem;
+}
+
+.umu-content__intro {
+    max-width: 640px;
+    margin-bottom: 2.5rem;
+}
+
+.umu-content__logo {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 14px;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    background: #0d0d0d;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.umu-content__eyebrow {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--umu-moss);
+}
+
+.umu-content__intro h1 {
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    margin-bottom: 0.85rem;
+}
+
+.umu-content__lead {
+    margin: 0;
+    font-size: 1.1rem;
+    color: rgba(26, 33, 28, 0.7);
+}
+
+.umu-content__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+}
+
+.umu-content__block {
+    padding: 1.4rem;
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    background: rgba(255, 255, 255, 0.55);
+}
+
+.umu-content__block h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.65rem;
+}
+
+.umu-content__block p {
+    margin: 0;
+    color: rgba(26, 33, 28, 0.72);
+}
+
+.umu-content__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+}
+
+.umu-contact {
+    display: grid;
+    grid-template-columns: 0.9fr 1.2fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.umu-contact__info,
+.umu-contact__form {
+    padding: 1.5rem;
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.umu-contact__info h2 {
+    margin-bottom: 0.5rem;
+}
+
+.umu-contact__list {
+    list-style: none;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem;
+}
+
+.umu-contact__list li {
+    display: grid;
+    gap: 0.15rem;
+}
+
+.umu-contact__list strong {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--umu-moss);
+}
+
+.umu-form__row {
+    margin-bottom: 1rem;
+}
+
+.umu-form__row label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.umu-form .form-control,
+.umu-form textarea {
+    width: 100%;
+    border: 1px solid var(--umu-line);
+    border-radius: 10px;
+    padding: 0.7rem 0.85rem;
+    font: inherit;
+    background: #fff;
+}
+
+.umu-form .form-control:focus,
+.umu-form textarea:focus {
+    outline: none;
+    border-color: var(--umu-moss);
+    box-shadow: 0 0 0 3px rgba(74, 107, 86, 0.15);
+}
+
+.umu-form .umu-btn {
+    margin-top: 0.35rem;
+}
+
+.umu-form .invalid-feedback,
+.umu-form ul {
+    color: #8a2424;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+}
+
+/* ---------- Dashboard ---------- */
+.dash {
+    --dash-sidebar-w: 260px;
+    width: 100%;
+    min-height: calc(100vh - var(--umu-nav-h));
+    margin: 0;
+    display: block;
+}
+
+/* Dashboard without top navbar */
+body:has(.dash--standalone) {
+    padding-top: 0;
+}
+
+.dash--standalone {
+    min-height: 100vh;
+}
+
+.dash__sidebar {
+    position: fixed;
+    top: var(--umu-nav-h);
+    left: 0;
+    bottom: 0;
+    width: var(--dash-sidebar-w);
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    background: rgba(250, 251, 248, 0.98);
+    border-right: 1px solid var(--umu-line);
+    border-radius: 0;
+    padding: 1.15rem 0.95rem;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    box-shadow: 8px 0 24px rgba(26, 33, 28, 0.04);
+}
+
+.dash--standalone .dash__sidebar {
+    top: 0;
+}
+
+.dash__brand {
+    flex-shrink: 0;
+    margin-bottom: 1rem;
+    padding: 0 0.35rem 0.85rem;
+    border-bottom: 1px solid var(--umu-line);
+}
+
+.dash__brand-link {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: inherit;
+    text-decoration: none;
+}
+
+.dash__brand-link:hover {
+    color: inherit;
+}
+
+.dash__brand-logo {
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    background: #0d0d0d;
+    flex-shrink: 0;
+}
+
+.dash__brand span {
+    display: grid;
+    gap: 0.1rem;
+}
+
+.dash__brand small {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--umu-moss);
+    font-weight: 700;
+}
+
+.dash__brand strong {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    color: var(--umu-ink);
+}
+
+.umu-auth__brand {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.umu-auth__brand img {
+    width: 88px;
+    height: 88px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    background: #0d0d0d;
+    margin: 0 auto;
+}
+
+.dash__nav {
+    display: grid;
+    gap: 0.2rem;
+    flex: 1 1 auto;
+    align-content: start;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 0.15rem;
+    padding-bottom: 0.5rem;
+}
+
+.dash__label {
+    margin: 0.85rem 0 0.25rem;
+    padding: 0 0.4rem;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: rgba(26, 33, 28, 0.45);
+    font-weight: 700;
+}
+
+.dash__link {
+    display: block;
+    padding: 0.55rem 0.65rem;
+    border-radius: 8px;
+    color: var(--umu-ink);
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+
+.dash__link:hover,
+.dash__link.is-active {
+    background: rgba(42, 69, 52, 0.1);
+    color: var(--umu-forest);
+}
+
+.dash__footer {
+    flex-shrink: 0;
+    margin-top: auto;
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.85rem 0.35rem 0.15rem;
+    border-top: 1px solid var(--umu-line);
+    background: rgba(250, 251, 248, 0.98);
+}
+
+.dash__back,
+.dash__logout {
+    display: block;
+    padding: 0.55rem 0.65rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.dash__back {
+    color: var(--umu-moss);
+}
+
+.dash__back:hover {
+    background: rgba(42, 69, 52, 0.08);
+    color: var(--umu-forest);
+}
+
+.dash__logout {
+    color: #8a2424;
+}
+
+.dash__logout:hover {
+    background: rgba(179, 58, 58, 0.1);
+    color: #8a2424;
+}
+
+.dash__main {
+    min-width: 0;
+    width: min(1100px, calc(100% - var(--dash-sidebar-w) - 2.5rem));
+    margin: 1.25rem auto 3rem calc(var(--dash-sidebar-w) + 1.5rem);
+    padding-right: 1rem;
+}
+
+.dash__top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.dash__title {
+    margin: 0 0 0.25rem;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+}
+
+.dash__subtitle {
+    margin: 0;
+    color: rgba(26, 33, 28, 0.62);
+}
+
+.dash__top-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.dash-stats {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.dash-stat {
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius-sm);
+    padding: 0.95rem;
+    display: grid;
+    gap: 0.35rem;
+    transition: transform 0.2s var(--ease-out), border-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+
+.dash-stat:hover {
+    transform: translateY(-2px);
+    border-color: rgba(42, 69, 52, 0.28);
+    box-shadow: 0 10px 24px rgba(26, 33, 28, 0.06);
+}
+
+.dash-stat span {
+    font-size: 0.8rem;
+    color: rgba(26, 33, 28, 0.55);
+    font-weight: 600;
+}
+
+.dash-stat strong {
+    font-family: var(--font-display);
+    font-size: 1.55rem;
+    color: var(--umu-forest);
+}
+
+.dash-stat--warn strong { color: var(--umu-copper); }
+.dash-stat--alert strong { color: #b33a3a; }
+
+.dash-panels {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.dash-panel {
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    padding: 1rem;
+}
+
+.dash-panel__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+}
+
+.dash-panel__head h2 {
+    margin: 0;
+    font-size: 1.15rem;
+}
+
+.dash-panel__head a {
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.dash-empty,
+.dash-empty-box {
+    margin: 0;
+    color: rgba(26, 33, 28, 0.55);
+}
+
+.dash-empty-box {
+    padding: 1.5rem;
+    border: 1px dashed var(--umu-line);
+    border-radius: var(--umu-radius);
+    background: rgba(255, 255, 255, 0.45);
+    text-align: center;
+}
+
+.dash-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.65rem;
+}
+
+.dash-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.2rem;
+    border-bottom: 1px solid var(--umu-line);
+}
+
+.dash-list li:last-child {
+    border-bottom: none;
+}
+
+.dash-list strong {
+    display: block;
+}
+
+.dash-list span {
+    font-size: 0.85rem;
+    color: rgba(26, 33, 28, 0.55);
+}
+
+.dash-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: rgba(26, 33, 28, 0.08);
+    color: var(--umu-ink);
+    white-space: nowrap;
+}
+
+.dash-badge--ok {
+    background: rgba(42, 69, 52, 0.12);
+    color: var(--umu-forest);
+}
+
+.dash-badge--warn {
+    background: rgba(184, 107, 58, 0.15);
+    color: var(--umu-copper-deep);
+}
+
+.dash-badge--info {
+    background: rgba(74, 107, 86, 0.14);
+    color: var(--umu-moss);
+}
+
+.dash-badge--alert {
+    background: rgba(179, 58, 58, 0.12);
+    color: #8a2424;
+}
+
+.dash-quick {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem;
+}
+
+.dash-quick__card {
+    display: grid;
+    gap: 0.3rem;
+    padding: 1rem;
+    border-radius: var(--umu-radius-sm);
+    border: 1px solid var(--umu-line);
+    background: rgba(255, 255, 255, 0.55);
+    color: var(--umu-ink);
+    transition: transform 0.2s var(--ease-out), border-color 0.2s;
+}
+
+.dash-quick__card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(42, 69, 52, 0.3);
+    color: var(--umu-ink);
+}
+
+.dash-quick__card strong {
+    font-family: var(--font-display);
+}
+
+.dash-quick__card span {
+    font-size: 0.88rem;
+    color: rgba(26, 33, 28, 0.58);
+}
+
+.dash-row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.4rem;
+}
+
+.dash-order {
+    background: rgba(255, 255, 255, 0.62);
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    padding: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.dash-order__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
+}
+
+.dash-order__head h2 {
+    margin: 0 0 0.2rem;
+    font-size: 1.25rem;
+}
+
+.dash-order__head p {
+    margin: 0;
+    color: rgba(26, 33, 28, 0.58);
+    font-size: 0.9rem;
+}
+
+.dash-order__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: start;
+}
+
+.dash-order__products-title {
+    margin: 1rem 0 0.55rem;
+    font-size: 1rem;
+}
+
+.dash-order__totals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin: 0.9rem 0;
+}
+
+.dash-order__totals p {
+    margin: 0;
+}
+
+.dash-order__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* Dashboard cards / forms / details */
+.dash-card {
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    padding: 1.35rem 1.4rem;
+    box-shadow: 0 10px 28px rgba(26, 33, 28, 0.04);
+    margin-bottom: 1rem;
+}
+
+.dash-card--narrow {
+    max-width: 640px;
+}
+
+.dash-card__hint {
+    margin: 0 0 1.1rem;
+    color: rgba(26, 33, 28, 0.58);
+    font-size: 0.92rem;
+}
+
+.dash-form .form-group,
+.dash-form .mb-3,
+.dash-form > div {
+    margin-bottom: 1rem;
+}
+
+.dash-form label,
+.dash-form .form-label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--umu-ink);
+}
+
+.dash-form .form-control,
+.dash-form .form-select,
+.dash-form select,
+.dash-form textarea,
+.dash-form input[type="text"],
+.dash-form input[type="number"],
+.dash-form input[type="email"],
+.dash-form input[type="file"] {
+    width: 100%;
+    border: 1px solid var(--umu-line);
+    border-radius: 10px;
+    padding: 0.72rem 0.9rem;
+    font: inherit;
+    background: #fff;
+    color: var(--umu-ink);
+    transition: border-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+
+.dash-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.dash-form .form-control:focus,
+.dash-form .form-select:focus,
+.dash-form select:focus,
+.dash-form textarea:focus,
+.dash-form input:focus {
+    outline: none;
+    border-color: var(--umu-moss);
+    box-shadow: 0 0 0 3px rgba(74, 107, 86, 0.15);
+}
+
+.dash-form .form-text,
+.dash-form .help-text {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.82rem;
+    color: rgba(26, 33, 28, 0.55);
+}
+
+.dash-form .invalid-feedback,
+.dash-form ul {
+    color: #8a2424;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+    padding-left: 1rem;
+}
+
+.dash-form__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--umu-line);
+}
+
+.dash-form__actions form {
+    display: inline;
+    margin: 0;
+}
+
+.dash-detail {
+    display: grid;
+    gap: 0;
+}
+
+.dash-detail__row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 1rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--umu-line);
+    align-items: start;
+}
+
+.dash-detail__row:last-child {
+    border-bottom: none;
+}
+
+.dash-detail__label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    color: var(--umu-moss);
+    padding-top: 0.15rem;
+}
+
+.dash-detail__value {
+    font-weight: 500;
+    color: var(--umu-ink);
+    word-break: break-word;
+}
+
+.dash-detail__media {
+    width: min(220px, 100%);
+    border-radius: var(--umu-radius-sm);
+    border: 1px solid var(--umu-line);
+    overflow: hidden;
+    background: var(--umu-mist);
+}
+
+.dash-detail__media img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.dash-product-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.dash-product-cell img {
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--umu-line);
+    flex-shrink: 0;
+}
+
+.dash-flash {
+    margin-bottom: 1rem;
+}
+
+.umu-table td.text-end,
+.umu-table th.text-end {
+    text-align: right;
+}
+
+.umu-checkout__form button[type="submit"],
+.umu-checkout__form .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.5rem;
+    padding: 0.85rem 1.25rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--umu-forest);
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s var(--ease-out), transform 0.15s var(--ease-out);
+}
+
+.umu-checkout__form button[type="submit"]:hover,
+.umu-checkout__form .btn:hover {
+    background: var(--umu-moss);
+    color: #fff;
+}
+
+@media (max-width: 1100px) {
+    .dash-stats {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .dash-quick {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .dash {
+        --dash-sidebar-w: 0px;
+    }
+
+    .dash__sidebar {
+        position: static;
+        width: 100%;
+        bottom: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--umu-line);
+        box-shadow: none;
+        margin-bottom: 0.5rem;
+    }
+
+    .dash__main {
+        width: min(1100px, calc(100% - 2rem));
+        margin: 1rem auto 2.5rem;
+        padding-right: 0;
+    }
+
+    .dash__nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        display: grid;
+    }
+
+    .dash--standalone .dash__sidebar {
+        position: static;
+        overflow: visible;
+    }
+
+    .dash__nav {
+        overflow: visible;
+    }
+
+    .dash__footer {
+        margin-top: 0.75rem;
+    }
+
+    .dash-panels {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .dash-stats,
+    .dash-quick,
+    .dash__nav {
+        grid-template-columns: 1fr;
+    }
+
+    .dash-detail__row {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+    }
+
+    .dash-card {
+        padding: 1.1rem;
+    }
+}
+
+/* ---------- Admin compatibility ---------- */
+.login-form {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.btn-yellow {
+    background-color: var(--umu-copper);
+    color: #fff;
+    border: 1px solid var(--umu-copper-deep);
+}
+
+.btn-yellow:hover {
+    background-color: var(--umu-copper-deep);
+    color: #fff;
+}
+
+.security-form {
+    display: block;
+    width: auto;
+    height: auto;
+}
+
+.actions-cell {
+    display: flex !important;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Flash */
+.flash-message {
+    width: min(1100px, calc(100% - 2rem));
+    margin: 1rem auto 0;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1024px) {
+    .umu-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .umu-hero {
+        min-height: calc(100svh - var(--umu-nav-h));
+    }
+
+    .umu-product,
+    .umu-checkout,
+    .umu-contact,
+    .umu-content__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .umu-nav__toolbar {
+        margin-left: auto;
+    }
+
+    .umu-nav__auth .umu-btn--sm {
+        padding: 0.35rem 0.65rem;
+        font-size: 0.8rem;
+    }
+
+    .umu-nav__toggle {
+        display: inline-flex;
+    }
+
+    .umu-profile,
+    .umu-profile--edit {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .umu-profile__form-wrap {
+        border-left: none;
+        border-top: 1px solid var(--umu-line);
+        padding: 1.25rem 0 0;
+        width: 100%;
+        text-align: left;
+    }
+
+    .umu-form__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .umu-nav__panel {
+        display: none !important;
+        position: fixed;
+        top: var(--umu-nav-h);
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 998;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        padding: 1.1rem 1rem 2rem;
+        overflow-y: auto;
+        background: rgba(250, 251, 248, 0.99);
+        border-bottom: 1px solid var(--umu-line);
+        box-shadow: var(--umu-shadow);
+        flex: none;
+        width: 100%;
+        max-width: none;
+        margin: 0;
+    }
+
+    .umu-nav__panel.is-open {
+        display: flex !important;
+    }
+
+    .umu-nav__links {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .umu-nav__link {
+        width: 100%;
+        justify-content: space-between;
+        padding: 0.8rem 0.85rem;
+    }
+
+    .umu-nav__search {
+        margin: 0;
+        flex: none;
+        width: 100%;
+    }
+
+    .umu-mega {
+        position: static;
+        min-width: 0;
+        width: 100%;
+        margin-top: 0.35rem;
+        box-shadow: none;
+        animation: none;
+    }
+
+    .umu-mega__inner {
+        grid-template-columns: 1fr;
+    }
+
+    body.umu-nav-open {
+        overflow: hidden;
+    }
+}
+
+@media (min-width: 901px) {
+    .umu-nav__toggle {
+        display: none !important;
+    }
+
+    .umu-nav__panel {
+        display: flex !important;
+        position: static;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .umu-nav__links {
+        flex: 1;
+    }
+
+    .umu-nav__search {
+        margin-left: auto;
+        margin-right: 0.5rem;
+    }
+
+    .umu-nav__toolbar {
+        margin-left: 0;
+    }
+
+    .umu-nav__backdrop {
+        display: none !important;
+    }
+}
+
+@media (max-width: 720px) {
+    .umu-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.85rem;
+    }
+
+    .umu-card__body {
+        padding: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .umu-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .umu-card {
+        opacity: 1;
+        transform: none;
+    }
+}

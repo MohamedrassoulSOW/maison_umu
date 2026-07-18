@@ -1,0 +1,3 @@
+# Dev utilise le même MAILER_DSN que la prod (.env / .env.local).
+# Pour recevoir vraiment les mails sur l'adresse client, le DSN doit être
+# un SMTP réel (Gmail, Brevo, etc.) — pas Mailtrap sandbox.

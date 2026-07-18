@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Facture {{ order.id }} — Maison UMU</title>
+    <style>
+        @page { margin: 14mm 16mm; }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: DejaVu Sans, Arial, sans-serif;
+            color: #1a1a1a;
+            font-size: 12px;
+            line-height: 1.45;
+            background: #fff;
+        }
+        .invoice { width: 100%; }
+        .header {
+            background: #0d0d0d;
+            color: #c9a227;
+            padding: 22px 24px;
+            margin-bottom: 22px;
+        }
+        .header-table { width: 100%; border-collapse: collapse; }
+        .header-table td { vertical-align: middle; border: none; padding: 0; }
+        .logo {
+            max-height: 92px;
+            max-width: 180px;
+            display: block;
+        }
+        .brand-block { text-align: right; }
+        .brand-name {
+            font-size: 22px;
+            letter-spacing: 0.28em;
+            margin: 0 0 6px;
+            color: #d4af37;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .brand-tag {
+            margin: 0;
+            font-size: 10px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #e8d5a3;
+        }
+        .meta {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 22px;
+        }
+        .meta td {
+            width: 50%;
+            vertical-align: top;
+            border: none;
+            padding: 0;
+        }
+        .card {
+            border: 1px solid #e5dfd0;
+            background: #faf7f0;
+            padding: 14px 16px;
+            min-height: 120px;
+        }
+        .card-right {
+            margin-left: 12px;
+            background: #fff;
+            border-color: #d4af37;
+        }
+        .card h3 {
+            margin: 0 0 10px;
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #8a7340;
+            font-weight: 700;
+        }
+        .card p { margin: 0 0 4px; color: #222; }
+        .card strong { color: #0d0d0d; }
+        .invoice-no {
+            font-size: 18px;
+            letter-spacing: 0.06em;
+            color: #0d0d0d;
+            margin: 0 0 8px;
+        }
+        table.lines {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+        table.lines th {
+            background: #0d0d0d;
+            color: #d4af37;
+            font-size: 10px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 10px 8px;
+            border: none;
+            text-align: left;
+        }
+        table.lines th.num,
+        table.lines td.num { text-align: right; }
+        table.lines th.center,
+        table.lines td.center { text-align: center; }
+        table.lines td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #ebe4d4;
+            color: #222;
+        }
+        table.lines tr:nth-child(even) td { background: #faf7f0; }
+        .totals {
+            width: 42%;
+            margin-left: auto;
+            margin-top: 18px;
+            border-collapse: collapse;
+        }
+        .totals td {
+            padding: 8px 10px;
+            border: none;
+        }
+        .totals .label {
+            color: #666;
+            text-align: left;
+        }
+        .totals .value {
+            text-align: right;
+            font-weight: 600;
+        }
+        .totals .grand td {
+            background: #0d0d0d;
+            color: #d4af37;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 12px 10px;
+        }
+        .note {
+            margin-top: 28px;
+            padding-top: 14px;
+            border-top: 1px solid #e5dfd0;
+            text-align: center;
+            color: #6b6558;
+            font-size: 11px;
+        }
+        .note .thanks {
+            color: #0d0d0d;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .gold-rule {
+            width: 64px;
+            height: 2px;
+            background: #d4af37;
+            margin: 10px auto 0;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+<div class="invoice">
+    <div class="header">
+        <table class="header-table">
+            <tr>
+                <td style="width:45%;">
+                    {% if logo_base64 %}
+                        <img class="logo" src="data:{{ logo_mime|default('image/jpeg') }};base64,{{ logo_base64 }}" alt="Maison UMU">
+                    {% endif %}
+                </td>
+                <td class="brand-block">
+                    <p class="brand-name">Maison UMU</p>
+                    <p class="brand-tag">{{ brand_tagline|default("L'art des senteurs") }}</p>
+                    <div class="gold-rule"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <table class="meta">
+        <tr>
+            <td>
+                <div class="card">
+                    <h3>Client</h3>
+                    <p><strong>{{ order.firstName }} {{ order.lastName }}</strong></p>
+                    <p>{{ order.phone }}</p>
+                    <p>{{ order.email }}</p>
+                    <p>{{ order.adress }}</p>
+                    <p>{{ order.city.name }}</p>
+                </div>
+            </td>
+            <td>
+                <div class="card card-right">
+                    <h3>Facture</h3>
+                    <p class="invoice-no">N° {{ '%05d'|format(order.id) }}</p>
+                    <p><strong>Date :</strong> {{ order.createdAt|date('d/m/Y') }}</p>
+                    <p><strong>Heure :</strong> {{ order.createdAt|date('H:i') }}</p>
+                    <p>
+                        <strong>Paiement :</strong>
+                        {% if order.payOnDelivery %}
+                            À la livraison
+                        {% elseif order.isPaymentCompleted %}
+                            En ligne — payé
+                        {% else %}
+                            En ligne
+                        {% endif %}
+                    </p>
+                    <p>
+                        <strong>Statut :</strong>
+                        {{ order.isComplted ? 'Livrée' : 'En cours' }}
+                    </p>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="lines">
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th class="num">Prix unitaire</th>
+                <th class="center">Qté</th>
+                <th class="num">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for line in order.orderProducts %}
+                <tr>
+                    <td>{{ line.product.name }}</td>
+                    <td class="num">{{ line.product.price|number_format(0, ',', ' ') }} CFA</td>
+                    <td class="center">{{ line.qte }}</td>
+                    <td class="num">{{ (line.product.price * line.qte)|number_format(0, ',', ' ') }} CFA</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <table class="totals">
+        <tr>
+            <td class="label">Sous-total produits</td>
+            <td class="value">{{ (order.totalPrice - order.city.shippingConst)|number_format(0, ',', ' ') }} CFA</td>
+        </tr>
+        <tr>
+            <td class="label">Livraison ({{ order.city.name }})</td>
+            <td class="value">{{ order.city.shippingConst|number_format(0, ',', ' ') }} CFA</td>
+        </tr>
+        <tr class="grand">
+            <td>Total TTC</td>
+            <td class="value">{{ order.totalPrice|number_format(0, ',', ' ') }} CFA</td>
+        </tr>
+    </table>
+
+    <div class="note">
+        <p class="thanks">Merci pour votre confiance</p>
+        <p>Maison UMU — {{ brand_tagline|default("L'art des senteurs") }}</p>
+        <p>Document généré le {{ "now"|date('d/m/Y à H:i') }}</p>
+    </div>
+</div>
+</body>
+</html>

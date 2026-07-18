@@ -1,0 +1,4 @@
+<form method="post" action="{{ path('app_city_delete', { id: city.id }) }}" onsubmit="return confirm('Supprimer cette ville de livraison ?');" style="display:inline;">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ city.id) }}">
+    <button type="submit" class="umu-btn umu-btn--danger umu-btn--sm">Supprimer</button>
+</form>

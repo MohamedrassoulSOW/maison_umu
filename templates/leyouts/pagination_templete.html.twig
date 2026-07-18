@@ -1,0 +1,31 @@
+{% if pageCount > 1 %}
+<nav aria-label="Pagination">
+    <ul class="umu-pagination">
+        {% if previous is defined %}
+            <li>
+                <a href="{{ path(route, query|merge({(pageParameterName): previous})) }}" aria-label="Précédent">Précédent</a>
+            </li>
+        {% else %}
+            <li class="disabled"><span>Précédent</span></li>
+        {% endif %}
+
+        {% for page in pagesInRange %}
+            {% if page != current %}
+                <li>
+                    <a href="{{ path(route, query|merge({(pageParameterName): page})) }}">{{ page }}</a>
+                </li>
+            {% else %}
+                <li class="active" aria-current="page"><span>{{ page }}</span></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if next is defined %}
+            <li>
+                <a href="{{ path(route, query|merge({(pageParameterName): next})) }}" aria-label="Suivant">Suivant</a>
+            </li>
+        {% else %}
+            <li class="disabled"><span>Suivant</span></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}

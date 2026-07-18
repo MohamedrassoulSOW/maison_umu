@@ -1,0 +1,20 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Modifier catégorie — Dashboard{% endblock %}
+{% block dash_title %}Modifier la catégorie{% endblock %}
+{% block dash_subtitle %}Mettez à jour le nom de la catégorie.{% endblock %}
+
+{% block dash_actions %}
+    <a href="{{ path('app_category') }}" class="umu-btn umu-btn--ghost umu-btn--sm">Retour à la liste</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="dash-card dash-card--narrow">
+    {{ form_start(form, { attr: { class: 'dash-form', 'data-turbo': 'false' } }) }}
+        {{ form_row(form.name, { attr: { class: 'form-control' }, label: 'Nom de la catégorie' }) }}
+        <div class="dash-form__actions">
+            <button type="submit" class="umu-btn umu-btn--primary">Enregistrer les modifications</button>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

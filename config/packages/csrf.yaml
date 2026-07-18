@@ -1,0 +1,12 @@
+# Enable CSRF protection for forms and logins/logouts
+framework:
+    form:
+        csrf_protection:
+            token_id: submit
+
+    csrf_protection:
+        enabled: true
+        # Keep only "submit" as stateless (needs JS).
+        # Login/logout use classic session tokens to avoid "Invalid CSRF token".
+        stateless_token_ids:
+            - submit

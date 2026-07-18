@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panier — Maison UMU{% endblock %}
+
+{% block body %}
+<div class="umu-page-title">
+    <h1>Votre panier</h1>
+    <p>Vérifiez vos articles avant de finaliser la commande.</p>
+</div>
+
+<div class="umu-cart">
+    {% if items is empty %}
+        <div class="umu-cart__empty">
+            <p>Votre panier est vide.</p>
+            <a class="umu-btn umu-btn--primary" href="{{ path('app_home_page') }}" style="margin-top: 1rem;">
+                Continuer vos achats
+            </a>
+        </div>
+    {% else %}
+        <div class="umu-table-wrap">
+            <table class="umu-table">
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Prix</th>
+                        <th>Quantité</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:0.85rem;">
+                                <img class="umu-thumb" src="{{ asset('uploads/images/' ~ item.product.image) }}" alt="{{ item.product.name }}">
+                                <span>{{ item.product.name }}</span>
+                            </div>
+                        </td>
+                        <td>{{ item.product.price }} CFA</td>
+                        <td>
+                            <div class="umu-qty">
+                                <a href="{{ path('app_cart_decrease', {id: item.product.id}) }}" aria-label="Diminuer">−</a>
+                                <span style="min-width:2rem; text-align:center; line-height:34px; font-weight:600;">{{ item.quantity }}</span>
+                                <a href="{{ path('app_cart_add', {id: item.product.id}) }}" aria-label="Augmenter">+</a>
+                            </div>
+                        </td>
+                        <td>{{ item.product.price * item.quantity }} CFA</td>
+                        <td>
+                            <a href="{{ path('app_cart_product_remove', {'id': item.product.id}) }}" class="umu-btn umu-btn--danger umu-btn--sm">Retirer</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="umu-cart__footer">
+            <p class="umu-cart__total">Total : <span>{{ total }} CFA</span></p>
+            <div style="display:flex; flex-wrap:wrap; gap:0.65rem;">
+                <a data-turbo="false" href="{{ path('app_order') }}" class="umu-btn umu-btn--primary">
+                    Valider la commande
+                </a>
+                <a href="{{ path('app_cart_remove') }}" class="umu-btn umu-btn--ghost">
+                    Vider le panier
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

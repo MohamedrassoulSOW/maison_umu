@@ -1,0 +1,133 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Dashboard — Maison UMU{% endblock %}
+{% block dash_title %}Vue d’ensemble{% endblock %}
+{% block dash_subtitle %}Bonjour {{ app.user.firstName|default('équipe') }}, voici l’activité de la boutique.{% endblock %}
+
+{% block dash_actions %}
+    <a class="umu-btn umu-btn--primary umu-btn--sm" href="{{ path('app_product_new') }}">+ Produit</a>
+    <a class="umu-btn umu-btn--ghost umu-btn--sm" href="{{ path('app_order_show', {type: 'not-Complted'}) }}">Commandes</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="dash-stats">
+    <article class="dash-stat">
+        <span>Produits</span>
+        <strong>{{ stats.products }}</strong>
+    </article>
+    <article class="dash-stat">
+        <span>Commandes</span>
+        <strong>{{ stats.orders }}</strong>
+    </article>
+    <article class="dash-stat dash-stat--warn">
+        <span>À traiter</span>
+        <strong>{{ stats.pending }}</strong>
+    </article>
+    <article class="dash-stat">
+        <span>Livrées</span>
+        <strong>{{ stats.delivered }}</strong>
+    </article>
+    <article class="dash-stat">
+        <span>Utilisateurs</span>
+        <strong>{{ stats.users }}</strong>
+    </article>
+    <article class="dash-stat dash-stat--alert">
+        <span>Stock bas</span>
+        <strong>{{ stats.lowStock }}</strong>
+    </article>
+</div>
+
+<div class="dash-panels">
+    <section class="dash-panel">
+        <div class="dash-panel__head">
+            <h2>Commandes récentes</h2>
+            <a href="{{ path('app_order_show', {type: 'not-Complted'}) }}">Voir tout</a>
+        </div>
+        {% if recentOrders is empty %}
+            <p class="dash-empty">Aucune commande pour le moment.</p>
+        {% else %}
+            <div class="umu-table-wrap">
+                <table class="umu-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Client</th>
+                            <th>Total</th>
+                            <th>Statut</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recentOrders %}
+                            <tr>
+                                <td>{{ order.id }}</td>
+                                <td>{{ order.firstName }} {{ order.lastName }}</td>
+                                <td>{{ order.totalPrice }} CFA</td>
+                                <td>
+                                    {% if order.isComplted %}
+                                        <span class="dash-badge dash-badge--ok">Livrée</span>
+                                    {% elseif order.isPaymentCompleted %}
+                                        <span class="dash-badge dash-badge--info">Payée</span>
+                                    {% else %}
+                                        <span class="dash-badge dash-badge--warn">En cours</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ order.createdAt|date('d/m/Y H:i') }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </section>
+
+    <section class="dash-panel">
+        <div class="dash-panel__head">
+            <h2>Stock faible</h2>
+            <a href="{{ path('app_product_index') }}">Gérer</a>
+        </div>
+        {% if lowStockProducts is empty %}
+            <p class="dash-empty">Tous les stocks sont corrects.</p>
+        {% else %}
+            <ul class="dash-list">
+                {% for product in lowStockProducts %}
+                    <li>
+                        <div>
+                            <strong>{{ product.name }}</strong>
+                            <span>{{ product.price }} CFA</span>
+                        </div>
+                        <span class="dash-badge {% if product.stock == 0 %}dash-badge--alert{% else %}dash-badge--warn{% endif %}">
+                            {{ product.stock == 0 ? 'Épuisé' : product.stock ~ ' restants' }}
+                        </span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </section>
+</div>
+
+<div class="dash-quick">
+    <a class="dash-quick__card" href="{{ path('app_hero_edit') }}">
+        <strong>Hero accueil</strong>
+        <span>Modifier le bandeau</span>
+    </a>
+    <a class="dash-quick__card" href="{{ path('app_order_show', {type: 'not-Complted'}) }}">
+        <strong>COD à traiter</strong>
+        <span>{{ stats.pendingCod }} commande(s)</span>
+    </a>
+    <a class="dash-quick__card" href="{{ path('app_order_show', {type: 'pay-on-line-not-delivered'}) }}">
+        <strong>Payées en ligne</strong>
+        <span>{{ stats.pendingPaid }} à livrer</span>
+    </a>
+    <a class="dash-quick__card" href="{{ path('app_city_index') }}">
+        <strong>Zones de livraison</strong>
+        <span>{{ stats.cities }} ville(s)</span>
+    </a>
+    {% if is_granted('ROLE_ADMIN') %}
+    <a class="dash-quick__card" href="{{ path('app_user') }}">
+        <strong>Utilisateurs</strong>
+        <span>{{ stats.users }} compte(s)</span>
+    </a>
+    {% endif %}
+</div>
+{% endblock %}

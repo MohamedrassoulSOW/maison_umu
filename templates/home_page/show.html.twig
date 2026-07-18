@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }} — Maison UMU{% endblock %}
+
+{% block body %}
+<section class="umu-product">
+    <div class="umu-product__media">
+        <img src="{{ asset('uploads/images/' ~ product.image) }}" alt="{{ product.name }}">
+    </div>
+    <div class="umu-product__info">
+        <h1>{{ product.name }}</h1>
+        <p>{{ product.description }}</p>
+        <p class="umu-product__price">{{ product.price }} CFA</p>
+        <p class="umu-stock">En stock : {{ product.stock }}</p>
+        <div style="margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem;">
+            <a href="{{ path('app_cart_new', {'id': product.id}) }}" class="umu-btn umu-btn--primary">
+                Ajouter au panier
+            </a>
+            <a href="{{ path('app_home_page') }}" class="umu-btn umu-btn--ghost">
+                Continuer vos achats
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="umu-section" style="padding-top: 0;">
+    <div class="umu-section__head">
+        <div>
+            <h2 class="umu-section__title">À découvrir aussi</h2>
+            <p class="umu-section__lead">D’autres pièces de la maison qui pourraient vous plaire.</p>
+        </div>
+    </div>
+
+    <div class="umu-slider-wrap">
+        <div class="umu-slider" id="productSlider">
+            {% for item in products %}
+                {% if item.id != product.id %}
+                    {% include 'leyouts/_product_card.html.twig' with { product: item } %}
+                {% endif %}
+            {% endfor %}
+        </div>
+        <button type="button" class="umu-slider__btn umu-slider__btn--prev" id="prevBtn" aria-label="Précédent">‹</button>
+        <button type="button" class="umu-slider__btn umu-slider__btn--next" id="nextBtn" aria-label="Suivant">›</button>
+    </div>
+</section>
+{% endblock %}

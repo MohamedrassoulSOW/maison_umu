@@ -1,0 +1,45 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Catégories — Dashboard{% endblock %}
+{% block dash_title %}Catégories{% endblock %}
+{% block dash_subtitle %}Organisez le catalogue par catégories.{% endblock %}
+
+{% block dash_actions %}
+    <a href="{{ path('app_category_new') }}" class="umu-btn umu-btn--primary umu-btn--sm">Nouvelle catégorie</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="umu-table-wrap">
+    <table class="umu-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+                <tr>
+                    <td>{{ category.id }}</td>
+                    <td><strong>{{ category.name }}</strong></td>
+                    <td>
+                        <div class="dash-row-actions">
+                            <a href="{{ path('app_category_update', {'id': category.id}) }}" class="umu-btn umu-btn--primary umu-btn--sm">Modifier</a>
+                            <form method="post" action="{{ path('app_category_delete', {'id': category.id}) }}" style="display:inline;"
+                                  onsubmit="return confirm('Supprimer cette catégorie ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_category' ~ category.id) }}">
+                                <button type="submit" class="umu-btn umu-btn--danger umu-btn--sm">Supprimer</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">Aucune catégorie trouvée.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

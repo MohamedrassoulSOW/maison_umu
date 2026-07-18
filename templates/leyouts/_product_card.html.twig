@@ -1,0 +1,20 @@
+<article class="umu-card">
+    <a class="umu-card__media" href="{{ path('app_home_product_show', {'id': product.id}) }}">
+        <img src="{{ asset('uploads/images/' ~ product.image) }}" alt="{{ product.name }}" loading="lazy">
+    </a>
+    <div class="umu-card__body">
+        <h3 class="umu-card__title">
+            <a href="{{ path('app_home_product_show', {'id': product.id}) }}">{{ product.name }}</a>
+        </h3>
+        <p class="umu-card__desc">{{ product.description|slice(0, 80) }}{% if product.description|length > 80 %}…{% endif %}</p>
+        <div class="umu-card__meta">
+            <span class="umu-price">{{ product.price }} CFA</span>
+            <span class="umu-stock">Stock {{ product.stock }}</span>
+        </div>
+        <div class="umu-card__actions">
+            <a href="{{ path('app_cart_new', {'id': product.id}) }}" class="umu-btn umu-btn--primary umu-btn--sm">
+                Ajouter au panier
+            </a>
+        </div>
+    </div>
+</article>

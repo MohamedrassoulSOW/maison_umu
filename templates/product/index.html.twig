@@ -1,0 +1,64 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Produits — Dashboard{% endblock %}
+{% block dash_title %}Produits{% endblock %}
+{% block dash_subtitle %}Gérez le catalogue et les stocks.{% endblock %}
+
+{% block dash_actions %}
+    <a href="{{ path('app_product_new') }}" class="umu-btn umu-btn--primary umu-btn--sm">Ajouter un produit</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="umu-table-wrap">
+    <table class="umu-table">
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th>Description</th>
+                <th>Prix</th>
+                <th>Stock</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+            <tr>
+                <td>
+                    <div class="dash-product-cell">
+                        {% if product.image %}
+                            <img src="{{ asset('uploads/images/' ~ product.image) }}" alt="{{ product.name }}">
+                        {% endif %}
+                        <div>
+                            <strong>{{ product.name }}</strong>
+                            <div style="font-size:0.8rem;color:rgba(26,33,28,0.5);">#{{ product.id }}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>{{ product.description|slice(0, 60) }}{% if product.description|length > 60 %}…{% endif %}</td>
+                <td>{{ product.price }} CFA</td>
+                <td>
+                    {% if product.stock > 5 %}
+                        <span class="dash-badge dash-badge--ok">{{ product.stock }}</span>
+                    {% elseif product.stock > 0 %}
+                        <span class="dash-badge dash-badge--warn">{{ product.stock }}</span>
+                    {% else %}
+                        <span class="dash-badge dash-badge--alert">Épuisé</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="dash-row-actions">
+                        <a href="{{ path('app_product_stock_add', {'id': product.id}) }}" class="umu-btn umu-btn--ghost umu-btn--sm">Stock</a>
+                        <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="umu-btn umu-btn--primary umu-btn--sm">Modifier</a>
+                        <a href="{{ path('app_product_show', {'id': product.id}) }}" class="umu-btn umu-btn--ghost umu-btn--sm">Voir</a>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">Aucun produit trouvé.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

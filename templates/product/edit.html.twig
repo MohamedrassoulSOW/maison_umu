@@ -1,0 +1,22 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Modifier {{ product.name }} — Dashboard{% endblock %}
+{% block dash_title %}Modifier le produit{% endblock %}
+{% block dash_subtitle %}{{ product.name }}{% endblock %}
+
+{% block dash_actions %}
+    <a href="{{ path('app_product_show', { id: product.id }) }}" class="umu-btn umu-btn--ghost umu-btn--sm">Voir</a>
+    <a href="{{ path('app_product_index') }}" class="umu-btn umu-btn--ghost umu-btn--sm">Retour à la liste</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="dash-card dash-card--narrow">
+    {{ include('product/_form.html.twig', { button_label: 'Enregistrer les modifications' }) }}
+    <div class="dash-form__actions" style="border-top: none; padding-top: 0; margin-top: 0.5rem;">
+        <form method="post" action="{{ path('app_product_delete', { id: product.id }) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce produit ?');">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+            <button type="submit" class="umu-btn umu-btn--danger umu-btn--sm">Supprimer le produit</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

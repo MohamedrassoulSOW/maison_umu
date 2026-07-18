@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion — Maison UMU{% endblock %}
+
+{% block body %}
+<div class="umu-auth">
+    <form method="post" class="umu-auth__panel" action="{{ path('app_login') }}" data-turbo="false">
+        <div class="umu-auth__brand">
+            <img src="{{ asset(brand_logo_path) }}" alt="Maison UMU">
+        </div>
+        <h1>Connexion</h1>
+
+        {% if error %}
+            <div class="umu-alert umu-alert--danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+
+        {% if app.user %}
+            <div class="umu-alert umu-alert--success">
+                Connecté en tant que {{ app.user.email }}.
+                <a href="{{ path('app_logout') }}">Se déconnecter</a>
+            </div>
+        {% endif %}
+
+        <label for="inputEmail">Email</label>
+        <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+
+        <label for="inputPassword">Mot de passe</label>
+        <div class="umu-password">
+            <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required data-password-toggle>
+            {% include 'leyouts/_password_toggle.html.twig' %}
+        </div>
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+        <button class="btn" type="submit">Se connecter</button>
+
+        <p style="text-align:center; margin-top:1rem; font-size:0.92rem;">
+            <a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a>
+        </p>
+
+        <p style="text-align:center; margin-top:0.75rem; font-size:0.92rem;">
+            Pas encore de compte ?
+            <a href="{{ path('app_register') }}">Créer un compte</a>
+        </p>
+    </form>
+</div>
+{% endblock %}

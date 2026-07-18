@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Maison UMU — Boutique{% endblock %}
+
+{% block body %}
+<section class="umu-hero">
+    <div class="umu-hero__media" aria-hidden="true">
+        {% if hero.image %}
+            <img src="{{ asset('uploads/hero/' ~ hero.image) }}" alt="">
+        {% else %}
+            <img src="{{ asset(brand_logo_path) }}" alt="" class="umu-hero__media-logo">
+        {% endif %}
+    </div>
+    <div class="umu-hero__content">
+        <p class="umu-hero__brand">{{ hero.brandLabel }}</p>
+        <h1 class="umu-hero__headline">{{ hero.headline }}</h1>
+        <p class="umu-hero__text">{{ hero.text }}</p>
+        <div class="umu-hero__cta">
+            <a class="umu-btn umu-btn--primary" href="{{ hero.primaryCtaUrl }}">{{ hero.primaryCtaLabel }}</a>
+            <a class="umu-btn umu-btn--ghost" href="{{ hero.secondaryCtaUrl }}">{{ hero.secondaryCtaLabel }}</a>
+        </div>
+    </div>
+</section>
+
+<section class="umu-section" id="collection">
+    <div class="umu-section__head">
+        <div>
+            <h2 class="umu-section__title">La collection</h2>
+            <p class="umu-section__lead">Des pièces sélectionnées pour leur qualité et leur présence.</p>
+        </div>
+    </div>
+
+    <div class="umu-grid">
+        {% for product in products %}
+            {% include 'leyouts/_product_card.html.twig' with { product: product } %}
+        {% else %}
+            <p>Aucun produit disponible pour le moment.</p>
+        {% endfor %}
+    </div>
+
+    {{ knp_pagination_render(products, 'leyouts/pagination_templete.html.twig') }}
+</section>
+{% endblock %}

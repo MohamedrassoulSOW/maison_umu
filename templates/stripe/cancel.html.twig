@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement annulé — Maison UMU{% endblock %}
+
+{% block body %}
+<div class="umu-auth">
+    <div class="umu-auth__panel" style="text-align:center;">
+        <div class="umu-auth__brand">
+            <img src="{{ asset(brand_logo_path) }}" alt="Maison UMU">
+        </div>
+        <h1>Paiement annulé</h1>
+        <div class="umu-alert umu-alert--danger">
+            Le paiement n’a pas abouti. Vous pouvez réessayer depuis votre panier.
+        </div>
+        <a class="umu-btn umu-btn--primary" href="{{ path('app_cart') }}">Retour au panier</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% set currentRoute = app.request.attributes.get('_route') %}
+
+{% block nav %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block body %}
+<div class="dash dash--standalone">
+    <aside class="dash__sidebar" aria-label="Menu dashboard">
+        <div class="dash__brand">
+            <a class="dash__brand-link" href="{{ path('app_dashboard') }}">
+                <img class="dash__brand-logo" src="{{ asset(brand_logo_path) }}" alt="Maison UMU">
+                <span>
+                    <small>Maison UMU</small>
+                    <strong>Dashboard</strong>
+                </span>
+            </a>
+        </div>
+
+        <nav class="dash__nav" aria-label="Navigation dashboard">
+            <a class="dash__link {% if currentRoute == 'app_dashboard' %}is-active{% endif %}" href="{{ path('app_dashboard') }}">
+                Vue d’ensemble
+            </a>
+
+            <p class="dash__label">Boutique</p>
+            <a class="dash__link {% if currentRoute == 'app_hero_edit' or currentRoute == 'app_hero_remove_image' %}is-active{% endif %}" href="{{ path('app_hero_edit') }}">Hero accueil</a>
+            <a class="dash__link {% if currentRoute starts with 'app_product' %}is-active{% endif %}" href="{{ path('app_product_index') }}">Produits</a>
+            <a class="dash__link {% if currentRoute starts with 'app_city' %}is-active{% endif %}" href="{{ path('app_city_index') }}">Livraison</a>
+
+            <p class="dash__label">Commandes</p>
+            <a class="dash__link {% if currentRoute == 'app_order_show' and app.request.attributes.get('type') == 'not-Complted' %}is-active{% endif %}" href="{{ path('app_order_show', {type: 'not-Complted'}) }}">À traiter</a>
+            <a class="dash__link {% if currentRoute == 'app_order_show' and app.request.attributes.get('type') == 'pay-on-line-not-delivered' %}is-active{% endif %}" href="{{ path('app_order_show', {type: 'pay-on-line-not-delivered'}) }}">Payées non livrées</a>
+            <a class="dash__link {% if currentRoute == 'app_order_show' and app.request.attributes.get('type') == 'is-Complted' %}is-active{% endif %}" href="{{ path('app_order_show', {type: 'is-Complted'}) }}">Livrées</a>
+
+            {% if is_granted('ROLE_ADMIN') %}
+                <p class="dash__label">Administration</p>
+                <a class="dash__link {% if currentRoute starts with 'app_category' %}is-active{% endif %}" href="{{ path('app_category') }}">Catégories</a>
+                <a class="dash__link {% if currentRoute starts with 'app_sub_category' %}is-active{% endif %}" href="{{ path('app_sub_category_index') }}">Sous-catégories</a>
+                <a class="dash__link {% if currentRoute starts with 'app_user' %}is-active{% endif %}" href="{{ path('app_user') }}">Utilisateurs</a>
+            {% endif %}
+        </nav>
+
+        <div class="dash__footer">
+            <a class="dash__back" href="{{ path('app_home_page') }}">← Retour boutique</a>
+            <a class="dash__logout" href="{{ path('app_logout') }}">Déconnexion</a>
+        </div>
+    </aside>
+
+    <section class="dash__main">
+        <header class="dash__top">
+            <div>
+                <h1 class="dash__title">{% block dash_title %}Dashboard{% endblock %}</h1>
+                <p class="dash__subtitle">{% block dash_subtitle %}Pilotage Maison UMU{% endblock %}</p>
+            </div>
+            <div class="dash__top-actions">
+                {% block dash_actions %}{% endblock %}
+            </div>
+        </header>
+
+        <div class="dash-flash">
+            {% include 'leyouts/_flash_message.html.twig' %}
+        </div>
+
+        {% block dash_body %}{% endblock %}
+    </section>
+</div>
+{% endblock %}

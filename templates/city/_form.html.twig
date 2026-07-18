@@ -1,0 +1,9 @@
+{{ form_start(form, { attr: { class: 'dash-form', 'data-turbo': 'false' } }) }}
+    {{ form_row(form.name, { attr: { class: 'form-control' }, label: 'Nom de la ville' }) }}
+    {{ form_row(form.shippingConst, { attr: { class: 'form-control' }, label: 'Frais de livraison (CFA)' }) }}
+    <div class="dash-form__actions">
+        <button type="submit" class="umu-btn umu-btn--primary">
+            {{ button_label|default('Enregistrer la ville') }}
+        </button>
+    </div>
+{{ form_end(form) }}

@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}À propos — Maison UMU{% endblock %}
+
+{% block body %}
+<section class="umu-content">
+    <header class="umu-content__intro">
+        <img class="umu-content__logo" src="{{ asset(brand_logo_path) }}" alt="Maison UMU">
+        <p class="umu-content__eyebrow">{{ brand_tagline }}</p>
+        <h1>À propos de Maison UMU</h1>
+        <p class="umu-content__lead">
+            Maison UMU célèbre l’élégance des senteurs et sélectionne des créations raffinées pour accompagner votre quotidien.
+        </p>
+    </header>
+
+    <div class="umu-content__grid">
+        <article class="umu-content__block">
+            <h2>Notre promesse</h2>
+            <p>
+                Nous croyons qu’un objet bien choisi transforme l’ambiance d’un espace.
+                Chaque produit publié sur la boutique est pensé pour durer, se vivre et se transmettre.
+            </p>
+        </article>
+
+        <article class="umu-content__block">
+            <h2>Une sélection soignée</h2>
+            <p>
+                Qualité, esthétique et usage réel guident nos choix.
+                Notre équipe suit les stocks, les commandes et la livraison pour une expérience fluide de bout en bout.
+            </p>
+        </article>
+
+        <article class="umu-content__block">
+            <h2>Proche de vous</h2>
+            <p>
+                Une question sur un produit, une commande ou une livraison ?
+                Notre équipe est disponible pour vous accompagner avec clarté et réactivité.
+            </p>
+        </article>
+    </div>
+
+    <div class="umu-content__cta">
+        <a class="umu-btn umu-btn--primary" href="{{ path('app_home_page') }}">Explorer la boutique</a>
+        <a class="umu-btn umu-btn--ghost" href="{{ path('app_contact') }}">Nous contacter</a>
+    </div>
+</section>
+{% endblock %}

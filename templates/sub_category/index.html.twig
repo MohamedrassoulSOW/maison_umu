@@ -1,0 +1,43 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Sous-catégories — Dashboard{% endblock %}
+{% block dash_title %}Sous-catégories{% endblock %}
+{% block dash_subtitle %}Affinez le classement des produits.{% endblock %}
+
+{% block dash_actions %}
+    <a href="{{ path('app_sub_category_new') }}" class="umu-btn umu-btn--primary umu-btn--sm">Nouvelle sous-catégorie</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="umu-table-wrap">
+    <table class="umu-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Catégorie</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for sub_category in sub_categories %}
+            <tr>
+                <td>{{ sub_category.id }}</td>
+                <td><strong>{{ sub_category.name }}</strong></td>
+                <td>{{ sub_category.category.name }}</td>
+                <td>
+                    <div class="dash-row-actions">
+                        <a href="{{ path('app_sub_category_show', {'id': sub_category.id}) }}" class="umu-btn umu-btn--ghost umu-btn--sm">Voir</a>
+                        <a href="{{ path('app_sub_category_edit', {'id': sub_category.id}) }}" class="umu-btn umu-btn--primary umu-btn--sm">Modifier</a>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">Aucune sous-catégorie trouvée.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

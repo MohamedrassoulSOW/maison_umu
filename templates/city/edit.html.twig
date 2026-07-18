@@ -1,0 +1,18 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Modifier {{ city.name }} — Dashboard{% endblock %}
+{% block dash_title %}Modifier la ville{% endblock %}
+{% block dash_subtitle %}{{ city.name }}{% endblock %}
+
+{% block dash_actions %}
+    <a class="umu-btn umu-btn--ghost umu-btn--sm" href="{{ path('app_city_index') }}">Retour à la liste</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="dash-card dash-card--narrow">
+    {{ include('city/_form.html.twig', { button_label: 'Enregistrer les modifications' }) }}
+    <div class="dash-form__actions" style="border-top: none; padding-top: 0; margin-top: 0.5rem;">
+        {{ include('city/_delete_form.html.twig') }}
+    </div>
+</div>
+{% endblock %}

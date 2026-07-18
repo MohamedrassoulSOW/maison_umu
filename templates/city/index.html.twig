@@ -1,0 +1,43 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Livraison — Dashboard{% endblock %}
+{% block dash_title %}Zones de livraison{% endblock %}
+{% block dash_subtitle %}Villes desservies et frais associés.{% endblock %}
+
+{% block dash_actions %}
+    <a class="umu-btn umu-btn--primary umu-btn--sm" href="{{ path('app_city_new') }}">Ajouter une ville</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="umu-table-wrap">
+    <table class="umu-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ville</th>
+                <th>Frais de livraison</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for city in cities %}
+            <tr>
+                <td>{{ city.id }}</td>
+                <td><strong>{{ city.name }}</strong></td>
+                <td>{{ city.shippingConst }} CFA</td>
+                <td>
+                    <div class="dash-row-actions">
+                        <a class="umu-btn umu-btn--ghost umu-btn--sm" href="{{ path('app_city_show', {'id': city.id}) }}">Voir</a>
+                        <a class="umu-btn umu-btn--primary umu-btn--sm" href="{{ path('app_city_edit', {'id': city.id}) }}">Modifier</a>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">Aucune ville trouvée.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% set currentRoute = app.request.attributes.get('_route') %}
+{% set initials = 'U' %}
+{% if app.user %}
+  {% set initials = (app.user.firstName|default('U')|slice(0,1) ~ app.user.lastName|default('')|slice(0,1))|upper %}
+{% endif %}
+{% set cartCount = app.session.get('cart') is defined ? app.session.get('cart')|length : 0 %}
+
+<nav class="umu-nav" data-umu-nav>
+  <div class="umu-nav__inner">
+    <a class="umu-brand" href="{{ path('app_home_page') }}" aria-label="Maison UMU">
+      <img class="umu-brand__logo" src="{{ asset(brand_logo_path) }}" alt="Maison UMU">
+      <span class="umu-brand__text">
+        <strong>Maison UMU</strong>
+        <small>{{ brand_tagline }}</small>
+      </span>
+    </a>
+
+    <div class="umu-nav__panel" id="umuNavPanel" data-umu-nav-panel>
+      <ul class="umu-nav__links">
+        <li>
+          <a class="umu-nav__link {% if currentRoute == 'app_home_page' %}is-active{% endif %}" href="{{ path('app_home_page') }}">Boutique</a>
+        </li>
+
+        {% if categories is defined and categories|length > 0 %}
+        <li class="umu-nav__item--mega" data-umu-mega>
+          <button type="button" class="umu-nav__link umu-nav__mega-btn {% if currentRoute == 'app_home_product_filter' %}is-active{% endif %}" data-umu-mega-btn aria-expanded="false" aria-controls="umuMegaMenu">
+            Catégories
+            <span class="umu-nav__chevron" aria-hidden="true">▾</span>
+          </button>
+          <div class="umu-mega" id="umuMegaMenu" data-umu-mega-panel hidden>
+            <div class="umu-mega__inner">
+              {% for category in categories %}
+                <div class="umu-mega__col">
+                  <p class="umu-mega__title">{{ category.name }}</p>
+                  <ul>
+                    {% for subCategory in category.subCategories %}
+                      <li>
+                        <a href="{{ path('app_home_product_filter', {'id': subCategory.id}) }}">{{ subCategory.name }}</a>
+                      </li>
+                    {% else %}
+                      <li><span class="umu-mega__empty">Aucune sous-catégorie</span></li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </li>
+        {% endif %}
+
+        <li>
+          <a class="umu-nav__link {% if currentRoute == 'app_about' %}is-active{% endif %}" href="{{ path('app_about') }}">À propos</a>
+        </li>
+        <li>
+          <a class="umu-nav__link {% if currentRoute == 'app_contact' %}is-active{% endif %}" href="{{ path('app_contact') }}">Contact</a>
+        </li>
+      </ul>
+
+      <form data-turbo="false" class="umu-nav__search" role="search" method="GET" action="{{ path('app_search_engine') }}">
+        <input type="search" name="word" placeholder="Rechercher…" aria-label="Rechercher un produit" required>
+        <button class="umu-btn umu-btn--ghost umu-btn--sm" type="submit">OK</button>
+      </form>
+    </div>
+
+    <div class="umu-nav__toolbar">
+      <a class="umu-nav__cart" href="{{ path('app_cart') }}" aria-label="Panier ({{ cartCount }})">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+        </svg>
+        {% if cartCount > 0 %}
+          <span class="umu-cart-count">{{ cartCount }}</span>
+        {% endif %}
+      </a>
+
+      {% if app.user %}
+        <div class="umu-profile-menu" data-umu-profile>
+          <button type="button" class="umu-avatar" data-umu-profile-btn aria-expanded="false" aria-haspopup="true" aria-controls="umuProfileMenu" title="{{ app.user.firstName }} {{ app.user.lastName }}">
+            <span>{{ initials }}</span>
+          </button>
+          <div class="umu-profile-menu__dropdown" id="umuProfileMenu" data-umu-profile-panel hidden>
+            <div class="umu-profile-menu__head">
+              <span class="umu-avatar umu-avatar--sm" aria-hidden="true">{{ initials }}</span>
+              <div>
+                <strong>{{ app.user.firstName }} {{ app.user.lastName }}</strong>
+                <small>{{ app.user.email }}</small>
+              </div>
+            </div>
+            <ul>
+              <li>
+                <a href="{{ path('app_profile') }}" class="{% if currentRoute == 'app_profile' %}is-active{% endif %}">Mon profil</a>
+              </li>
+              {% if is_granted('ROLE_EDITOR') %}
+                <li>
+                  <a href="{{ path('app_dashboard') }}" class="{% if currentRoute == 'app_dashboard' %}is-active{% endif %}">Dashboard</a>
+                </li>
+              {% endif %}
+              {% if is_granted('ROLE_ADMIN') %}
+                <li>
+                  <a href="{{ path('app_user') }}">Utilisateurs</a>
+                </li>
+              {% endif %}
+              <li><hr></li>
+              <li>
+                <a href="{{ path('app_logout') }}" class="umu-profile-menu__logout">Déconnexion</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      {% else %}
+        <div class="umu-nav__auth">
+          <a class="umu-btn umu-btn--ghost umu-btn--sm" href="{{ path('app_login') }}">Connexion</a>
+          <a class="umu-btn umu-btn--copper umu-btn--sm" href="{{ path('app_register') }}">Inscription</a>
+        </div>
+      {% endif %}
+
+      <button class="umu-nav__toggle" type="button" data-umu-nav-toggle aria-expanded="false" aria-controls="umuNavPanel" aria-label="Ouvrir le menu">
+        <span class="umu-nav__burger" aria-hidden="true"></span>
+        <span data-umu-nav-toggle-label>Menu</span>
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="umu-nav__backdrop" data-umu-nav-backdrop hidden></div>

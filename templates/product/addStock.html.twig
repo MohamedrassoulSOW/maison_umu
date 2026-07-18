@@ -1,0 +1,22 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Stock — {{ product.name }}{% endblock %}
+{% block dash_title %}Ajouter du stock{% endblock %}
+{% block dash_subtitle %}{{ product.name }} · stock actuel : {{ product.stock }}{% endblock %}
+
+{% block dash_actions %}
+    <a href="{{ path('app_product_index') }}" class="umu-btn umu-btn--ghost umu-btn--sm">Retour à la liste</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="dash-card dash-card--narrow">
+    <p class="dash-card__hint">Indiquez la quantité à ajouter au stock existant.</p>
+    {{ form_start(form, { attr: { class: 'dash-form', 'data-turbo': 'false' } }) }}
+        {{ form_row(form.qte, { attr: { class: 'form-control' }, label: 'Quantité à ajouter' }) }}
+        <div class="dash-form__actions">
+            <button type="submit" class="umu-btn umu-btn--primary">Ajouter au stock</button>
+            <a href="{{ path('app_product_stock_add_history', { id: product.id }) }}" class="umu-btn umu-btn--ghost">Voir l’historique</a>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

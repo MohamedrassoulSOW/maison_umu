@@ -1,0 +1,18 @@
+<footer class="umu-footer">
+    <div class="umu-footer__inner">
+        <div>
+            <a class="umu-footer__brand-link" href="{{ path('app_home_page') }}">
+                <img class="umu-footer__logo" src="{{ asset(brand_logo_path) }}" alt="Maison UMU">
+            </a>
+            <p class="umu-footer__brand">Maison UMU</p>
+            <p>{{ brand_tagline }} — une sélection soignée pour votre quotidien.</p>
+        </div>
+        <nav class="umu-footer__nav" aria-label="Pied de page">
+            <a href="{{ path('app_home_page') }}">Boutique</a>
+            <a href="{{ path('app_about') }}">À propos</a>
+            <a href="{{ path('app_contact') }}">Contact</a>
+            <a href="{{ path('app_cart') }}">Panier</a>
+        </nav>
+        <p class="umu-footer__copy">© {{ "now"|date("Y") }} Maison UMU — Tous droits réservés</p>
+    </div>
+</footer>

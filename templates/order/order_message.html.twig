@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande confirmée — Maison UMU{% endblock %}
+
+{% block body %}
+<div class="umu-auth">
+    <div class="umu-auth__panel" style="text-align:center;">
+        <div class="umu-auth__brand">
+            <img src="{{ asset(brand_logo_path) }}" alt="Maison UMU">
+        </div>
+        <h1>Merci !</h1>
+        <div class="umu-alert umu-alert--success">
+            Votre commande a bien été enregistrée. Vous recevrez un e-mail de confirmation sous peu.
+        </div>
+        <a class="umu-btn umu-btn--primary" href="{{ path('app_home_page') }}">Retour à la boutique</a>
+    </div>
+</div>
+{% endblock %}

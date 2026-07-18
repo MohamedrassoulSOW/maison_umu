@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription — Maison UMU{% endblock %}
+
+{% block body %}
+<div class="umu-auth">
+    <div class="umu-auth__panel">
+        <div class="umu-auth__brand">
+            <img src="{{ asset(brand_logo_path) }}" alt="Maison UMU">
+        </div>
+        <h1>Inscription</h1>
+
+        {{ form_errors(registrationForm) }}
+
+        {{ form_start(registrationForm, { attr: { 'data-turbo': 'false' } }) }}
+            <label for="registration_form_firstName">Prénom</label>
+            {{ form_widget(registrationForm.firstName, {'attr':{'class':'form-control','placeholder':"Votre prénom"}}) }}
+
+            <label for="registration_form_lastName">Nom</label>
+            {{ form_widget(registrationForm.lastName, {'attr':{'class':'form-control','placeholder':"Votre nom"}}) }}
+
+            <label for="registration_form_email">Email</label>
+            {{ form_widget(registrationForm.email, {'attr':{'class':'form-control','placeholder':"Votre email"}}) }}
+
+            <label for="registration_form_plainPassword">Mot de passe</label>
+            <div class="umu-password">
+                {{ form_widget(registrationForm.plainPassword, {'attr':{'class':'form-control','placeholder':"Votre mot de passe", 'data-password-toggle': '1'}}) }}
+                {% include 'leyouts/_password_toggle.html.twig' %}
+            </div>
+
+            <label for="registration_form_agreeTerms" style="display:flex; align-items:center; gap:0.5rem; font-weight:500;">
+                {{ form_widget(registrationForm.agreeTerms) }}
+                J’accepte les conditions
+            </label>
+
+            <button type="submit" class="btn">Créer mon compte</button>
+        {{ form_end(registrationForm) }}
+
+        <p style="text-align:center; margin-top:1.25rem; font-size:0.92rem;">
+            Déjà inscrit ?
+            <a href="{{ path('app_login') }}">Se connecter</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

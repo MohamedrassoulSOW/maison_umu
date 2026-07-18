@@ -1,0 +1,58 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Hero — Dashboard{% endblock %}
+{% block dash_title %}Page d’accueil — Hero{% endblock %}
+{% block dash_subtitle %}Modifiez le bandeau principal visible sur la boutique.{% endblock %}
+
+{% block dash_actions %}
+    <a href="{{ path('app_home_page') }}" class="umu-btn umu-btn--ghost umu-btn--sm" target="_blank" rel="noopener">Voir la boutique</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="dash-panels" style="grid-template-columns: 1.2fr 0.8fr;">
+    <section class="dash-card">
+        <p class="dash-card__hint">Ces contenus s’affichent en haut de la page d’accueil.</p>
+
+        {{ form_start(form, { attr: { class: 'dash-form', 'data-turbo': 'false' } }) }}
+            {{ form_row(form.brandLabel, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.headline, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.text, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.primaryCtaLabel, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.primaryCtaUrl, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.secondaryCtaLabel, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.secondaryCtaUrl, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.imageFile, { attr: { class: 'form-control' } }) }}
+
+            <div class="dash-form__actions">
+                <button type="submit" class="umu-btn umu-btn--primary">Enregistrer le hero</button>
+            </div>
+        {{ form_end(form) }}
+    </section>
+
+    <aside class="dash-card">
+        <h2 style="margin:0 0 0.75rem;font-size:1.1rem;">Aperçu image</h2>
+        {% if hero.image %}
+            <div class="dash-detail__media" style="width:100%;max-width:100%;">
+                <img src="{{ asset('uploads/hero/' ~ hero.image) }}" alt="Hero actuel" style="aspect-ratio:16/10;">
+            </div>
+            <form method="post" action="{{ path('app_hero_remove_image') }}" style="margin-top:1rem;"
+                  onsubmit="return confirm('Supprimer l’image du hero ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('hero_remove_image') }}">
+                <button type="submit" class="umu-btn umu-btn--danger umu-btn--sm">Supprimer l’image</button>
+            </form>
+        {% else %}
+            <p class="dash-empty">Aucune image personnalisée. Un fond par défaut sera utilisé (ou le logo).</p>
+            <div class="dash-detail__media" style="width:100%;max-width:100%;margin-top:0.75rem;">
+                <img src="{{ asset(brand_logo_path) }}" alt="Logo Maison UMU" style="aspect-ratio:1;object-fit:cover;">
+            </div>
+        {% endif %}
+
+        <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--umu-line);">
+            <p class="dash-card__hint" style="margin:0 0 0.5rem;">Contenu actuel</p>
+            <p style="margin:0 0 0.35rem;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--umu-moss);font-weight:700;">{{ hero.brandLabel }}</p>
+            <strong style="display:block;font-family:var(--font-display);font-size:1.25rem;margin-bottom:0.35rem;">{{ hero.headline }}</strong>
+            <p style="margin:0;color:rgba(26,33,28,0.65);">{{ hero.text }}</p>
+        </div>
+    </aside>
+</div>
+{% endblock %}

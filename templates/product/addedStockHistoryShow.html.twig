@@ -1,0 +1,40 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Historique stock — Dashboard{% endblock %}
+{% block dash_title %}Historique du stock{% endblock %}
+{% block dash_subtitle %}{% if product %}{{ product.name }}{% else %}Mouvements d’ajout de stock{% endif %}{% endblock %}
+
+{% block dash_actions %}
+    {% if product %}
+        <a href="{{ path('app_product_stock_add', { id: product.id }) }}" class="umu-btn umu-btn--primary umu-btn--sm">Ajouter du stock</a>
+        <a href="{{ path('app_product_show', { id: product.id }) }}" class="umu-btn umu-btn--ghost umu-btn--sm">Fiche produit</a>
+    {% endif %}
+    <a href="{{ path('app_product_index') }}" class="umu-btn umu-btn--ghost umu-btn--sm">Retour</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="umu-table-wrap">
+    <table class="umu-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Quantité</th>
+                <th>Date d’ajout</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in productsAdded %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td><span class="dash-badge dash-badge--ok">+{{ item.qte }}</span></td>
+                <td>{{ item.createdAt|date('d/m/Y H:i') }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Aucun mouvement de stock enregistré.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

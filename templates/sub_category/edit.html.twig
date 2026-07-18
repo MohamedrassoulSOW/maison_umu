@@ -1,0 +1,18 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Modifier sous-catégorie — Dashboard{% endblock %}
+{% block dash_title %}Modifier la sous-catégorie{% endblock %}
+{% block dash_subtitle %}{{ sub_category.name }}{% endblock %}
+
+{% block dash_actions %}
+    <a href="{{ path('app_sub_category_index') }}" class="umu-btn umu-btn--ghost umu-btn--sm">Retour à la liste</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="dash-card dash-card--narrow">
+    {{ include('sub_category/_form.html.twig', { button_label: 'Enregistrer' }) }}
+    <div class="dash-form__actions" style="border-top: none; padding-top: 0; margin-top: 0.5rem;">
+        {{ include('sub_category/_delete_form.html.twig') }}
+    </div>
+</div>
+{% endblock %}

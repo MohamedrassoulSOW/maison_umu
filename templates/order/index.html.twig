@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande — Maison UMU{% endblock %}
+
+{% block body %}
+<div class="umu-page-title">
+    <h1>Finaliser la commande</h1>
+    <p>Renseignez vos informations de livraison.</p>
+</div>
+
+<div class="umu-checkout">
+    <div class="umu-checkout__form dash-form">
+        {{ form_start(orderForm, { attr: { 'data-turbo': 'false', class: 'dash-form' } }) }}
+        {{ form_widget(orderForm) }}
+        <button type="submit" class="umu-btn umu-btn--primary" style="width:100%;margin-top:1rem;">Continuer vers le paiement</button>
+        {{ form_end(orderForm) }}
+    </div>
+
+    <aside class="umu-checkout__summary">
+        <p class="dash-card__hint" style="margin-bottom:0.5rem;">Récapitulatif</p>
+        <p style="margin:0.75rem 0 0.25rem;font-size:0.85rem;color:rgba(26,33,28,0.55);font-weight:600;">Produits</p>
+        <h3>{{ total }} CFA</h3>
+        <p style="margin:0.75rem 0 0.25rem;font-size:0.85rem;color:rgba(26,33,28,0.55);font-weight:600;">Livraison</p>
+        <h3 id="shippingConst">—</h3>
+        <hr style="border:none; border-top:1px solid var(--umu-line); margin:1.25rem 0;">
+        <p style="margin:0 0 0.25rem;font-size:0.85rem;color:rgba(26,33,28,0.55);font-weight:600;">Total à payer</p>
+        <h2 id="totalToPay"
+            data-base-total="{{ total }}"
+            data-shipping-url-template="{{ path('app_city_shipping_const', {id: '__CITY__'}) }}"
+            style="margin:0; font-family:var(--font-display); color:var(--umu-copper);">
+            {{ total }} CFA
+        </h2>
+    </aside>
+</div>
+{% endblock %}

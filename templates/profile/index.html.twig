@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil — Maison UMU{% endblock %}
+
+{% block body %}
+<section class="umu-content">
+    <header class="umu-content__intro">
+        <p class="umu-content__eyebrow">Compte</p>
+        <h1>Mon profil</h1>
+        <p class="umu-content__lead">Consultez et modifiez vos informations personnelles.</p>
+    </header>
+
+    <div class="umu-profile umu-profile--edit">
+        <div class="umu-profile__aside">
+            <div class="umu-profile__avatar" aria-hidden="true">
+                {{ (user.firstName|default('U')|slice(0,1) ~ user.lastName|default('')|slice(0,1))|upper }}
+            </div>
+            <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+            <p>{{ user.email }}</p>
+            <p class="umu-profile__role">
+                {% if is_granted('ROLE_ADMIN') %}
+                    Administrateur
+                {% elseif is_granted('ROLE_EDITOR') %}
+                    Éditeur
+                {% else %}
+                    Client
+                {% endif %}
+            </p>
+            <div class="umu-content__cta">
+                {% if is_granted('ROLE_EDITOR') %}
+                    <a class="umu-btn umu-btn--ghost umu-btn--sm" href="{{ path('app_dashboard') }}">Dashboard</a>
+                {% endif %}
+                <a class="umu-btn umu-btn--ghost umu-btn--sm" href="{{ path('app_home_page') }}">Boutique</a>
+            </div>
+        </div>
+
+        <div class="umu-profile__form-wrap">
+            <h2>Informations personnelles</h2>
+            <p class="umu-profile__hint">Laissez le mot de passe vide si vous ne souhaitez pas le modifier.</p>
+
+            {{ form_start(profileForm, { attr: { class: 'umu-form umu-profile__form', 'data-turbo': 'false' } }) }}
+                <div class="umu-form__grid">
+                    <div class="umu-form__row">
+                        {{ form_label(profileForm.firstName) }}
+                        {{ form_widget(profileForm.firstName, { attr: { class: 'form-control' } }) }}
+                        {{ form_errors(profileForm.firstName) }}
+                    </div>
+                    <div class="umu-form__row">
+                        {{ form_label(profileForm.lastName) }}
+                        {{ form_widget(profileForm.lastName, { attr: { class: 'form-control' } }) }}
+                        {{ form_errors(profileForm.lastName) }}
+                    </div>
+                </div>
+
+                <div class="umu-form__row">
+                    {{ form_label(profileForm.email) }}
+                    {{ form_widget(profileForm.email, { attr: { class: 'form-control' } }) }}
+                    {{ form_errors(profileForm.email) }}
+                </div>
+
+                <h3 class="umu-profile__section">Mot de passe</h3>
+
+                <div class="umu-form__row">
+                    {{ form_label(profileForm.plainPassword.first) }}
+                    <div class="umu-password">
+                        {{ form_widget(profileForm.plainPassword.first, { attr: { class: 'form-control', placeholder: 'Nouveau mot de passe (optionnel)', 'data-password-toggle': '1' } }) }}
+                        {% include 'leyouts/_password_toggle.html.twig' %}
+                    </div>
+                    {{ form_errors(profileForm.plainPassword.first) }}
+                </div>
+                <div class="umu-form__row">
+                    {{ form_label(profileForm.plainPassword.second) }}
+                    <div class="umu-password">
+                        {{ form_widget(profileForm.plainPassword.second, { attr: { class: 'form-control', placeholder: 'Confirmer le mot de passe', 'data-password-toggle': '1' } }) }}
+                        {% include 'leyouts/_password_toggle.html.twig' %}
+                    </div>
+                    {{ form_errors(profileForm.plainPassword.second) }}
+                </div>
+                {{ form_errors(profileForm.plainPassword) }}
+
+                <div class="umu-profile__actions">
+                    <button type="submit" class="umu-btn umu-btn--primary">Enregistrer les modifications</button>
+                    <a class="umu-btn umu-btn--ghost" href="{{ path('app_profile') }}">Annuler</a>
+                </div>
+            {{ form_end(profileForm) }}
+        </div>
+    </div>
+</section>
+{% endblock %}

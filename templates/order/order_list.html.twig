@@ -1,0 +1,114 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Commandes — Dashboard{% endblock %}
+{% block dash_title %}Commandes{% endblock %}
+{% block dash_subtitle %}Suivi et traitement des commandes clients.{% endblock %}
+
+{% block dash_actions %}
+    {% set type = app.request.attributes.get('type') %}
+    <a class="umu-btn umu-btn--sm {% if type == 'not-Complted' %}umu-btn--primary{% else %}umu-btn--ghost{% endif %}" href="{{ path('app_order_show', {type: 'not-Complted'}) }}">À traiter</a>
+    <a class="umu-btn umu-btn--sm {% if type == 'pay-on-line-not-delivered' %}umu-btn--primary{% else %}umu-btn--ghost{% endif %}" href="{{ path('app_order_show', {type: 'pay-on-line-not-delivered'}) }}">Payées</a>
+    <a class="umu-btn umu-btn--sm {% if type == 'is-Complted' %}umu-btn--primary{% else %}umu-btn--ghost{% endif %}" href="{{ path('app_order_show', {type: 'is-Complted'}) }}">Livrées</a>
+{% endblock %}
+
+{% block dash_body %}
+{% if orders is empty %}
+    <div class="dash-empty-box">Aucune commande trouvée pour ce filtre.</div>
+{% else %}
+    {% for order in orders %}
+        <article class="dash-order">
+            <header class="dash-order__head">
+                <div>
+                    <h2>Commande n° {{ order.id }}</h2>
+                    <p>{{ order.createdAt|date('d/m/Y - H:i') }} · {{ order.email }}</p>
+                </div>
+                <div class="dash-order__badges">
+                    {% if order.isComplted %}
+                        <span class="dash-badge dash-badge--ok">Livrée</span>
+                    {% else %}
+                        <span class="dash-badge dash-badge--warn">En cours</span>
+                    {% endif %}
+                    {% if order.isPaymentCompleted %}
+                        <span class="dash-badge dash-badge--info">Payée</span>
+                    {% elseif order.payOnDelivery %}
+                        <span class="dash-badge">Paiement à la livraison</span>
+                    {% endif %}
+                </div>
+            </header>
+
+            <div class="umu-table-wrap">
+                <table class="umu-table">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Téléphone</th>
+                            <th>Adresse</th>
+                            <th>Ville</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ order.firstName }} {{ order.lastName }}</td>
+                            <td>{{ order.phone }}</td>
+                            <td>{{ order.adress }}</td>
+                            <td>{{ order.city.name }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="dash-order__products-title">Produits</h3>
+            <div class="umu-table-wrap">
+                <table class="umu-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Produit</th>
+                            <th>Description</th>
+                            <th>Prix</th>
+                            <th>Qté</th>
+                            <th>Sous-total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for line in order.orderProducts %}
+                            <tr>
+                                <td>
+                                    <img class="umu-thumb" src="{{ asset('uploads/images/' ~ line.product.image) }}" alt="{{ line.product.name }}">
+                                </td>
+                                <td>{{ line.product.name }}</td>
+                                <td>{{ line.product.description|slice(0, 100) }}{% if line.product.description|length > 100 %}…{% endif %}</td>
+                                <td>{{ line.product.price }} CFA</td>
+                                <td>{{ line.qte }}</td>
+                                <td>{{ (line.product.price * line.qte) }} CFA</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="dash-order__totals">
+                <p>Livraison : <strong>{{ order.city.shippingConst }} CFA</strong></p>
+                <p>Total : <strong>{{ order.totalPrice }} CFA</strong></p>
+            </div>
+
+            <div class="dash-order__actions">
+                {% if not order.isComplted %}
+                    <form method="post" action="{{ path('app_order_isComplted_update', {'id': order.id}) }}" style="display:inline;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('order_complete' ~ order.id) }}">
+                        <button type="submit" class="umu-btn umu-btn--primary umu-btn--sm">Marquer comme livrée</button>
+                    </form>
+                {% endif %}
+                <a href="{{ path('app_bill', {'id': order.id}) }}" class="umu-btn umu-btn--ghost umu-btn--sm">Facture PDF</a>
+                <form method="post" action="{{ path('app_order_remove', {'id': order.id}) }}" style="display:inline;"
+                      onsubmit="return confirm('Voulez-vous vraiment supprimer cette commande ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('order_delete' ~ order.id) }}">
+                    <button type="submit" class="umu-btn umu-btn--danger umu-btn--sm">Supprimer</button>
+                </form>
+            </div>
+        </article>
+    {% endfor %}
+
+    {{ knp_pagination_render(orders, 'leyouts/pagination_templete.html.twig') }}
+{% endif %}
+{% endblock %}

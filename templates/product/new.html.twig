@@ -1,0 +1,16 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Nouveau produit — Dashboard{% endblock %}
+{% block dash_title %}Nouveau produit{% endblock %}
+{% block dash_subtitle %}Ajoutez une pièce au catalogue Maison UMU.{% endblock %}
+
+{% block dash_actions %}
+    <a href="{{ path('app_product_index') }}" class="umu-btn umu-btn--ghost umu-btn--sm">Retour à la liste</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="dash-card dash-card--narrow">
+    <p class="dash-card__hint">Renseignez les informations essentielles. Vous pourrez ajuster le stock ensuite.</p>
+    {{ include('product/_form.html.twig', { button_label: 'Créer le produit' }) }}
+</div>
+{% endblock %}

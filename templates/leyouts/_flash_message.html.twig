@@ -1,0 +1,17 @@
+{% for type, messages in app.flashes(['success', 'danger', 'info']) %}
+    {% for message in messages %}
+        <div class="flash-message umu-alert umu-alert--{{ type == 'danger' ? 'danger' : 'success' }}" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<script>
+    document.querySelectorAll('.flash-message').forEach(flash => {
+        setTimeout(() => {
+            flash.style.transition = "opacity 0.5s ease";
+            flash.style.opacity = 0;
+            setTimeout(() => flash.remove(), 500);
+        }, 3000);
+    });
+</script>

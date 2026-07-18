@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmation de commande — Maison UMU</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f1ea;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;">
+    <div style="max-width:640px;margin:24px auto;background:#ffffff;border:1px solid #e5dfd0;overflow:hidden;">
+        {% include 'mail/_mail_header.html.twig' %}
+
+        <div style="padding:28px 24px;">
+            <h1 style="margin:0 0 12px;font-size:22px;color:#0d0d0d;">Commande confirmée</h1>
+            <p style="margin:0 0 16px;line-height:1.55;">
+                Bonjour {{ order.firstName }} {{ order.lastName }},
+            </p>
+            <p style="margin:0 0 16px;line-height:1.55;">
+                Merci pour votre commande <strong>n° {{ '%05d'|format(order.id) }}</strong>
+                du {{ order.createdAt|date('d/m/Y à H:i') }}.
+            </p>
+
+            <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:20px 0;">
+                <thead>
+                    <tr>
+                        <th align="left" style="background:#0d0d0d;color:#d4af37;padding:10px 8px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;">Produit</th>
+                        <th align="right" style="background:#0d0d0d;color:#d4af37;padding:10px 8px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;">Prix</th>
+                        <th align="center" style="background:#0d0d0d;color:#d4af37;padding:10px 8px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;">Qté</th>
+                        <th align="right" style="background:#0d0d0d;color:#d4af37;padding:10px 8px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for line in order.orderProducts %}
+                        <tr>
+                            <td style="padding:10px 8px;border-bottom:1px solid #ebe4d4;">{{ line.product.name }}</td>
+                            <td align="right" style="padding:10px 8px;border-bottom:1px solid #ebe4d4;">{{ line.product.price|number_format(0, ',', ' ') }} CFA</td>
+                            <td align="center" style="padding:10px 8px;border-bottom:1px solid #ebe4d4;">{{ line.qte }}</td>
+                            <td align="right" style="padding:10px 8px;border-bottom:1px solid #ebe4d4;">{{ (line.product.price * line.qte)|number_format(0, ',', ' ') }} CFA</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <p style="margin:0 0 6px;"><strong>Livraison :</strong> {{ order.city.shippingConst|number_format(0, ',', ' ') }} CFA</p>
+            <p style="margin:0 0 20px;font-size:18px;color:#0d0d0d;"><strong>Total :</strong> {{ order.totalPrice|number_format(0, ',', ' ') }} CFA</p>
+
+            <p style="margin:0;color:#6b6558;font-size:13px;line-height:1.5;">
+                Nous préparons votre colis avec soin. Merci pour votre confiance.
+            </p>
+        </div>
+
+        <div style="background:#faf7f0;padding:16px 24px;text-align:center;color:#6b6558;font-size:12px;border-top:1px solid #e5dfd0;">
+            Maison UMU — {{ brand_tagline|default("L'art des senteurs") }}
+        </div>
+    </div>
+</body>
+</html>

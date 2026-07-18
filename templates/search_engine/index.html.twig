@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche — Maison UMU{% endblock %}
+
+{% block body %}
+<div class="umu-page-title">
+    <h1>Résultats</h1>
+    <p>Recherche pour « {{ word }} »</p>
+</div>
+
+<section class="umu-section" style="padding-top: 0;">
+    <div class="umu-grid">
+        {% for product in products %}
+            {% include 'leyouts/_product_card.html.twig' with { product: product } %}
+        {% else %}
+            <div class="dash-empty-box" style="grid-column:1/-1;">
+                Aucun produit ne correspond à « {{ word }} ».
+                <div style="margin-top:1rem;">
+                    <a class="umu-btn umu-btn--primary umu-btn--sm" href="{{ path('app_home_page') }}">Retour à la boutique</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

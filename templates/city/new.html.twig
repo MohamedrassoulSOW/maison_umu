@@ -1,0 +1,15 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Nouvelle ville — Dashboard{% endblock %}
+{% block dash_title %}Ajouter une ville{% endblock %}
+{% block dash_subtitle %}Définissez une zone de livraison et ses frais.{% endblock %}
+
+{% block dash_actions %}
+    <a class="umu-btn umu-btn--ghost umu-btn--sm" href="{{ path('app_city_index') }}">Retour à la liste</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="dash-card dash-card--narrow">
+    {{ include('city/_form.html.twig') }}
+</div>
+{% endblock %}

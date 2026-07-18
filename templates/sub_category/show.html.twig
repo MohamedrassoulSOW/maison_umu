@@ -1,0 +1,33 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}{{ sub_category.name }} — Dashboard{% endblock %}
+{% block dash_title %}Sous-catégorie{% endblock %}
+{% block dash_subtitle %}{{ sub_category.name }}{% endblock %}
+
+{% block dash_actions %}
+    <a href="{{ path('app_sub_category_edit', { id: sub_category.id }) }}" class="umu-btn umu-btn--primary umu-btn--sm">Modifier</a>
+    <a href="{{ path('app_sub_category_index') }}" class="umu-btn umu-btn--ghost umu-btn--sm">Retour</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="dash-card dash-card--narrow">
+    <div class="dash-detail">
+        <div class="dash-detail__row">
+            <div class="dash-detail__label">ID</div>
+            <div class="dash-detail__value">{{ sub_category.id }}</div>
+        </div>
+        <div class="dash-detail__row">
+            <div class="dash-detail__label">Nom</div>
+            <div class="dash-detail__value"><strong>{{ sub_category.name }}</strong></div>
+        </div>
+        <div class="dash-detail__row">
+            <div class="dash-detail__label">Catégorie</div>
+            <div class="dash-detail__value">{{ sub_category.category.name }}</div>
+        </div>
+    </div>
+    <div class="dash-form__actions">
+        <a href="{{ path('app_sub_category_edit', { id: sub_category.id }) }}" class="umu-btn umu-btn--primary umu-btn--sm">Modifier</a>
+        {{ include('sub_category/_delete_form.html.twig') }}
+    </div>
+</div>
+{% endblock %}

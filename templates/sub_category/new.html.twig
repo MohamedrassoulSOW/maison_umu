@@ -1,0 +1,15 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Nouvelle sous-catégorie — Dashboard{% endblock %}
+{% block dash_title %}Nouvelle sous-catégorie{% endblock %}
+{% block dash_subtitle %}Affinez le classement des produits.{% endblock %}
+
+{% block dash_actions %}
+    <a href="{{ path('app_sub_category_index') }}" class="umu-btn umu-btn--ghost umu-btn--sm">Retour à la liste</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="dash-card dash-card--narrow">
+    {{ include('sub_category/_form.html.twig', { button_label: 'Créer' }) }}
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}{{ city.name }} — Dashboard{% endblock %}
+{% block dash_title %}Détail de la ville{% endblock %}
+{% block dash_subtitle %}Zone de livraison{% endblock %}
+
+{% block dash_actions %}
+    <a class="umu-btn umu-btn--primary umu-btn--sm" href="{{ path('app_city_edit', { id: city.id }) }}">Modifier</a>
+    <a class="umu-btn umu-btn--ghost umu-btn--sm" href="{{ path('app_city_index') }}">Retour</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="dash-card dash-card--narrow">
+    <div class="dash-detail">
+        <div class="dash-detail__row">
+            <div class="dash-detail__label">ID</div>
+            <div class="dash-detail__value">{{ city.id }}</div>
+        </div>
+        <div class="dash-detail__row">
+            <div class="dash-detail__label">Ville</div>
+            <div class="dash-detail__value"><strong>{{ city.name }}</strong></div>
+        </div>
+        <div class="dash-detail__row">
+            <div class="dash-detail__label">Livraison</div>
+            <div class="dash-detail__value">{{ city.shippingConst }} CFA</div>
+        </div>
+    </div>
+    <div class="dash-form__actions">
+        <a class="umu-btn umu-btn--primary umu-btn--sm" href="{{ path('app_city_edit', { id: city.id }) }}">Modifier</a>
+        {{ include('city/_delete_form.html.twig') }}
+    </div>
+</div>
+{% endblock %}

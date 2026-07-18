@@ -1,0 +1,69 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Utilisateurs — Dashboard{% endblock %}
+{% block dash_title %}Utilisateurs{% endblock %}
+{% block dash_subtitle %}Gérez les comptes et les rôles.{% endblock %}
+
+{% block dash_body %}
+<div class="umu-table-wrap">
+    <table class="umu-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Rôle</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.lastName }}</td>
+                    <td>{{ user.firstName }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% if 'ROLE_ADMIN' in user.roles %}
+                            <span class="dash-badge dash-badge--info">Administrateur</span>
+                        {% elseif 'ROLE_EDITOR' in user.roles %}
+                            <span class="dash-badge dash-badge--ok">Éditeur</span>
+                        {% else %}
+                            <span class="dash-badge">Utilisateur</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if 'ROLE_ADMIN' not in user.roles %}
+                            <div class="dash-row-actions">
+                                {% if 'ROLE_EDITOR' not in user.roles %}
+                                    <form method="post" action="{{ path('app_user_to_editor', {'id': user.id}) }}" style="display:inline;"
+                                          onsubmit="return confirm('Promouvoir cet utilisateur en éditeur ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('user_editor' ~ user.id) }}">
+                                        <button type="submit" class="umu-btn umu-btn--primary umu-btn--sm">Éditeur</button>
+                                    </form>
+                                {% else %}
+                                    <form method="post" action="{{ path('app_user_remove_editor_role', {'id': user.id}) }}" style="display:inline;"
+                                          onsubmit="return confirm('Retirer le rôle éditeur ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('user_remove_editor' ~ user.id) }}">
+                                        <button type="submit" class="umu-btn umu-btn--ghost umu-btn--sm">Retirer éditeur</button>
+                                    </form>
+                                {% endif %}
+                                <form method="post" action="{{ path('app_user_remove', {'id': user.id}) }}" style="display:inline;"
+                                      onsubmit="return confirm('Supprimer cet utilisateur ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('user_delete' ~ user.id) }}">
+                                    <button type="submit" class="umu-btn umu-btn--danger umu-btn--sm">Supprimer</button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6">Aucun utilisateur trouvé.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
