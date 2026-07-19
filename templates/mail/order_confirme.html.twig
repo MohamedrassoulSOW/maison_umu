@@ -78,6 +78,8 @@
             <p style="margin:0 0 8px;"><strong>Paiement :</strong> {{ order.paymentMethodLabel }}{% if order.isPaymentCompleted %} — payé{% elseif order.paymentMethod == 'cod' %} — à régler à la livraison{% endif %}</p>
             <p style="margin:0 0 20px;font-size:18px;color:#0d0d0d;"><strong>Total :</strong> {{ order.totalPrice|number_format(0, ',', ' ') }} CFA</p>
 
+            {% include 'mail/_tracking_cta.html.twig' %}
+
             <p style="margin:0;color:#6b6558;font-size:13px;line-height:1.5;">
                 Merci pour votre confiance.
             </p>

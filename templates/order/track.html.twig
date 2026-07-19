@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Suivi commande n° {{ '%05d'|format(order.id) }} — {{ brand_name|default('Maison UMU') }}{% endblock %}
+
+{% block body %}
+<div class="umu-track">
+    <header class="umu-track__hero">
+        <p class="umu-track__eyebrow">Suivi de commande</p>
+        <h1>Commande n° {{ '%05d'|format(order.id) }}</h1>
+        <p class="umu-track__lead">
+            Bonjour {{ order.firstName }}, retrouvez ici l’état et tous les détails
+            jusqu’à la réception de votre commande.
+        </p>
+        <p class="umu-track__status">
+            Statut actuel :
+            <strong>{{ order.currentTrackingLabel }}</strong>
+        </p>
+    </header>
+
+    <section class="umu-track__card">
+        <h2>Où en est ma commande ?</h2>
+        <ol class="umu-track__steps">
+            {% for step in steps %}
+                <li class="umu-track__step is-{{ step.state }}">
+                    <span class="umu-track__step-dot" aria-hidden="true"></span>
+                    <div>
+                        <strong>{{ step.label }}</strong>
+                        <p>{{ step.detail }}</p>
+                    </div>
+                </li>
+            {% endfor %}
+        </ol>
+    </section>
+
+    <section class="umu-track__card">
+        <h2>Détails de la commande</h2>
+        <div class="umu-track__meta">
+            <div><span>Date</span><strong>{{ order.createdAt|date('d/m/Y à H:i') }}</strong></div>
+            <div><span>Paiement</span><strong>{{ order.paymentMethodLabel }}{% if order.isPaymentCompleted %} — payé{% elseif order.paymentMethod == 'cod' %} — à la livraison{% endif %}</strong></div>
+            <div><span>Téléphone</span><strong>{{ order.phone }}</strong></div>
+            <div><span>Adresse</span><strong>{{ order.adress }}, {{ order.city.name }}</strong></div>
+        </div>
+
+        <div class="umu-table-wrap" style="margin-top:1rem;">
+            <table class="umu-table">
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Prix</th>
+                        <th>Qté</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for line in order.orderProducts %}
+                        <tr>
+                            <td data-label="Produit">{{ line.product.name }}</td>
+                            <td data-label="Prix">{{ line.product.price|number_format(0, ',', ' ') }} CFA</td>
+                            <td data-label="Qté">{{ line.qte }}</td>
+                            <td data-label="Total">{{ (line.product.price * line.qte)|number_format(0, ',', ' ') }} CFA</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <p class="umu-track__total">
+            Total : <strong>{{ order.totalPrice|number_format(0, ',', ' ') }} CFA</strong>
+            <small>(dont livraison {{ order.city.shippingConst|number_format(0, ',', ' ') }} CFA)</small>
+        </p>
+    </section>
+
+    {% if order.isComplted %}
+        <section class="umu-track__card" id="avis">
+            <h2>Enquête de satisfaction</h2>
+            {% if order.hasSatisfactionFeedback %}
+                <div class="umu-alert umu-alert--success">
+                    Merci ! Vous avez noté cette commande
+                    <strong>{{ order.satisfactionScore }}/5</strong>
+                    le {{ order.satisfactionSubmittedAt|date('d/m/Y') }}.
+                </div>
+                {% if order.satisfactionComment %}
+                    <p class="umu-track__comment">« {{ order.satisfactionComment }} »</p>
+                {% endif %}
+            {% else %}
+                <p class="umu-track__lead" style="margin-top:0;">
+                    Votre commande a été réceptionnée. Dites-nous comment s’est passée votre expérience.
+                </p>
+                <form method="post" class="umu-track__survey" data-turbo="false">
+                    <input type="hidden" name="_token" value="{{ csrf_token('order_survey' ~ order.trackingToken) }}">
+                    <fieldset>
+                        <legend>Votre note</legend>
+                        <div class="umu-track__scores">
+                            {% for n in 1..5 %}
+                                <label class="umu-track__score">
+                                    <input type="radio" name="score" value="{{ n }}" required>
+                                    <span>{{ n }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                        <p class="umu-track__score-hint">1 = déçu · 5 = excellent</p>
+                    </fieldset>
+                    <label class="umu-track__label" for="surveyComment">Commentaire (optionnel)</label>
+                    <textarea id="surveyComment" name="comment" rows="4" maxlength="2000" placeholder="Ce qui vous a plu, ou ce que nous pouvons améliorer…"></textarea>
+                    <button type="submit" class="umu-btn umu-btn--primary">Envoyer mon avis</button>
+                </form>
+            {% endif %}
+        </section>
+    {% endif %}
+
+    <p class="umu-track__back">
+        <a class="umu-btn umu-btn--ghost" href="{{ path('app_home_page') }}">Retour à la boutique</a>
+    </p>
+</div>
+{% endblock %}

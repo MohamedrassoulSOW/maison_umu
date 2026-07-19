@@ -2,16 +2,17 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Commande livrée — Maison UMU</title>
+    <title>Commande réceptionnée — Maison UMU</title>
 </head>
 <body style="margin:0;padding:0;background:#f4f1ea;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;">
     <div style="max-width:640px;margin:24px auto;background:#ffffff;border:1px solid #e5dfd0;overflow:hidden;">
         {% include 'mail/_mail_header.html.twig' %}
         <div style="padding:28px 24px;">
-            <h1 style="margin:0 0 12px;font-size:22px;color:#0d0d0d;">Votre commande a été livrée</h1>
+            <h1 style="margin:0 0 12px;font-size:22px;color:#0d0d0d;">Votre commande a été réceptionnée</h1>
             <p style="margin:0 0 16px;line-height:1.55;">Bonjour {{ order.firstName }} {{ order.lastName }},</p>
             <p style="margin:0 0 16px;line-height:1.55;">
-                Votre commande <strong>n° {{ '%05d'|format(order.id) }}</strong> a bien été livrée.
+                Votre commande <strong>n° {{ '%05d'|format(order.id) }}</strong> a bien été
+                <strong>réceptionnée</strong>. Nous espérons qu’elle vous plaît.
             </p>
             <p style="margin:0 0 8px;"><strong>Récapitulatif :</strong></p>
             <ul style="margin:0 0 16px;padding-left:18px;line-height:1.6;">
@@ -19,7 +20,23 @@
                     <li>{{ line.product.name }} × {{ line.qte }}</li>
                 {% endfor %}
             </ul>
-            <p style="margin:0 0 8px;font-size:18px;"><strong>Total :</strong> {{ order.totalPrice|number_format(0, ',', ' ') }} CFA</p>
+            <p style="margin:0 0 16px;font-size:18px;"><strong>Total :</strong> {{ order.totalPrice|number_format(0, ',', ' ') }} CFA</p>
+
+            {% include 'mail/_tracking_cta.html.twig' %}
+
+            <div style="margin:20px 0;padding:16px;background:#fff8f0;border:1px solid #e8d5a3;border-radius:8px;text-align:center;">
+                <p style="margin:0 0 10px;font-weight:700;font-size:16px;">Enquête de satisfaction</p>
+                <p style="margin:0 0 14px;font-size:14px;line-height:1.5;color:#3a3428;">
+                    Votre avis nous aide à améliorer Maison UMU. Cela ne prend qu’une minute.
+                </p>
+                {% if trackingUrl is defined and trackingUrl %}
+                    <a href="{{ trackingUrl }}#avis"
+                       style="display:inline-block;background:#b86b3a;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 22px;border-radius:8px;">
+                        Donner mon avis
+                    </a>
+                {% endif %}
+            </div>
+
             <p style="margin:16px 0 0;color:#6b6558;font-size:13px;">Merci pour votre confiance. À bientôt sur Maison UMU.</p>
         </div>
         <div style="background:#faf7f0;padding:16px 24px;text-align:center;color:#6b6558;font-size:12px;border-top:1px solid #e5dfd0;">

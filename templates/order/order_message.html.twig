@@ -69,6 +69,9 @@
             </div>
         {% endif %}
 
+        {% if trackingUrl %}
+            <a class="umu-btn umu-btn--primary umu-pay-done__cta" href="{{ trackingUrl }}">Suivre ma commande</a>
+        {% endif %}
         <a class="umu-btn umu-btn--ghost" href="{{ path('app_home_page') }}">Retour à la boutique</a>
     </div>
 </div>

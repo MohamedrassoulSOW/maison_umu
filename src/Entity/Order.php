@@ -59,9 +59,167 @@ class Order
     #[ORM\Column]
     private ?bool $isPaymentCompleted = null;
 
+    #[ORM\Column(length: 64, unique: true, nullable: true)]
+    private ?string $trackingToken = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $satisfactionScore = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $satisfactionComment = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $satisfactionSubmittedAt = null;
+
     public function __construct()
     {
         $this->orderProducts = new ArrayCollection();
+    }
+
+    public function ensureTrackingToken(): string
+    {
+        if ($this->trackingToken === null || $this->trackingToken === '') {
+            $this->trackingToken = bin2hex(random_bytes(32));
+        }
+
+        return $this->trackingToken;
+    }
+
+    public function getTrackingToken(): ?string
+    {
+        return $this->trackingToken;
+    }
+
+    public function setTrackingToken(?string $trackingToken): static
+    {
+        $this->trackingToken = $trackingToken;
+
+        return $this;
+    }
+
+    /**
+     * Étapes de suivi pour la page client.
+     *
+     * @return list<array{key: string, label: string, detail: string, state: string}>
+     */
+    public function getTrackingSteps(): array
+    {
+        $delivered = (bool) $this->isComplted;
+        $paid = (bool) $this->isPaymentCompleted;
+        $cod = $this->paymentMethod === 'cod';
+        $awaitingPay = !$paid && !$cod && $this->isMobileMoney();
+
+        $paymentDetail = match (true) {
+            $cod && $delivered => 'Réglé à la livraison',
+            $cod => 'À régler à la remise / livraison',
+            $paid => 'Paiement reçu ('.$this->getPaymentMethodLabel().')',
+            $awaitingPay => 'En attente de votre transfert '.$this->getPaymentMethodLabel(),
+            default => $this->getPaymentMethodLabel(),
+        };
+
+        $paymentState = match (true) {
+            $cod && $delivered, $paid => 'done',
+            $cod, $awaitingPay => 'current',
+            default => 'pending',
+        };
+
+        $prepState = match (true) {
+            $delivered => 'done',
+            $paid || $cod => 'current',
+            default => 'pending',
+        };
+
+        return [
+            [
+                'key' => 'registered',
+                'label' => 'Commande enregistrée',
+                'detail' => 'Nous avons bien reçu votre commande.',
+                'state' => 'done',
+            ],
+            [
+                'key' => 'payment',
+                'label' => 'Paiement',
+                'detail' => $paymentDetail,
+                'state' => $paymentState,
+            ],
+            [
+                'key' => 'preparing',
+                'label' => 'Préparation',
+                'detail' => $delivered
+                    ? 'Colis préparé et remis.'
+                    : (($paid || $cod) ? 'Votre commande est en cours de préparation.' : 'Dès validation du paiement.'),
+                'state' => $prepState,
+            ],
+            [
+                'key' => 'delivered',
+                'label' => 'Livrée / réceptionnée',
+                'detail' => $delivered
+                    ? 'Commande réceptionnée. Merci pour votre confiance.'
+                    : 'En attente de réception.',
+                'state' => $delivered ? 'done' : 'pending',
+            ],
+        ];
+    }
+
+    public function getCurrentTrackingLabel(): string
+    {
+        if ($this->isComplted) {
+            return 'Livrée / réceptionnée';
+        }
+
+        foreach ($this->getTrackingSteps() as $step) {
+            if ($step['state'] === 'current') {
+                return $step['label'];
+            }
+        }
+
+        return 'En cours';
+    }
+
+    public function getSatisfactionScore(): ?int
+    {
+        return $this->satisfactionScore;
+    }
+
+    public function setSatisfactionScore(?int $satisfactionScore): static
+    {
+        $this->satisfactionScore = $satisfactionScore;
+
+        return $this;
+    }
+
+    public function getSatisfactionComment(): ?string
+    {
+        return $this->satisfactionComment;
+    }
+
+    public function setSatisfactionComment(?string $satisfactionComment): static
+    {
+        $this->satisfactionComment = $satisfactionComment;
+
+        return $this;
+    }
+
+    public function getSatisfactionSubmittedAt(): ?\DateTimeImmutable
+    {
+        return $this->satisfactionSubmittedAt;
+    }
+
+    public function setSatisfactionSubmittedAt(?\DateTimeImmutable $satisfactionSubmittedAt): static
+    {
+        $this->satisfactionSubmittedAt = $satisfactionSubmittedAt;
+
+        return $this;
+    }
+
+    public function hasSatisfactionFeedback(): bool
+    {
+        return $this->satisfactionSubmittedAt !== null;
+    }
+
+    public function canSubmitSatisfaction(): bool
+    {
+        return (bool) $this->isComplted && !$this->hasSatisfactionFeedback();
     }
 
     public function getId(): ?int

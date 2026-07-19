@@ -3,10 +3,12 @@
 namespace App\Service;
 
 use App\Entity\Order;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
 class OrderMailer
@@ -18,6 +20,8 @@ class OrderMailer
         private LoggerInterface $logger,
         private MobileMoneyConfig $mobileMoney,
         private InvoicePdf $invoicePdf,
+        private UrlGeneratorInterface $urlGenerator,
+        private EntityManagerInterface $entityManager,
         private string $fromEmail,
         private string $fromName,
     ) {
@@ -31,15 +35,12 @@ class OrderMailer
             default => 'Confirmation de votre commande — Maison UMU',
         };
 
-        // COD : facture non payée en pièce jointe
-        $attachInvoice = $order->getPaymentMethod() === 'cod';
-
         $this->send(
             $order,
             $subject,
             'mail/order_confirme.html.twig',
             'order_confirmation',
-            $attachInvoice
+            $order->getPaymentMethod() === 'cod'
         );
     }
 
@@ -47,14 +48,13 @@ class OrderMailer
     {
         $this->send(
             $order,
-            'Votre commande a été livrée — Maison UMU',
+            'Commande réceptionnée — votre avis nous intéresse — Maison UMU',
             'mail/order_delivered.html.twig',
             'order_delivered',
             false
         );
     }
 
-    /** E-mail après paiement reçu (Wave / OM / Stripe) + facture payée en PJ. */
     public function sendPaymentConfirmed(Order $order): void
     {
         $this->send(
@@ -63,6 +63,46 @@ class OrderMailer
             'mail/order_payment.html.twig',
             'payment_confirmed',
             true
+        );
+    }
+
+    /** Notifie la boutique qu’un avis client a été déposé. */
+    public function notifySatisfactionReceived(Order $order): void
+    {
+        $score = $order->getSatisfactionScore() ?? 0;
+        $comment = $order->getSatisfactionComment() ?: '—';
+        $html = sprintf(
+            '<p>Nouvel avis satisfaction</p><p>Commande n° %05d — %s %s</p><p>Note : <strong>%d/5</strong></p><p>Commentaire :</p><p>%s</p>',
+            (int) $order->getId(),
+            htmlspecialchars($order->getFirstName() ?? '', ENT_QUOTES, 'UTF-8'),
+            htmlspecialchars($order->getLastName() ?? '', ENT_QUOTES, 'UTF-8'),
+            $score,
+            nl2br(htmlspecialchars($comment, ENT_QUOTES, 'UTF-8'))
+        );
+
+        $email = (new Email())
+            ->from(new Address($this->fromEmail, $this->fromName))
+            ->to($this->fromEmail)
+            ->replyTo($order->getEmail() ?: $this->fromEmail)
+            ->subject(sprintf('Avis client %d/5 — commande n° %05d', $score, (int) $order->getId()))
+            ->html($html);
+
+        $this->mailer->send($email);
+    }
+
+    public function trackingUrl(Order $order): string
+    {
+        $hadToken = $order->getTrackingToken() !== null && $order->getTrackingToken() !== '';
+        $token = $order->ensureTrackingToken();
+        if (!$hadToken) {
+            $this->entityManager->persist($order);
+            $this->entityManager->flush();
+        }
+
+        return $this->urlGenerator->generate(
+            'app_order_track',
+            ['token' => $token],
+            UrlGeneratorInterface::ABSOLUTE_URL
         );
     }
 
@@ -82,9 +122,12 @@ class OrderMailer
             return;
         }
 
+        $trackingUrl = $this->trackingUrl($order);
+
         $html = $this->twig->render($template, [
             'order' => $order,
             'mobileMoneyPhone' => $this->mobileMoney->getDisplayPhone(),
+            'trackingUrl' => $trackingUrl,
         ]);
 
         $email = (new Email())
@@ -94,12 +137,13 @@ class OrderMailer
             ->subject($subject)
             ->html($html)
             ->text(sprintf(
-                "Maison UMU\n\nBonjour %s %s,\n\n%s\nCommande n° %s\nTotal : %s CFA\n",
+                "Maison UMU\n\nBonjour %s %s,\n\n%s\nCommande n° %s\nTotal : %s CFA\nSuivi : %s\n",
                 $order->getFirstName() ?? '',
                 $order->getLastName() ?? '',
                 $subject,
                 $order->getId(),
-                $order->getTotalPrice()
+                $order->getTotalPrice(),
+                $trackingUrl
             ));
 
         $logoPath = $this->brandLogo->getPath();

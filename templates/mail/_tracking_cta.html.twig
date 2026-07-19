@@ -1,0 +1,12 @@
+{% if trackingUrl is defined and trackingUrl %}
+<div style="margin:20px 0;text-align:center;">
+    <a href="{{ trackingUrl }}"
+       style="display:inline-block;background:#2a4534;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 22px;border-radius:8px;">
+        Suivre ma commande
+    </a>
+    <p style="margin:10px 0 0;font-size:12px;color:#6b6558;line-height:1.45;">
+        Consultez l’état et tous les détails jusqu’à la réception :<br>
+        <a href="{{ trackingUrl }}" style="color:#2a4534;word-break:break-all;">{{ trackingUrl }}</a>
+    </p>
+</div>
+{% endif %}

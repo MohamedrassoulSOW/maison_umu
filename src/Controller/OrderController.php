@@ -75,6 +75,7 @@ final class OrderController extends AbstractController
             $order->setPaymentMethod($method);
             // Wave / OM / COD = règlement manuel (apparaissent dans « À traiter »)
             $order->setPayOnDelivery($method !== 'stripe');
+            $order->ensureTrackingToken();
 
             $entityManager->persist($order);
             $entityManager->flush();
@@ -209,9 +210,9 @@ final class OrderController extends AbstractController
 
         try {
             $this->orderMailer->sendOrderDelivered($order);
-            $this->addFlash('success', 'Commande marquée comme livrée. Un email a été envoyé au client.');
+            $this->addFlash('success', 'Commande réceptionnée. E-mail + lien d’avis envoyés au client.');
         } catch (\Throwable) {
-            $this->addFlash('success', 'Commande marquée comme livrée.');
+            $this->addFlash('success', 'Commande marquée comme réceptionnée.');
             $this->addFlash('danger', 'La mise à jour est enregistrée, mais l’email n’a pas pu être envoyé.');
         }
 
@@ -237,8 +238,11 @@ final class OrderController extends AbstractController
     }
 
     #[Route('/order-ok-message', name: 'app_order-ok-message')]
-    public function orderMessage(SessionInterface $session, OrderRepository $orderRepository): Response
-    {
+    public function orderMessage(
+        SessionInterface $session,
+        OrderRepository $orderRepository,
+        EntityManagerInterface $entityManager,
+    ): Response {
         $orderId = $session->get('last_order_id');
         $order = $orderId ? $orderRepository->find($orderId) : null;
 
@@ -250,10 +254,21 @@ final class OrderController extends AbstractController
             );
         }
 
+        $trackingUrl = null;
+        if ($order) {
+            $hadToken = (bool) $order->getTrackingToken();
+            $token = $order->ensureTrackingToken();
+            if (!$hadToken) {
+                $entityManager->flush();
+            }
+            $trackingUrl = $this->generateUrl('app_order_track', ['token' => $token]);
+        }
+
         return $this->render('order/order_message.html.twig', [
             'order' => $order,
             'mobileMoneyPhone' => $this->mobileMoney->getDisplayPhone(),
             'paymentLinks' => $paymentLinks,
+            'trackingUrl' => $trackingUrl,
         ]);
     }
 
