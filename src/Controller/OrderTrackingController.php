@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Order;
+use App\Entity\User;
 use App\Repository\OrderRepository;
 use App\Service\OrderMailer;
 use Doctrine\ORM\EntityManagerInterface;
@@ -9,10 +11,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
 final class OrderTrackingController extends AbstractController
 {
+    use TargetPathTrait;
+
     #[Route('/suivi', name: 'app_order_track_help', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function help(): Response
     {
         return $this->render('order/track_help.html.twig');
@@ -26,9 +33,21 @@ final class OrderTrackingController extends AbstractController
         EntityManagerInterface $entityManager,
         OrderMailer $orderMailer,
     ): Response {
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            $this->addFlash('danger', 'Connectez-vous pour suivre votre commande.');
+            $this->saveTargetPath($request->getSession(), 'main', $request->getUri());
+
+            return $this->redirectToRoute('app_login');
+        }
+
         $order = $orderRepository->findOneBy(['trackingToken' => $token]);
         if (!$order) {
             throw $this->createNotFoundException('Lien de suivi invalide ou expiré.');
+        }
+
+        if (!$this->canViewOrder($user, $order)) {
+            throw $this->createAccessDeniedException('Cette commande ne correspond pas à votre compte.');
         }
 
         if ($request->isMethod('POST')) {
@@ -74,5 +93,19 @@ final class OrderTrackingController extends AbstractController
             'order' => $order,
             'steps' => $order->getTrackingSteps(),
         ]);
+    }
+
+    private function canViewOrder(User $user, Order $order): bool
+    {
+        if ($this->isGranted('ROLE_EDITOR')) {
+            return true;
+        }
+
+        $orderEmail = (string) ($order->getEmail() ?? '');
+        $userEmail = (string) ($user->getEmail() ?? '');
+
+        return $orderEmail !== ''
+            && $userEmail !== ''
+            && strcasecmp($orderEmail, $userEmail) === 0;
     }
 }
