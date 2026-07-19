@@ -21,7 +21,6 @@
             <span class="umu-stock">Stock {{ product.stock }}</span>
         </div>
         <div class="umu-card__actions">
-            <button type="button" class="umu-btn umu-btn--ghost umu-btn--sm" data-umu-product-open>Voir le détail</button>
             <a href="{{ path('app_cart_new', {'id': product.id}) }}" class="umu-btn umu-btn--primary umu-btn--sm">
                 Ajouter au panier
             </a>
@@ -104,7 +103,6 @@
                         <button type="button" class="umu-btn umu-btn--primary" disabled>Indisponible</button>
                     {% endif %}
                     {% include 'leyouts/_favorite_button.html.twig' with { product: product, class: 'umu-fav--action' } %}
-                    <a href="{{ path('app_home_product_show', {'id': product.id}) }}" class="umu-btn umu-btn--ghost">Ouvrir la fiche</a>
                 </div>
             </div>
         </div>

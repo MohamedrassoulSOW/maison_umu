@@ -5,7 +5,7 @@
 {% block body %}
 <div class="umu-page-title">
     <h1>Votre panier</h1>
-    <p>{% if items is empty %}Il n’y a encore rien ici.{% else %}{{ items|length }} article{{ items|length > 1 ? 's' : '' }} — vérifiez avant de commander.{% endif %}</p>
+    <p>{% if items is empty %}Il n’y a encore rien ici.{% else %}{{ items|length }} article{{ items|length > 1 ? 's' : '' }} — cliquez un produit pour voir ses détails.{% endif %}</p>
 </div>
 
 {% if items is empty %}
@@ -27,31 +27,113 @@
     <div class="umu-cart umu-cart--filled">
         <div class="umu-cart__list">
             {% for item in items %}
-                <article class="umu-cart-line">
-                    <a class="umu-cart-line__media" href="{{ path('app_home_product_show', {id: item.product.id}) }}">
-                        <img src="{{ asset('uploads/images/' ~ item.product.coverImage) }}" alt="{{ item.product.name }}">
-                    </a>
+                {% set product = item.product %}
+                {% set cover = product.coverImage %}
+                {% set gallery = product.images %}
+                <article class="umu-cart-line" data-umu-product-card>
+                    <button type="button" class="umu-cart-line__media" data-umu-product-open aria-haspopup="dialog" aria-label="Voir {{ product.name }}">
+                        <img src="{{ asset('uploads/images/' ~ cover) }}" alt="{{ product.name }}">
+                    </button>
                     <div class="umu-cart-line__body">
                         <div class="umu-cart-line__top">
-                            <div>
+                            <div class="umu-cart-line__info">
                                 <h2>
-                                    <a href="{{ path('app_home_product_show', {id: item.product.id}) }}">{{ item.product.name }}</a>
+                                    <button type="button" class="umu-cart-line__title-btn" data-umu-product-open>
+                                        {{ product.name }}
+                                    </button>
                                 </h2>
-                                <p class="umu-cart-line__unit">{{ item.product.price|number_format(0, ',', ' ') }} CFA / unité</p>
+                                <p class="umu-cart-line__unit">{{ product.price|number_format(0, ',', ' ') }} CFA / unité</p>
                             </div>
-                            <a class="umu-cart-line__remove" href="{{ path('app_cart_product_remove', {id: item.product.id}) }}" aria-label="Retirer {{ item.product.name }}">
-                                Retirer
+                            <a class="umu-cart-line__remove"
+                               href="{{ path('app_cart_product_remove', {id: product.id}) }}"
+                               aria-label="Retirer {{ product.name }} du panier"
+                               title="Retirer">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path d="M4 7h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                                    <path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                                    <path d="M7 7l1 13h8l1-13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                                </svg>
                             </a>
                         </div>
                         <div class="umu-cart-line__bottom">
                             <div class="umu-qty" role="group" aria-label="Quantité">
-                                <a href="{{ path('app_cart_decrease', {id: item.product.id}) }}" aria-label="Diminuer">−</a>
+                                <a href="{{ path('app_cart_decrease', {id: product.id}) }}" aria-label="Diminuer">−</a>
                                 <span>{{ item.quantity }}</span>
-                                <a href="{{ path('app_cart_add', {id: item.product.id}) }}" aria-label="Augmenter">+</a>
+                                <a href="{{ path('app_cart_add', {id: product.id}) }}" aria-label="Augmenter">+</a>
                             </div>
-                            <strong class="umu-cart-line__sum">{{ (item.product.price * item.quantity)|number_format(0, ',', ' ') }} CFA</strong>
+                            <strong class="umu-cart-line__sum">{{ (product.price * item.quantity)|number_format(0, ',', ' ') }} CFA</strong>
                         </div>
                     </div>
+
+                    <template data-umu-product-template>
+                        <div class="umu-modal-product" data-umu-gallery>
+                            <div class="umu-modal-product__gallery">
+                                <div class="umu-modal-product__media">
+                                    {% if cover %}
+                                        <img src="{{ asset('uploads/images/' ~ cover) }}" alt="{{ product.name }}" data-umu-gallery-main>
+                                    {% else %}
+                                        <img src="{{ asset(brand_logo_path) }}" alt="{{ product.name }}" class="umu-product__media-fallback" data-umu-gallery-main>
+                                    {% endif %}
+                                </div>
+                                {% if gallery|length > 1 %}
+                                    <div class="umu-product__thumbs" role="list">
+                                        {% for image in gallery %}
+                                            <button type="button"
+                                                    class="umu-product__thumb {% if loop.first %}is-active{% endif %}"
+                                                    data-umu-gallery-thumb
+                                                    data-src="{{ asset('uploads/images/' ~ image.filename) }}"
+                                                    aria-label="Voir l’image {{ loop.index }}">
+                                                <img src="{{ asset('uploads/images/' ~ image.filename) }}" alt="" loading="lazy">
+                                            </button>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="umu-modal-product__info">
+                                <p class="umu-modal-product__eyebrow">{{ brand_name }}</p>
+                                <h2 class="umu-modal-product__title" id="umuProductModalTitle">{{ product.name }}</h2>
+
+                                <div class="umu-modal-product__meta">
+                                    <span class="umu-price">{{ product.price|number_format(0, ',', ' ') }} CFA</span>
+                                    {% if product.stock > 0 %}
+                                        <span class="umu-stock umu-stock--ok">En stock : {{ product.stock }}</span>
+                                    {% else %}
+                                        <span class="umu-stock umu-stock--alert">Rupture de stock</span>
+                                    {% endif %}
+                                </div>
+
+                                {% if product.subcategories|length > 0 %}
+                                    <div class="umu-modal-product__tags">
+                                        {% for sub in product.subcategories %}
+                                            <span class="umu-tag">{{ sub.name }}{% if sub.category %} · {{ sub.category.name }}{% endif %}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                                <div class="umu-modal-product__desc">
+                                    <h3>Description</h3>
+                                    <p>{{ product.description|default('Aucune description pour ce produit.')|nl2br }}</p>
+                                </div>
+
+                                <dl class="umu-modal-product__details">
+                                    <div>
+                                        <dt>Référence</dt>
+                                        <dd>#{{ product.id }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Dans le panier</dt>
+                                        <dd>{{ item.quantity }} × {{ product.price|number_format(0, ',', ' ') }} CFA</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Sous-total</dt>
+                                        <dd>{{ (product.price * item.quantity)|number_format(0, ',', ' ') }} CFA</dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+                    </template>
                 </article>
             {% endfor %}
         </div>

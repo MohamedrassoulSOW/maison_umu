@@ -2003,10 +2003,14 @@ html[data-theme="dark"] .umu-alert--success {
 
 .umu-cart-line__media {
     display: block;
+    width: 100%;
+    padding: 0;
+    border: none;
     border-radius: 14px;
     overflow: hidden;
     background: var(--umu-mist);
     aspect-ratio: 1;
+    cursor: pointer;
 }
 
 .umu-cart-line__media img {
@@ -2018,6 +2022,24 @@ html[data-theme="dark"] .umu-alert--success {
 
 .umu-cart-line:hover .umu-cart-line__media img {
     transform: scale(1.04);
+}
+
+.umu-cart-line__title-btn {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-weight: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.umu-cart-line__title-btn:hover {
+    color: var(--umu-forest);
 }
 
 .umu-cart-line__body {
@@ -2059,15 +2081,27 @@ html[data-theme="dark"] .umu-alert--success {
 
 .umu-cart-line__remove {
     flex-shrink: 0;
-    font-size: 0.82rem;
-    font-weight: 650;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--umu-line);
+    background: var(--umu-surface-strong);
     color: var(--umu-muted);
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    text-decoration: none;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
 
 .umu-cart-line__remove:hover {
     color: #8a2424;
+    border-color: rgba(138, 36, 36, 0.35);
+    background: rgba(138, 36, 36, 0.08);
+}
+
+.umu-cart-line__remove svg {
+    display: block;
 }
 
 .umu-cart-line__bottom {
