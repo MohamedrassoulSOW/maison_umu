@@ -57,7 +57,6 @@ final class StripeController extends AbstractController
 
                         try {
                             $this->orderMailer->sendPaymentConfirmed($order);
-                            $this->orderMailer->sendOrderConfirmation($order);
                         } catch (\Throwable) {
                             // Payment saved even if mail fails
                         }
@@ -118,7 +117,6 @@ final class StripeController extends AbstractController
 
                     try {
                         $this->orderMailer->sendPaymentConfirmed($order);
-                        $this->orderMailer->sendOrderConfirmation($order);
                     } catch (\Throwable) {
                         // Payment saved even if mail fails
                     }

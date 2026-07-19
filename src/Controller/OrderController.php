@@ -178,7 +178,7 @@ final class OrderController extends AbstractController
 
         try {
             $this->orderMailer->sendPaymentConfirmed($order);
-            $this->addFlash('success', 'Paiement confirmé. Un e-mail a été envoyé au client.');
+            $this->addFlash('success', 'Paiement confirmé. E-mail + facture PDF envoyés au client.');
         } catch (\Throwable) {
             $this->addFlash('success', 'Paiement confirmé.');
             $this->addFlash('danger', 'La confirmation est enregistrée, mais l’e-mail n’a pas pu être envoyé.');

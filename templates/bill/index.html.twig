@@ -195,19 +195,18 @@
                     <p><strong>Heure :</strong> {{ order.createdAt|date('H:i') }}</p>
                     <p>
                         <strong>Paiement :</strong>
-                        {% if order.paymentMethod is defined and order.paymentMethod %}
-                            {{ order.paymentMethodLabel }}
-                            {% if order.isPaymentCompleted %} — payé{% elseif order.mobileMoney %} — en attente{% endif %}
-                        {% elseif order.payOnDelivery %}
-                            À la livraison
-                        {% elseif order.isPaymentCompleted %}
-                            En ligne — payé
+                        {{ order.paymentMethodLabel }}
+                    </p>
+                    <p>
+                        <strong>Facture :</strong>
+                        {% if order.isPaymentCompleted %}
+                            <strong style="color:#2a4534;">PAYÉE</strong>
                         {% else %}
-                            En ligne
+                            <strong style="color:#94542c;">NON PAYÉE</strong>
                         {% endif %}
                     </p>
                     <p>
-                        <strong>Statut :</strong>
+                        <strong>Statut commande :</strong>
                         {{ order.isComplted ? 'Livrée' : 'En cours' }}
                     </p>
                 </div>
@@ -252,6 +251,17 @@
     </table>
 
     <div class="note">
+        {% if not order.isPaymentCompleted %}
+            <p style="margin:0 0 8px;font-weight:700;color:#94542c;">
+                {% if order.paymentMethod == 'cod' %}
+                    Facture non payée — montant à régler à la livraison / à la remise au livreur.
+                {% else %}
+                    Facture non payée — en attente de règlement.
+                {% endif %}
+            </p>
+        {% else %}
+            <p style="margin:0 0 8px;font-weight:700;color:#2a4534;">Facture payée — règlement reçu.</p>
+        {% endif %}
         <p class="thanks">Merci pour votre confiance</p>
         <p>Maison UMU — {{ brand_tagline|default("L'art des senteurs") }}</p>
         <p>Document généré le {{ "now"|date('d/m/Y à H:i') }}</p>
