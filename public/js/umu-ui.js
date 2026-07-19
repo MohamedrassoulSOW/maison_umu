@@ -86,8 +86,64 @@
         });
     }
 
+    var FAV_WELCOME_KEY = 'umu-fav-welcome-seen';
+
     function getProductModal() {
         return document.querySelector('[data-umu-product-modal]');
+    }
+
+    function getFavWelcome() {
+        return document.querySelector('[data-umu-fav-welcome]');
+    }
+
+    function dismissFavWelcome() {
+        var modal = getFavWelcome();
+        if (!modal || modal.hidden) return;
+        modal.hidden = true;
+        document.body.classList.remove('umu-modal-open');
+        try {
+            localStorage.setItem(FAV_WELCOME_KEY, '1');
+        } catch (e) { /* ignore */ }
+    }
+
+    function shouldShowFavWelcome() {
+        try {
+            if (localStorage.getItem(FAV_WELCOME_KEY) === '1') {
+                return false;
+            }
+        } catch (e) { /* ignore */ }
+
+        var path = window.location.pathname || '/';
+        if (path !== '/' && path !== '') {
+            return false;
+        }
+
+        var badge = document.querySelector('[data-umu-fav-count]');
+        if (badge && !badge.hidden) {
+            var n = parseInt(badge.textContent, 10);
+            if (!isNaN(n) && n > 0) {
+                return false;
+            }
+        }
+
+        return !!getFavWelcome();
+    }
+
+    function openFavWelcome() {
+        var modal = getFavWelcome();
+        if (!modal || !shouldShowFavWelcome()) return;
+        modal.hidden = false;
+        document.body.classList.add('umu-modal-open');
+        var closeBtn = modal.querySelector('.umu-modal__close');
+        if (closeBtn && closeBtn.focus) {
+            try { closeBtn.focus({ preventScroll: true }); } catch (e) { closeBtn.focus(); }
+        }
+    }
+
+    function scheduleFavWelcome() {
+        if (window.__umuWelcomeScheduled || !shouldShowFavWelcome()) return;
+        window.__umuWelcomeScheduled = true;
+        window.setTimeout(openFavWelcome, 900);
     }
 
     function closeProductModal() {
@@ -297,6 +353,7 @@
         initCheckoutShipping();
         initProductGallery(document);
         applyTheme(getTheme());
+        scheduleFavWelcome();
     }
 
     document.addEventListener('click', function (event) {
@@ -414,6 +471,11 @@
             return;
         }
 
+        if (target.closest('[data-umu-fav-welcome-close]')) {
+            dismissFavWelcome();
+            return;
+        }
+
         if (els.megaRoot && !els.megaRoot.contains(target)) {
             setMegaOpen(false);
         }
@@ -436,6 +498,7 @@
             setProfileOpen(false);
             setNavOpen(false);
             closeProductModal();
+            dismissFavWelcome();
         }
     });
 

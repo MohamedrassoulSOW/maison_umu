@@ -1477,6 +1477,70 @@ body.is-dashboard .umu-theme-toggle--float {
     display: none !important;
 }
 
+.umu-welcome {
+    z-index: 1250;
+}
+
+.umu-welcome__dialog {
+    width: min(440px, 100%);
+    max-height: none;
+    overflow: visible;
+}
+
+.umu-welcome__body {
+    padding: 2rem 1.75rem 1.75rem;
+    text-align: center;
+}
+
+.umu-welcome__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    margin-bottom: 1rem;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--umu-copper) 16%, transparent);
+    color: var(--umu-copper);
+}
+
+.umu-welcome__brand {
+    margin: 0 0 0.35rem;
+    font-family: Syne, sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--umu-moss);
+}
+
+.umu-welcome__title {
+    margin: 0 0 0.75rem;
+    font-family: Syne, sans-serif;
+    font-size: clamp(1.35rem, 3vw, 1.65rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--umu-ink);
+}
+
+.umu-welcome__text {
+    margin: 0 auto 1.5rem;
+    max-width: 32ch;
+    font-size: 0.98rem;
+    line-height: 1.55;
+    color: var(--umu-muted);
+}
+
+.umu-welcome__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.umu-welcome__actions .umu-btn {
+    width: 100%;
+    justify-content: center;
+}
+
 .umu-modal {
     position: fixed;
     inset: 0;
