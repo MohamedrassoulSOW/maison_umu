@@ -37,6 +37,10 @@ class Order
     #[ORM\Column]
     private ?bool $payOnDelivery = null;
 
+    /** cod | wave | orange_money | stripe */
+    #[ORM\Column(length: 32)]
+    private string $paymentMethod = 'cod';
+
     /**
      * @var Collection<int, OrderProducts>
      */
@@ -147,6 +151,38 @@ class Order
         $this->payOnDelivery = $payOnDelivery;
 
         return $this;
+    }
+
+    public function getPaymentMethod(): string
+    {
+        return $this->paymentMethod;
+    }
+
+    public function setPaymentMethod(string $paymentMethod): static
+    {
+        $this->paymentMethod = $paymentMethod;
+
+        return $this;
+    }
+
+    public function isMobileMoney(): bool
+    {
+        return \in_array($this->paymentMethod, ['wave', 'orange_money'], true);
+    }
+
+    public function isManualPayment(): bool
+    {
+        return \in_array($this->paymentMethod, ['cod', 'wave', 'orange_money'], true);
+    }
+
+    public function getPaymentMethodLabel(): string
+    {
+        return match ($this->paymentMethod) {
+            'wave' => 'Wave Sénégal',
+            'orange_money' => 'Orange Money Sénégal',
+            'stripe' => 'Carte bancaire',
+            default => 'Paiement à la livraison',
+        };
     }
 
     /**

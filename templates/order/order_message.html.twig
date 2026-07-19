@@ -1,18 +1,113 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Commande confirmée — Maison UMU{% endblock %}
+{% block title %}{% if order and order.mobileMoney %}Payer la commande{% else %}Commande confirmée{% endif %} — {{ brand_name|default('Maison UMU') }}{% endblock %}
 
 {% block body %}
 <div class="umu-auth">
-    <div class="umu-auth__panel" style="text-align:center;">
+    <div class="umu-auth__panel umu-pay-done">
         <div class="umu-auth__brand">
-            <img src="{{ asset(brand_logo_path) }}" alt="Maison UMU">
+            <img src="{{ asset(brand_logo_path|default('images/logo.jpeg')) }}" alt="{{ brand_name|default('Maison UMU') }}">
         </div>
-        <h1>Merci !</h1>
-        <div class="umu-alert umu-alert--success">
-            Votre commande a bien été enregistrée. Vous recevrez un e-mail de confirmation sous peu.
-        </div>
-        <a class="umu-btn umu-btn--primary" href="{{ path('app_home_page') }}">Retour à la boutique</a>
+
+        {% if order and order.mobileMoney and paymentLinks %}
+            {% if order.paymentMethod == 'wave' %}
+                <img class="umu-pay-done__brand-logo" src="{{ asset('images/payments/wave.png') }}" alt="Wave Sénégal" width="72" height="72">
+            {% endif %}
+            <h1>Payer avec {{ paymentLinks.label }}</h1>
+            <p class="umu-pay-done__lead">
+                Commande n° <strong>{{ '%05d'|format(order.id) }}</strong> enregistrée.
+                Ouvrez votre application pour envoyer le paiement.
+            </p>
+
+            <div class="umu-pay-done__amount">
+                <span>Montant à envoyer</span>
+                <strong>{{ order.totalPrice|number_format(0, ',', ' ') }} CFA</strong>
+            </div>
+
+            <div class="umu-pay-done__meta">
+                <div>
+                    <span>Numéro</span>
+                    <strong>{{ paymentLinks.phone }}</strong>
+                </div>
+                <div>
+                    <span>Référence</span>
+                    <strong>CMD{{ '%05d'|format(order.id) }}</strong>
+                </div>
+            </div>
+
+            <a class="umu-btn umu-btn--primary umu-pay-done__cta"
+               id="umuPayOpenApp"
+               href="{{ paymentLinks.openUrl }}"
+               {% if order.paymentMethod == 'orange_money' %}rel="noopener"{% endif %}>
+                {% if order.paymentMethod == 'wave' %}
+                    Ouvrir Wave pour payer
+                {% else %}
+                    Ouvrir Orange Money pour payer
+                {% endif %}
+            </a>
+
+            {% if order.paymentMethod == 'orange_money' and paymentLinks.ussd %}
+                <p class="umu-pay-done__ussd">
+                    Ou composez : <code>{{ paymentLinks.ussd }}</code>
+                    <br><span>(saisissez ensuite votre code secret)</span>
+                </p>
+                <a class="umu-btn umu-btn--ghost umu-pay-done__secondary" href="{{ paymentLinks.secondaryUrl }}">
+                    Ouvrir l’application Max it
+                </a>
+            {% elseif order.paymentMethod == 'wave' %}
+                <a class="umu-btn umu-btn--ghost umu-pay-done__secondary" href="{{ paymentLinks.secondaryUrl }}" target="_blank" rel="noopener">
+                    Télécharger Wave si besoin
+                </a>
+            {% endif %}
+
+            <div class="umu-alert umu-alert--success umu-pay-done__mail">
+                Après validation de votre paiement, vous recevrez un e-mail avec
+                <strong>tous les détails de la commande</strong> et la confirmation que
+                <strong>votre commande est bien validée</strong>.
+            </div>
+
+            <p class="umu-pay-done__hint">
+                Indiquez la référence <strong>CMD{{ '%05d'|format(order.id) }}</strong> dans le message du transfert.
+            </p>
+        {% elseif order and order.paymentMethod == 'cod' %}
+            <h1>Merci !</h1>
+            <div class="umu-alert umu-alert--success">
+                Votre commande n° {{ '%05d'|format(order.id) }} a bien été enregistrée.
+                Un e-mail de confirmation vous a été envoyé.
+            </div>
+            <p class="umu-pay-done__hint">
+                Paiement à la livraison — préparez <strong>{{ order.totalPrice|number_format(0, ',', ' ') }} CFA</strong>.
+            </p>
+        {% else %}
+            <h1>Merci !</h1>
+            <div class="umu-alert umu-alert--success">
+                Votre commande a bien été enregistrée.
+            </div>
+        {% endif %}
+
+        <a class="umu-btn umu-btn--ghost" href="{{ path('app_home_page') }}">Retour à la boutique</a>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if order and order.mobileMoney and paymentLinks and paymentLinks.autoOpen %}
+    <script>
+    (function () {
+        var url = {{ paymentLinks.openUrl|json_encode|raw }};
+        var btn = document.getElementById('umuPayOpenApp');
+        function openPay() {
+            try {
+                if (btn) {
+                    btn.focus();
+                }
+                window.location.href = url;
+            } catch (e) {}
+        }
+        // Oriente automatiquement vers l’app / le composeur USSD
+        setTimeout(openPay, 600);
+    })();
+    </script>
+    {% endif %}
 {% endblock %}

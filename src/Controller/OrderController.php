@@ -9,6 +9,7 @@ use App\Form\OrderType;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Service\Cart;
+use App\Service\MobileMoneyConfig;
 use App\Service\OrderMailer;
 use App\Service\StripePayment;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,6 +27,7 @@ final class OrderController extends AbstractController
     public function __construct(
         private OrderMailer $orderMailer,
         private StripePayment $stripePayment,
+        private MobileMoneyConfig $mobileMoney,
     ) {
     }
 
@@ -46,6 +48,7 @@ final class OrderController extends AbstractController
         }
 
         $order = new Order();
+        $order->setPaymentMethod('wave');
         $form = $this->createForm(OrderType::class, $order);
         $form->handleRequest($request);
 
@@ -64,6 +67,15 @@ final class OrderController extends AbstractController
             $order->setTotalPrice($totalPrice);
             $order->setCreatedAt(new \DateTimeImmutable());
             $order->setIsPaymentCompleted(false);
+
+            $method = $order->getPaymentMethod() ?: 'cod';
+            if (!\in_array($method, ['cod', 'wave', 'orange_money', 'stripe'], true)) {
+                $method = 'cod';
+            }
+            $order->setPaymentMethod($method);
+            // Wave / OM / COD = règlement manuel (apparaissent dans « À traiter »)
+            $order->setPayOnDelivery($method !== 'stripe');
+
             $entityManager->persist($order);
             $entityManager->flush();
 
@@ -81,14 +93,22 @@ final class OrderController extends AbstractController
             }
             $entityManager->flush();
 
-            if ($order->isPayOnDelivery()) {
+            if ($order->isManualPayment()) {
                 $session->set('cart', []);
-                try {
-                    $this->orderMailer->sendOrderConfirmation($order);
-                } catch (\Throwable) {
-                    // Order is saved even if mail fails
+                $session->set('last_order_id', $order->getId());
+
+                // Wave / OM : e-mail uniquement après validation du paiement (dashboard).
+                // COD : confirmation immédiate.
+                if ($order->getPaymentMethod() === 'cod') {
+                    try {
+                        $this->orderMailer->sendOrderConfirmation($order);
+                    } catch (\Throwable) {
+                        // Order is saved even if mail fails
+                    }
+                    $this->addFlash('success', 'Votre commande a été passée avec succès !');
+                } else {
+                    $this->addFlash('success', 'Commande enregistrée — ouvrez votre application pour payer.');
                 }
-                $this->addFlash('success', 'Votre commande a été passée avec succès !');
 
                 return $this->redirectToRoute('app_order-ok-message');
             }
@@ -102,6 +122,7 @@ final class OrderController extends AbstractController
         return $this->render('order/index.html.twig', [
             'orderForm' => $form->createView(),
             'total' => $data['total'],
+            'mobileMoneyPhone' => $this->mobileMoney->getDisplayPhone(),
         ]);
     }
 
@@ -127,6 +148,47 @@ final class OrderController extends AbstractController
             'orders' => $order,
             'type' => $type,
         ]);
+    }
+
+    #[Route('/editor/order/{id}/payment/confirm', name: 'app_order_payment_confirm', methods: ['POST'])]
+    #[IsGranted('ROLE_EDITOR')]
+    public function confirmPayment(
+        $id,
+        OrderRepository $orderRepository,
+        EntityManagerInterface $entityManager,
+        Request $request,
+    ): Response {
+        if (!$this->isCsrfTokenValid('order_payment'.$id, $request->request->getString('_token'))) {
+            throw $this->createAccessDeniedException('Jeton CSRF invalide.');
+        }
+
+        $order = $orderRepository->find($id);
+        if (!$order) {
+            throw $this->createNotFoundException('Commande introuvable.');
+        }
+
+        if ($order->isPaymentCompleted()) {
+            $this->addFlash('success', 'Ce paiement était déjà confirmé.');
+
+            return $this->redirect($request->headers->get('referer') ?: $this->generateUrl('app_dashboard'));
+        }
+
+        $order->setIsPaymentCompleted(true);
+        // Passe dans « Payées » (comme Stripe) une fois le transfert reçu
+        if ($order->isMobileMoney()) {
+            $order->setPayOnDelivery(false);
+        }
+        $entityManager->flush();
+
+        try {
+            $this->orderMailer->sendOrderConfirmation($order);
+            $this->addFlash('success', 'Paiement confirmé. Un e-mail détaillé a été envoyé au client.');
+        } catch (\Throwable) {
+            $this->addFlash('success', 'Paiement confirmé.');
+            $this->addFlash('danger', 'La confirmation est enregistrée, mais l’e-mail n’a pas pu être envoyé.');
+        }
+
+        return $this->redirect($request->headers->get('referer') ?: $this->generateUrl('app_dashboard'));
     }
 
     #[Route('/editor/order/{id}/isComplted/update', name: 'app_order_isComplted_update', methods: ['POST'])]
@@ -179,9 +241,24 @@ final class OrderController extends AbstractController
     }
 
     #[Route('/order-ok-message', name: 'app_order-ok-message')]
-    public function orderMessage(): Response
+    public function orderMessage(SessionInterface $session, OrderRepository $orderRepository): Response
     {
-        return $this->render('order/order_message.html.twig');
+        $orderId = $session->get('last_order_id');
+        $order = $orderId ? $orderRepository->find($orderId) : null;
+
+        $paymentLinks = null;
+        if ($order && $order->isMobileMoney()) {
+            $paymentLinks = $this->mobileMoney->paymentLinksFor(
+                $order->getPaymentMethod(),
+                (float) $order->getTotalPrice()
+            );
+        }
+
+        return $this->render('order/order_message.html.twig', [
+            'order' => $order,
+            'mobileMoneyPhone' => $this->mobileMoney->getDisplayPhone(),
+            'paymentLinks' => $paymentLinks,
+        ]);
     }
 
     #[Route('/city/{id}/shipping/const', name: 'app_city_shipping_const')]

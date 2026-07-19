@@ -51,6 +51,8 @@ final class StripeController extends AbstractController
                     $order = $orderId ? $orderRepository->find($orderId) : null;
                     if ($order && !$order->isPaymentCompleted()) {
                         $order->setIsPaymentCompleted(true);
+                        $order->setPaymentMethod('stripe');
+                        $order->setPayOnDelivery(false);
                         $entityManager->flush();
 
                         try {
@@ -110,6 +112,8 @@ final class StripeController extends AbstractController
 
                 if ($cartPrice === $stripeTotalAmount) {
                     $order->setIsPaymentCompleted(true);
+                    $order->setPaymentMethod('stripe');
+                    $order->setPayOnDelivery(false);
                     $entityManager->flush();
 
                     try {

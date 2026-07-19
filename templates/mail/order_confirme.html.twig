@@ -2,20 +2,36 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Confirmation de commande — Maison UMU</title>
+    <title>Commande validée — Maison UMU</title>
 </head>
 <body style="margin:0;padding:0;background:#f4f1ea;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;">
     <div style="max-width:640px;margin:24px auto;background:#ffffff;border:1px solid #e5dfd0;overflow:hidden;">
         {% include 'mail/_mail_header.html.twig' %}
 
         <div style="padding:28px 24px;">
-            <h1 style="margin:0 0 12px;font-size:22px;color:#0d0d0d;">Commande confirmée</h1>
+            <h1 style="margin:0 0 12px;font-size:22px;color:#0d0d0d;">
+                {% if order.isPaymentCompleted or order.paymentMethod == 'cod' %}
+                    Votre commande est bien validée
+                {% else %}
+                    Confirmation de commande
+                {% endif %}
+            </h1>
             <p style="margin:0 0 16px;line-height:1.55;">
                 Bonjour {{ order.firstName }} {{ order.lastName }},
             </p>
             <p style="margin:0 0 16px;line-height:1.55;">
-                Merci pour votre commande <strong>n° {{ '%05d'|format(order.id) }}</strong>
-                du {{ order.createdAt|date('d/m/Y à H:i') }}.
+                {% if order.isPaymentCompleted and order.mobileMoney %}
+                    Nous avons bien reçu votre paiement
+                    <strong>{{ order.paymentMethodLabel }}</strong>.
+                    Votre commande <strong>n° {{ '%05d'|format(order.id) }}</strong>
+                    du {{ order.createdAt|date('d/m/Y à H:i') }} est <strong>validée</strong>.
+                {% elseif order.isPaymentCompleted %}
+                    Votre paiement pour la commande <strong>n° {{ '%05d'|format(order.id) }}</strong>
+                    a bien été confirmé. Votre commande est <strong>validée</strong>.
+                {% else %}
+                    Merci pour votre commande <strong>n° {{ '%05d'|format(order.id) }}</strong>
+                    du {{ order.createdAt|date('d/m/Y à H:i') }}.
+                {% endif %}
             </p>
 
             <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:20px 0;">
@@ -39,8 +55,15 @@
                 </tbody>
             </table>
 
-            <p style="margin:0 0 6px;"><strong>Livraison :</strong> {{ order.city.shippingConst|number_format(0, ',', ' ') }} CFA</p>
+            <p style="margin:0 0 6px;"><strong>Livraison :</strong> {{ order.city.shippingConst|number_format(0, ',', ' ') }} CFA ({{ order.city.name }})</p>
+            <p style="margin:0 0 8px;"><strong>Adresse :</strong> {{ order.adress }}, {{ order.city.name }}</p>
+            <p style="margin:0 0 8px;"><strong>Téléphone :</strong> {{ order.phone }}</p>
+            <p style="margin:0 0 8px;"><strong>Paiement :</strong> {{ order.paymentMethodLabel }}{% if order.isPaymentCompleted %} — payé{% endif %}</p>
             <p style="margin:0 0 20px;font-size:18px;color:#0d0d0d;"><strong>Total :</strong> {{ order.totalPrice|number_format(0, ',', ' ') }} CFA</p>
+
+            {% if order.paymentMethod == 'cod' or (order.payOnDelivery and not order.isPaymentCompleted) %}
+                <p style="margin:0 0 20px;color:#6b6558;font-size:14px;">Paiement à la livraison.</p>
+            {% endif %}
 
             <p style="margin:0;color:#6b6558;font-size:13px;line-height:1.5;">
                 Nous préparons votre colis avec soin. Merci pour votre confiance.

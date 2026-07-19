@@ -1,35 +1,183 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Commande — Maison UMU{% endblock %}
+{% block title %}Commande — {{ brand_name|default('Maison UMU') }}{% endblock %}
 
 {% block body %}
 <div class="umu-page-title">
     <h1>Finaliser la commande</h1>
-    <p>Renseignez vos informations de livraison.</p>
+    <p>Livraison et paiement — encore une étape.</p>
 </div>
 
 <div class="umu-checkout">
-    <div class="umu-checkout__form dash-form">
-        {{ form_start(orderForm, { attr: { 'data-turbo': 'false', class: 'dash-form' } }) }}
-        {{ form_widget(orderForm) }}
-        <button type="submit" class="umu-btn umu-btn--primary" style="width:100%;margin-top:1rem;">Continuer vers le paiement</button>
+    <div class="umu-checkout__form">
+        {{ form_start(orderForm, { attr: { 'data-turbo': 'false', class: 'umu-checkout-form', id: 'umuCheckoutForm' } }) }}
+
+            <section class="umu-checkout__section">
+                <h2 class="umu-checkout__section-title">Informations personnelles</h2>
+                <div class="umu-checkout__grid">
+                    <div class="umu-checkout__field">
+                        {{ form_label(orderForm.firstName) }}
+                        {{ form_widget(orderForm.firstName, { attr: { class: 'form-control', placeholder: 'Prénom' } }) }}
+                        {{ form_errors(orderForm.firstName) }}
+                    </div>
+                    <div class="umu-checkout__field">
+                        {{ form_label(orderForm.lastName) }}
+                        {{ form_widget(orderForm.lastName, { attr: { class: 'form-control', placeholder: 'Nom' } }) }}
+                        {{ form_errors(orderForm.lastName) }}
+                    </div>
+                    <div class="umu-checkout__field">
+                        {{ form_label(orderForm.email) }}
+                        {{ form_widget(orderForm.email, { attr: { class: 'form-control', placeholder: 'vous@email.com' } }) }}
+                        {{ form_errors(orderForm.email) }}
+                    </div>
+                    <div class="umu-checkout__field">
+                        {{ form_label(orderForm.phone) }}
+                        {{ form_widget(orderForm.phone, { attr: { class: 'form-control', placeholder: '+221 …' } }) }}
+                        {{ form_errors(orderForm.phone) }}
+                    </div>
+                    <div class="umu-checkout__field">
+                        {{ form_label(orderForm.adress) }}
+                        {{ form_widget(orderForm.adress, { attr: { class: 'form-control', placeholder: 'Adresse de livraison' } }) }}
+                        {{ form_errors(orderForm.adress) }}
+                    </div>
+                    <div class="umu-checkout__field">
+                        {{ form_label(orderForm.city) }}
+                        {{ form_widget(orderForm.city, { attr: { class: 'form-control' } }) }}
+                        {{ form_errors(orderForm.city) }}
+                    </div>
+                </div>
+            </section>
+
+            <section class="umu-checkout__section">
+                <h2 class="umu-checkout__section-title">{{ form_label(orderForm.paymentMethod) }}</h2>
+                <fieldset class="umu-pay">
+                    <legend class="visually-hidden">{{ form_label(orderForm.paymentMethod) }}</legend>
+                    <div class="umu-pay__list" data-umu-pay-methods>
+                        {% for child in orderForm.paymentMethod %}
+                            {% set method = child.vars.value %}
+                            {% if method in ['wave', 'orange_money', 'cod'] %}
+                            <label class="umu-pay__option">
+                                {{ form_widget(child) }}
+                                <span class="umu-pay__card umu-pay__card--{{ method }}">
+                                    <span class="umu-pay__icon" aria-hidden="true">
+                                        {% if method == 'wave' %}
+                                            <img class="umu-pay__logo" src="{{ asset('images/payments/wave.png') }}" alt="Wave Sénégal" width="40" height="40">
+                                        {% elseif method == 'orange_money' %}
+                                            <svg viewBox="0 0 48 48" width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <rect width="48" height="48" rx="12" fill="#FF7900"/>
+                                                <circle cx="24" cy="24" r="11" fill="#fff"/>
+                                                <circle cx="24" cy="24" r="7" fill="#FF7900"/>
+                                            </svg>
+                                        {% else %}
+                                            <svg viewBox="0 0 48 48" width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <rect width="48" height="48" rx="12" fill="#2a4534"/>
+                                                <path d="M16 28h16v2.5H16V28zm0-5h16v2.5H16V23zm3.5-9.5h9c.8 0 1.5.7 1.5 1.5v2H18v-2c0-.8.7-1.5 1.5-1.5zM14 19h20c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H14c-1.1 0-2-.9-2-2V21c0-1.1.9-2 2-2z" fill="#fff"/>
+                                            </svg>
+                                        {% endif %}
+                                    </span>
+                                    <strong class="umu-pay__name">{{ child.vars.label }}</strong>
+                                </span>
+                            </label>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <div class="umu-pay__stripe">
+                        {% for child in orderForm.paymentMethod %}
+                            {% if child.vars.value == 'stripe' %}
+                                <label class="umu-pay__option umu-pay__option--stripe">
+                                    {{ form_widget(child) }}
+                                    <span class="umu-pay__card umu-pay__card--stripe">
+                                        <span class="umu-pay__icon" aria-hidden="true">
+                                            <svg viewBox="0 0 48 48" width="36" height="36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <rect width="48" height="48" rx="12" fill="#635BFF"/>
+                                                <rect x="12" y="16" width="24" height="16" rx="3" fill="#fff"/>
+                                                <rect x="12" y="20" width="24" height="3" fill="#635BFF"/>
+                                            </svg>
+                                        </span>
+                                        <strong class="umu-pay__name">{{ child.vars.label }}</strong>
+                                    </span>
+                                </label>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% do orderForm.paymentMethod.setRendered %}
+                    {{ form_errors(orderForm.paymentMethod) }}
+                </fieldset>
+
+                <div class="umu-pay-hint" data-umu-pay-hint="wave" hidden>
+                    <p class="umu-pay-hint__title">Payer avec Wave Sénégal</p>
+                    <p>Après validation, vous serez orienté vers l’application <strong>Wave</strong> pour envoyer
+                        <strong>le total</strong> au <strong>{{ mobileMoneyPhone }}</strong>.</p>
+                    <p>Dès réception du paiement, vous recevrez un e-mail avec tous les détails de la commande.</p>
+                </div>
+
+                <div class="umu-pay-hint" data-umu-pay-hint="orange_money" hidden>
+                    <p class="umu-pay-hint__title">Payer avec Orange Money Sénégal</p>
+                    <p>Après validation, vous serez orienté vers <strong>Orange Money</strong> (USSD / Max it) pour envoyer
+                        <strong>le total</strong> au <strong>{{ mobileMoneyPhone }}</strong>.</p>
+                    <p>Dès réception du paiement, vous recevrez un e-mail avec tous les détails de la commande.</p>
+                </div>
+            </section>
+
+            <button type="submit" class="umu-btn umu-btn--primary umu-checkout__submit" data-umu-pay-submit>
+                Confirmer la commande
+            </button>
         {{ form_end(orderForm) }}
     </div>
 
     <aside class="umu-checkout__summary">
-        <p class="dash-card__hint" style="margin-bottom:0.5rem;">Récapitulatif</p>
-        <p style="margin:0.75rem 0 0.25rem;font-size:0.85rem;color:rgba(26,33,28,0.55);font-weight:600;">Produits</p>
-        <h3>{{ total }} CFA</h3>
-        <p style="margin:0.75rem 0 0.25rem;font-size:0.85rem;color:rgba(26,33,28,0.55);font-weight:600;">Livraison</p>
-        <h3 id="shippingConst">—</h3>
-        <hr style="border:none; border-top:1px solid var(--umu-line); margin:1.25rem 0;">
-        <p style="margin:0 0 0.25rem;font-size:0.85rem;color:rgba(26,33,28,0.55);font-weight:600;">Total à payer</p>
-        <h2 id="totalToPay"
-            data-base-total="{{ total }}"
-            data-shipping-url-template="{{ path('app_city_shipping_const', {id: '__CITY__'}) }}"
-            style="margin:0; font-family:var(--font-display); color:var(--umu-copper);">
-            {{ total }} CFA
-        </h2>
+        <h2 class="umu-checkout__summary-title">Récapitulatif</h2>
+        <div class="umu-checkout__summary-rows">
+            <div class="umu-checkout__summary-row">
+                <span>Produits</span>
+                <strong>{{ total }} CFA</strong>
+            </div>
+            <div class="umu-checkout__summary-row">
+                <span>Livraison</span>
+                <strong id="shippingConst">—</strong>
+            </div>
+        </div>
+        <div class="umu-checkout__summary-total">
+            <span>Total à payer</span>
+            <strong id="totalToPay"
+                data-base-total="{{ total }}"
+                data-shipping-url-template="{{ path('app_city_shipping_const', {id: '__CITY__'}) }}">
+                {{ total }} CFA
+            </strong>
+        </div>
+        <p class="umu-checkout__summary-note">Les frais de livraison se mettent à jour selon la ville.</p>
     </aside>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    (function () {
+        function syncPayHints() {
+            var checked = document.querySelector('input[type="radio"][name*="paymentMethod"]:checked');
+            var method = checked ? checked.value : 'wave';
+            document.querySelectorAll('[data-umu-pay-hint]').forEach(function (el) {
+                el.hidden = el.getAttribute('data-umu-pay-hint') !== method;
+            });
+            var submit = document.querySelector('[data-umu-pay-submit]');
+            if (submit) {
+                submit.textContent = method === 'stripe'
+                    ? 'Continuer vers le paiement'
+                    : 'Confirmer la commande';
+            }
+        }
+        document.addEventListener('change', function (e) {
+            if (e.target && e.target.matches && e.target.matches('input[type="radio"][name*="paymentMethod"]')) {
+                syncPayHints();
+            }
+        });
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', syncPayHints);
+        } else {
+            syncPayHints();
+        }
+    })();
+    </script>
 {% endblock %}

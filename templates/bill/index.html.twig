@@ -195,7 +195,10 @@
                     <p><strong>Heure :</strong> {{ order.createdAt|date('H:i') }}</p>
                     <p>
                         <strong>Paiement :</strong>
-                        {% if order.payOnDelivery %}
+                        {% if order.paymentMethod is defined and order.paymentMethod %}
+                            {{ order.paymentMethodLabel }}
+                            {% if order.isPaymentCompleted %} — payé{% elseif order.mobileMoney %} — en attente{% endif %}
+                        {% elseif order.payOnDelivery %}
                             À la livraison
                         {% elseif order.isPaymentCompleted %}
                             En ligne — payé

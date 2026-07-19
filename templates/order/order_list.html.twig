@@ -30,8 +30,14 @@
                     {% endif %}
                     {% if order.isPaymentCompleted %}
                         <span class="dash-badge dash-badge--info">Payée</span>
+                    {% elseif order.paymentMethod == 'wave' %}
+                        <span class="dash-badge dash-badge--warn">Wave — en attente</span>
+                    {% elseif order.paymentMethod == 'orange_money' %}
+                        <span class="dash-badge dash-badge--warn">Orange Money — en attente</span>
                     {% elseif order.payOnDelivery %}
                         <span class="dash-badge">Paiement à la livraison</span>
+                    {% else %}
+                        <span class="dash-badge">{{ order.paymentMethodLabel }}</span>
                     {% endif %}
                 </div>
             </header>
@@ -93,6 +99,12 @@
             </div>
 
             <div class="dash-order__actions">
+                {% if order.mobileMoney and not order.isPaymentCompleted %}
+                    <form method="post" action="{{ path('app_order_payment_confirm', {'id': order.id}) }}" style="display:inline;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('order_payment' ~ order.id) }}">
+                        <button type="submit" class="umu-btn umu-btn--primary umu-btn--sm">Confirmer le paiement + e-mail client</button>
+                    </form>
+                {% endif %}
                 {% if not order.isComplted %}
                     <form method="post" action="{{ path('app_order_isComplted_update', {'id': order.id}) }}" style="display:inline;">
                         <input type="hidden" name="_token" value="{{ csrf_token('order_complete' ~ order.id) }}">

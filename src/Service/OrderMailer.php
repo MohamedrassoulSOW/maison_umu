@@ -23,9 +23,13 @@ class OrderMailer
 
     public function sendOrderConfirmation(Order $order): void
     {
+        $subject = $order->isPaymentCompleted()
+            ? 'Commande validée — Maison UMU'
+            : 'Confirmation de votre commande — Maison UMU';
+
         $this->send(
             $order,
-            'Confirmation de votre commande — Maison UMU',
+            $subject,
             'mail/order_confirme.html.twig',
             'order_confirmation'
         );
