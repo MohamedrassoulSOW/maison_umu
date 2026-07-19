@@ -61,13 +61,9 @@
                                 <span class="umu-pay__card umu-pay__card--{{ method }}">
                                     <span class="umu-pay__icon" aria-hidden="true">
                                         {% if method == 'wave' %}
-                                            <img class="umu-pay__logo" src="{{ asset('images/payments/wave.png') }}" alt="Wave Sénégal" width="40" height="40">
+                                            <img class="umu-pay__logo" src="{{ asset('images/payments/wave.png') }}" alt="Wave" width="40" height="40">
                                         {% elseif method == 'orange_money' %}
-                                            <svg viewBox="0 0 48 48" width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <rect width="48" height="48" rx="12" fill="#FF7900"/>
-                                                <circle cx="24" cy="24" r="11" fill="#fff"/>
-                                                <circle cx="24" cy="24" r="7" fill="#FF7900"/>
-                                            </svg>
+                                            <img class="umu-pay__logo umu-pay__logo--om" src="{{ asset('images/payments/orange-money.png') }}" alt="Orange Money" width="40" height="40">
                                         {% else %}
                                             <svg viewBox="0 0 48 48" width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <rect width="48" height="48" rx="12" fill="#2a4534"/>

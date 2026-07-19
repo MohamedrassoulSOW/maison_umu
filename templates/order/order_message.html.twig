@@ -13,7 +13,9 @@
 
         {% if order and order.mobileMoney and paymentLinks %}
             {% if order.paymentMethod == 'wave' %}
-                <img class="umu-pay-done__brand-logo" src="{{ asset('images/payments/wave.png') }}" alt="Wave Sénégal" width="72" height="72">
+                <img class="umu-pay-done__brand-logo" src="{{ asset('images/payments/wave.png') }}" alt="Wave" width="72" height="72">
+            {% elseif order.paymentMethod == 'orange_money' %}
+                <img class="umu-pay-done__brand-logo umu-pay-done__brand-logo--om" src="{{ asset('images/payments/orange-money.png') }}" alt="Orange Money" width="72" height="72">
             {% endif %}
 
             <div class="umu-alert umu-alert--success umu-pay-done__mail">

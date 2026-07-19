@@ -2769,7 +2769,16 @@ html[data-theme="dark"] .umu-alert--success {
     border-radius: 10px;
 }
 
-.umu-pay__card--wave .umu-pay__icon {
+.umu-pay__logo--om {
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid var(--umu-line);
+    padding: 4px;
+    box-sizing: border-box;
+}
+
+.umu-pay__card--wave .umu-pay__icon,
+.umu-pay__card--orange_money .umu-pay__icon {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
@@ -2873,6 +2882,15 @@ html[data-theme="dark"] .umu-pay-hint {
     border-radius: 16px;
     margin: 0 auto 0.85rem;
     box-shadow: 0 6px 18px rgba(29, 200, 255, 0.28);
+}
+
+.umu-pay-done__brand-logo--om {
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid var(--umu-line);
+    padding: 10px;
+    box-sizing: border-box;
+    box-shadow: 0 6px 18px rgba(255, 121, 0, 0.22);
 }
 
 .umu-pay-done__lead {
