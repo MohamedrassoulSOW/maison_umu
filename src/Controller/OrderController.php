@@ -34,6 +34,7 @@ final class OrderController extends AbstractController
     }
 
     #[Route('/order', name: 'app_order')]
+    #[IsGranted('ROLE_USER')]
     public function index(
         Request $request,
         SessionInterface $session,

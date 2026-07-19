@@ -159,9 +159,16 @@
                 <strong>{{ total|number_format(0, ',', ' ') }} CFA</strong>
             </div>
             <p class="umu-cart__summary-note">Les frais de livraison sont calculés à l’étape suivante.</p>
-            <a data-turbo="false" href="{{ path('app_order') }}" class="umu-btn umu-btn--primary umu-cart__checkout">
-                Valider la commande
-            </a>
+            {% if app.user %}
+                <a data-turbo="false" href="{{ path('app_order') }}" class="umu-btn umu-btn--primary umu-cart__checkout">
+                    Valider la commande
+                </a>
+            {% else %}
+                <a data-turbo="false" href="{{ path('app_login') }}" class="umu-btn umu-btn--primary umu-cart__checkout">
+                    Se connecter pour commander
+                </a>
+                <p class="umu-cart__summary-note">Un compte est requis pour finaliser la commande.</p>
+            {% endif %}
             <a href="{{ path('app_home_page') }}" class="umu-btn umu-btn--ghost umu-cart__continue">
                 Continuer vos achats
             </a>

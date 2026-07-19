@@ -240,11 +240,20 @@
             credentials: 'same-origin',
         })
             .then(function (res) {
-                if (!res.ok) throw new Error('favorite toggle failed');
-                return res.json();
+                return res.json().then(function (data) {
+                    return { res: res, data: data };
+                }).catch(function () {
+                    return { res: res, data: null };
+                });
             })
-            .then(function (data) {
-                if (!data.ok) throw new Error(data.message || 'favorite toggle failed');
+            .then(function (payload) {
+                var res = payload.res;
+                var data = payload.data || {};
+                if (res.status === 401 || data.loginRequired) {
+                    window.location.href = data.loginUrl || '/login';
+                    return;
+                }
+                if (!res.ok || !data.ok) throw new Error(data.message || 'favorite toggle failed');
                 updateFavoriteUi(
                     data.productId,
                     Boolean(data.liked),

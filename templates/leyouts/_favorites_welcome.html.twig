@@ -11,13 +11,22 @@
             <p class="umu-welcome__brand">{{ brand_name|default('Maison UMU') }}</p>
             <h2 class="umu-welcome__title" id="umuFavWelcomeTitle">Gardez vos coups de cœur</h2>
             <p class="umu-welcome__text">
-                Ajoutez en favoris les pièces que vous souhaitez revoir plus tard.
-                Vos préférences nous aident aussi à vous montrer ce qui vous correspond.
+                Connectez-vous pour ajouter en favoris les pièces que vous souhaitez revoir,
+                et pour finaliser vos commandes. Vos goûts nous aident à mieux vous guider.
             </p>
             <div class="umu-welcome__actions">
-                <a href="{{ path('app_home_page') }}#collection" class="umu-btn umu-btn--primary" data-umu-fav-welcome-close>
-                    Parcourir la collection
-                </a>
+                {% if app.user %}
+                    <a href="{{ path('app_home_page') }}#collection" class="umu-btn umu-btn--primary" data-umu-fav-welcome-close>
+                        Parcourir la collection
+                    </a>
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="umu-btn umu-btn--primary" data-umu-fav-welcome-close>
+                        Se connecter
+                    </a>
+                    <a href="{{ path('app_register') }}" class="umu-btn umu-btn--ghost" data-umu-fav-welcome-close>
+                        Créer un compte
+                    </a>
+                {% endif %}
                 <button type="button" class="umu-btn umu-btn--ghost" data-umu-fav-welcome-close>
                     Plus tard
                 </button>
