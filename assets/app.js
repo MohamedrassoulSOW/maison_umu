@@ -1,7 +1,4 @@
-// CSS chargé via <link href="{{ asset('css/umu.css') }}"> dans base.html.twig
-// (hors Asset Mapper — fiable en prod Hostinger même sans asset-map:compile)
-
-// Stimulus optionnel : s’il échoue, l’UI critique reste dans /js/umu-ui.js
-import('./stimulus_bootstrap.js').catch(() => {
-    /* ignore */
-});
+// CSS : public/css/umu.css (base.html.twig)
+// UI : public/js/umu-ui.js (base.html.twig)
+// Stimulus / Turbo optionnels
+import('./stimulus_bootstrap.js').catch(() => {});

@@ -12,6 +12,9 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
+# Compiled Asset Mapper output (prod regenerates on server if needed)
+# public/css/umu.css and public/js/umu-ui.js ARE committed (prod-safe)
+
 # Uploaded media (keep folder structure)
 /public/uploads/hero/*
 !/public/uploads/hero/.gitkeep

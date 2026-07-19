@@ -300,14 +300,67 @@
             return;
         }
 
-        if (
-            target.closest('[data-umu-nav-toggle]')
-            || target.closest('[data-umu-nav-backdrop]')
-            || target.closest('[data-umu-nav-close]')
-        ) {
+        if (target.closest('[data-umu-nav-toggle]')) {
+            event.preventDefault();
             setProfileOpen(false);
             setMegaOpen(false);
+            var panel = els.panel;
+            setNavOpen(!(panel && panel.classList.contains('is-open')));
             return;
+        }
+
+        if (target.closest('[data-umu-nav-backdrop]') || target.closest('[data-umu-nav-close]')) {
+            event.preventDefault();
+            setProfileOpen(false);
+            setMegaOpen(false);
+            setNavOpen(false);
+            return;
+        }
+
+        var togglePwd = target.closest('[data-password-toggle-btn]');
+        if (togglePwd) {
+            event.preventDefault();
+            var wrap = togglePwd.closest('.umu-password');
+            var input = wrap ? wrap.querySelector('input') : null;
+            if (!input) return;
+            var show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            var iconShow = togglePwd.querySelector('.umu-password__icon--show');
+            var iconHide = togglePwd.querySelector('.umu-password__icon--hide');
+            if (iconShow && iconHide) {
+                iconShow.hidden = show;
+                iconHide.hidden = !show;
+            }
+            togglePwd.setAttribute('aria-label', show ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
+            return;
+        }
+
+        var dashToggle = target.closest('[data-dash-menu-toggle]');
+        if (dashToggle) {
+            event.preventDefault();
+            var dashMenu = document.querySelector('[data-dash-nav]');
+            if (!dashMenu) return;
+            var dashOpen = !dashMenu.classList.contains('is-open');
+            dashMenu.classList.toggle('is-open', dashOpen);
+            dashToggle.setAttribute('aria-expanded', dashOpen ? 'true' : 'false');
+            dashToggle.setAttribute('aria-label', dashOpen ? 'Fermer le menu' : 'Ouvrir le menu');
+            dashToggle.classList.toggle('is-open', dashOpen);
+            document.body.classList.toggle('dash-menu-open', dashOpen);
+            return;
+        }
+
+        if (target.closest('[data-dash-nav] a.dash__link')) {
+            var openMenu = document.querySelector('[data-dash-nav].is-open');
+            var openToggle = document.querySelector('[data-dash-menu-toggle]');
+            if (openMenu) {
+                openMenu.classList.remove('is-open');
+                document.body.classList.remove('dash-menu-open');
+                if (openToggle) {
+                    openToggle.setAttribute('aria-expanded', 'false');
+                    openToggle.setAttribute('aria-label', 'Ouvrir le menu');
+                    openToggle.classList.remove('is-open');
+                }
+            }
         }
 
         if (target.closest('[data-umu-profile-btn]')) {

@@ -38,25 +38,20 @@
                 </div>
             </div>
 
-            <p class="umu-pay-done__hint">
-                Les instructions de paiement sont aussi dans votre e-mail.
-                Indiquez la référence <strong>CMD{{ '%05d'|format(order.id) }}</strong> dans le message du transfert.
-            </p>
-
-            <a class="umu-btn umu-btn--primary umu-pay-done__cta"
-               href="{{ paymentLinks.openUrl }}"
-               {% if order.paymentMethod == 'orange_money' %}rel="noopener"{% endif %}>
-                {% if order.paymentMethod == 'wave' %}
-                    Ouvrir Wave pour payer
-                {% else %}
-                    Ouvrir Orange Money pour payer
-                {% endif %}
-            </a>
-
-            {% if order.paymentMethod == 'orange_money' and paymentLinks.ussd %}
+            {% if paymentLinks.ussd %}
                 <p class="umu-pay-done__ussd">
-                    Ou composez : <code>{{ paymentLinks.ussd }}</code>
+                    USSD : <code>{{ paymentLinks.ussd }}</code>
                 </p>
+            {% endif %}
+
+            {% if paymentLinks.openUrl %}
+                <a class="umu-btn umu-btn--primary umu-pay-done__cta" href="{{ paymentLinks.openUrl }}">
+                    {% if order.paymentMethod == 'orange_money' %}
+                        Composer le code Orange Money
+                    {% else %}
+                        Payer avec Wave
+                    {% endif %}
+                </a>
             {% endif %}
         {% elseif order and order.paymentMethod == 'cod' %}
             <div class="umu-alert umu-alert--success">

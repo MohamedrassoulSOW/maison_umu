@@ -2,10 +2,7 @@
 
 namespace App\Service;
 
-/**
- * Liens pour orienter le client vers Wave / Orange Money (Sénégal).
- * Sans API marchand : ouverture d’app + USSD ; lien Wave Business optionnel.
- */
+/** Config Wave / Orange Money (numéro + liens utiles après l’e-mail de validation). */
 class MobileMoneyConfig
 {
     public function __construct(
@@ -19,13 +16,11 @@ class MobileMoneyConfig
         return $this->phone;
     }
 
-    /** Chiffres uniquement, ex. 221774507808 */
     public function getPhoneDigits(): string
     {
         return preg_replace('/\D+/', '', $this->phone) ?: '221774507808';
     }
 
-    /** Numéro local SN sans indicatif, ex. 774507808 */
     public function getLocalPhone(): string
     {
         $digits = $this->getPhoneDigits();
@@ -41,61 +36,29 @@ class MobileMoneyConfig
         return $this->wavePayLink !== '';
     }
 
-    /**
-     * URL pour ouvrir Wave (lien marchand si configuré, sinon intention d’ouvrir l’app).
-     */
-    public function waveOpenUrl(): string
+    public function getWavePayLink(): string
     {
-        if ($this->hasWavePayLink()) {
-            return $this->wavePayLink;
-        }
-
-        // Chrome Android : tente d’ouvrir l’app Wave, sinon Play Store
-        return 'intent://#Intent;package=com.wave.personal;scheme=https;'
-            .'S.browser_fallback_url='.rawurlencode('https://play.google.com/store/apps/details?id=com.wave.personal')
-            .';end';
+        return $this->wavePayLink;
     }
 
-    public function waveStoreUrl(): string
+    /** USSD Orange Money SN : #144#21*numéro*montant# */
+    public function orangeUssd(int|float $amount): string
     {
-        return 'https://play.google.com/store/apps/details?id=com.wave.personal';
+        return sprintf('#144#21*%s*%d#', $this->getLocalPhone(), (int) round((float) $amount));
     }
 
-    /**
-     * USSD Orange Money SN : transfert national prérempli (le client saisit son code secret).
-     * Format : #144#21*numéro*montant#
-     */
     public function orangeUssdUrl(int|float $amount): string
     {
-        $amountInt = (int) round((float) $amount);
-        $ussd = sprintf('#144#21*%s*%d#', $this->getLocalPhone(), $amountInt);
-
-        return 'tel:'.rawurlencode($ussd);
-    }
-
-    /** Ouvre Max it / Orange Money (Android Intent + fallback store). */
-    public function orangeAppUrl(): string
-    {
-        return 'intent://#Intent;package=com.orange.myorange.osn;scheme=https;'
-            .'S.browser_fallback_url='.rawurlencode('https://play.google.com/store/apps/details?id=com.orange.myorange.osn')
-            .';end';
-    }
-
-    public function orangeStoreUrl(): string
-    {
-        return 'https://play.google.com/store/apps/details?id=com.orange.myorange.osn';
+        return 'tel:'.rawurlencode($this->orangeUssd($amount));
     }
 
     /**
      * @return array{
      *     phone: string,
-     *     localPhone: string,
      *     amount: int,
-     *     openUrl: string,
-     *     secondaryUrl: string,
-     *     ussd: string|null,
      *     label: string,
-     *     autoOpen: bool
+     *     ussd: string|null,
+     *     openUrl: string|null
      * }
      */
     public function paymentLinksFor(string $method, int|float $amount): array
@@ -105,25 +68,19 @@ class MobileMoneyConfig
         if ($method === 'orange_money') {
             return [
                 'phone' => $this->getDisplayPhone(),
-                'localPhone' => $this->getLocalPhone(),
                 'amount' => $amountInt,
-                'openUrl' => $this->orangeUssdUrl($amountInt),
-                'secondaryUrl' => $this->orangeAppUrl(),
-                'ussd' => sprintf('#144#21*%s*%d#', $this->getLocalPhone(), $amountInt),
                 'label' => 'Orange Money',
-                'autoOpen' => false,
+                'ussd' => $this->orangeUssd($amountInt),
+                'openUrl' => $this->orangeUssdUrl($amountInt),
             ];
         }
 
         return [
             'phone' => $this->getDisplayPhone(),
-            'localPhone' => $this->getLocalPhone(),
             'amount' => $amountInt,
-            'openUrl' => $this->waveOpenUrl(),
-            'secondaryUrl' => $this->waveStoreUrl(),
-            'ussd' => null,
             'label' => 'Wave',
-            'autoOpen' => false,
+            'ussd' => null,
+            'openUrl' => $this->hasWavePayLink() ? $this->wavePayLink : null,
         ];
     }
 }
