@@ -1,0 +1,5460 @@
+/* Maison UMU — design system (chargé via /css/umu.css — ne pas dépendre de asset-map:compile) */
+:root {
+    --umu-ink: #1a211c;
+    --umu-forest: #2a4534;
+    --umu-moss: #4a6b56;
+    --umu-leaf: #6f917a;
+    --umu-sand: #e4e7df;
+    --umu-mist: #f2f4ef;
+    --umu-paper: #fafbf8;
+    --umu-copper: #b86b3a;
+    --umu-copper-deep: #94542c;
+    --umu-line: rgba(26, 33, 28, 0.12);
+    --umu-shadow: 0 18px 40px rgba(26, 33, 28, 0.08);
+    --umu-surface: rgba(255, 255, 255, 0.6);
+    --umu-surface-strong: rgba(250, 251, 248, 0.98);
+    --umu-muted: color-mix(in srgb, var(--umu-ink) 58%, transparent);
+    --umu-muted-soft: color-mix(in srgb, var(--umu-ink) 45%, transparent);
+    --umu-on-primary: #fff;
+    --umu-btn-hover: #1a211c;
+    --umu-radius: 14px;
+    --umu-radius-sm: 10px;
+    --umu-nav-h: 72px;
+    --font-display: "Syne", sans-serif;
+    --font-body: "Figtree", sans-serif;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+    --umu-ink: #e8ede8;
+    --umu-forest: #8fb89a;
+    --umu-moss: #9ec2a8;
+    --umu-leaf: #6f917a;
+    --umu-sand: #1c2420;
+    --umu-mist: #121816;
+    --umu-paper: #161c19;
+    --umu-copper: #d4925a;
+    --umu-copper-deep: #e0a574;
+    --umu-line: rgba(232, 237, 232, 0.14);
+    --umu-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+    --umu-surface: rgba(28, 36, 32, 0.88);
+    --umu-surface-strong: rgba(22, 28, 25, 0.96);
+    --umu-muted: rgba(232, 237, 232, 0.62);
+    --umu-muted-soft: rgba(232, 237, 232, 0.48);
+    --umu-on-primary: #101512;
+    --umu-btn-hover: #6f9a7c;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font-body);
+    color: var(--umu-ink);
+    background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(111, 145, 122, 0.22), transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, rgba(184, 107, 58, 0.12), transparent 50%),
+        linear-gradient(180deg, var(--umu-mist) 0%, var(--umu-paper) 45%, var(--umu-sand) 100%);
+    background-attachment: fixed;
+    line-height: 1.55;
+    padding-top: var(--umu-nav-h);
+    transition: background 0.35s var(--ease-out), color 0.25s var(--ease-out);
+}
+
+html[data-theme="dark"] body {
+    background:
+        radial-gradient(1000px 520px at 8% -8%, rgba(111, 145, 122, 0.16), transparent 55%),
+        radial-gradient(800px 480px at 100% 0%, rgba(184, 107, 58, 0.1), transparent 50%),
+        linear-gradient(180deg, #101512 0%, #151b18 45%, #1a211c 100%);
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image:
+        linear-gradient(var(--umu-ink) 1px, transparent 1px),
+        linear-gradient(90deg, var(--umu-ink) 1px, transparent 1px);
+    background-size: 48px 48px;
+    z-index: 0;
+}
+
+main.umu-main,
+.umu-page {
+    position: relative;
+    z-index: 1;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+a {
+    color: var(--umu-forest);
+    text-decoration: none;
+    transition: color 0.2s var(--ease-out);
+}
+
+a:hover {
+    color: var(--umu-copper);
+}
+
+h1, h2, h3, h4,
+.umu-display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-top: 0;
+}
+
+/* ---------- Nav ---------- */
+.umu-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    min-height: var(--umu-nav-h);
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s;
+    /* Pas de backdrop-filter ici : il casse position:fixed des enfants */
+    background: transparent;
+    overflow: visible;
+}
+
+.umu-nav__glass {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--umu-nav-h);
+    z-index: 0;
+    pointer-events: none;
+    background: rgba(250, 251, 248, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: background 0.3s var(--ease-out), box-shadow 0.3s;
+}
+
+.umu-header.is-scrolled {
+    border-bottom-color: var(--umu-line);
+}
+
+.umu-header.is-scrolled .umu-nav__glass {
+    background: rgba(250, 251, 248, 0.97);
+    box-shadow: 0 8px 24px rgba(26, 33, 28, 0.06);
+}
+
+.umu-nav__inner {
+    width: min(1200px, calc(100% - 2rem));
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    z-index: 2;
+}
+
+.umu-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--umu-ink);
+    white-space: nowrap;
+    z-index: 1002;
+    text-decoration: none;
+}
+
+.umu-brand:hover {
+    color: var(--umu-forest);
+}
+
+.umu-brand__logo {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    background: #0d0d0d;
+    flex-shrink: 0;
+}
+
+.umu-brand__text {
+    display: grid;
+    gap: 0.05rem;
+    line-height: 1.1;
+}
+
+.umu-brand__text strong {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.umu-brand__text small {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--umu-muted);
+    font-weight: 600;
+}
+
+.umu-nav__toolbar {
+    display: flex;
+    margin-left: auto;
+    align-items: center;
+    gap: 0.55rem;
+    z-index: 1002;
+    flex-shrink: 0;
+}
+
+.umu-nav__auth {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* Profile avatar circle + dropdown */
+.umu-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid rgba(42, 69, 52, 0.2);
+    background: linear-gradient(145deg, var(--umu-forest), var(--umu-moss));
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.2s var(--ease-out), box-shadow 0.2s;
+}
+
+.umu-avatar:hover,
+.umu-profile-menu.is-open .umu-avatar {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(42, 69, 52, 0.22);
+    border-color: var(--umu-forest);
+}
+
+.umu-avatar--sm {
+    width: 36px;
+    height: 36px;
+    font-size: 0.75rem;
+    cursor: default;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.umu-profile-menu {
+    position: relative;
+}
+
+.umu-profile-menu__dropdown {
+    position: absolute;
+    top: calc(100% + 0.55rem);
+    right: 0;
+    width: min(280px, 86vw);
+    background: rgba(250, 251, 248, 0.98);
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    box-shadow: var(--umu-shadow);
+    padding: 0.65rem;
+    z-index: 1003;
+    animation: umuRise 0.2s var(--ease-out);
+}
+
+.umu-profile-menu__head {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.45rem 0.45rem 0.75rem;
+    border-bottom: 1px solid var(--umu-line);
+    margin-bottom: 0.35rem;
+}
+
+.umu-profile-menu__head strong {
+    display: block;
+    font-size: 0.95rem;
+    line-height: 1.2;
+}
+
+.umu-profile-menu__head small {
+    display: block;
+    color: var(--umu-muted);
+    font-size: 0.78rem;
+    margin-top: 0.15rem;
+    word-break: break-all;
+}
+
+.umu-profile-menu__dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.umu-profile-menu__dropdown a {
+    display: block;
+    padding: 0.55rem 0.65rem;
+    border-radius: 8px;
+    color: var(--umu-ink);
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+
+.umu-profile-menu__dropdown a:hover,
+.umu-profile-menu__dropdown a.is-active {
+    background: rgba(42, 69, 52, 0.1);
+    color: var(--umu-forest);
+}
+
+.umu-profile-menu__dropdown hr {
+    border: none;
+    border-top: 1px solid var(--umu-line);
+    margin: 0.35rem 0;
+}
+
+.umu-profile-menu__logout {
+    color: #8a2424 !important;
+}
+
+.umu-profile-menu__logout:hover {
+    background: rgba(179, 58, 58, 0.1) !important;
+    color: #8a2424 !important;
+}
+
+.umu-profile {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    padding: 1.5rem;
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    background: var(--umu-surface);
+    color: var(--umu-ink);
+}
+
+.umu-profile--edit {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.umu-profile__aside {
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.umu-profile__aside h2 {
+    margin: 0.85rem 0 0.25rem;
+    font-size: 1.25rem;
+}
+
+.umu-profile__aside > p {
+    margin: 0;
+    color: var(--umu-muted);
+    word-break: break-all;
+}
+
+.umu-profile__role {
+    display: inline-block;
+    margin: 0.75rem 0 1rem !important;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    background: rgba(42, 69, 52, 0.1);
+    color: var(--umu-forest);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.umu-profile__aside .umu-content__cta {
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.umu-profile__form-wrap {
+    padding: 0.25rem 0.25rem 0.25rem 0.5rem;
+    border-left: 1px solid var(--umu-line);
+    padding-left: 1.5rem;
+}
+
+.umu-profile__form-wrap h2 {
+    margin: 0 0 0.35rem;
+    font-size: 1.35rem;
+}
+
+.umu-profile__hint {
+    margin: 0 0 1.25rem;
+    color: var(--umu-muted);
+    font-size: 0.92rem;
+}
+
+.umu-profile__section {
+    margin: 1.5rem 0 0.85rem;
+    font-size: 1.05rem;
+}
+
+.umu-form__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+}
+
+.umu-profile__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 1.25rem;
+}
+
+.umu-profile__avatar {
+    width: 84px;
+    height: 84px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--umu-forest), var(--umu-moss));
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.umu-profile__info h2 {
+    margin: 0 0 0.25rem;
+}
+
+.umu-profile__info > p {
+    margin: 0 0 1rem;
+    color: var(--umu-muted);
+}
+
+.umu-profile__meta {
+    list-style: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+}
+
+.umu-profile__meta li {
+    display: grid;
+    gap: 0.15rem;
+}
+
+.umu-profile__meta strong {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--umu-moss);
+}
+
+.umu-nav__toggle {
+    display: none;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid var(--umu-line);
+    background: var(--umu-paper);
+    color: var(--umu-ink);
+    border-radius: 10px;
+    padding: 0.5rem 0.85rem;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.92rem;
+    transition: border-color 0.25s var(--ease-out), background 0.25s, color 0.25s, transform 0.2s;
+}
+
+.umu-nav__toggle:hover {
+    border-color: var(--umu-forest);
+    color: var(--umu-forest);
+    background: rgba(42, 69, 52, 0.06);
+}
+
+.umu-nav__toggle[aria-expanded="true"] {
+    border-color: var(--umu-forest);
+    background: rgba(42, 69, 52, 0.1);
+    color: var(--umu-forest);
+}
+
+.umu-nav__burger {
+    position: relative;
+    width: 18px;
+    height: 14px;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.umu-nav__burger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transform-origin: center;
+    transition: transform 0.35s var(--ease-out), opacity 0.25s, width 0.25s;
+}
+
+.umu-nav__toggle[aria-expanded="true"] .umu-nav__burger span:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+}
+
+.umu-nav__toggle[aria-expanded="true"] .umu-nav__burger span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.umu-nav__toggle[aria-expanded="true"] .umu-nav__burger span:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+}
+
+.umu-nav__panel {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.umu-nav__links {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.umu-nav__link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--umu-ink);
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.25s var(--ease-out), color 0.25s, transform 0.2s;
+}
+
+.umu-nav__link::after {
+    content: "";
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.15rem;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--umu-forest), #c4a35a);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.3s var(--ease-out);
+}
+
+.umu-nav__link:hover,
+.umu-nav__links .dropdown-item:hover {
+    background: rgba(42, 69, 52, 0.08);
+    color: var(--umu-forest);
+}
+
+.umu-nav__link:hover::after,
+.umu-nav__link.is-active::after {
+    transform: scaleX(1);
+}
+
+.umu-nav__link.is-active {
+    background: rgba(42, 69, 52, 0.1);
+    color: var(--umu-forest);
+}
+
+.umu-nav__chevron {
+    font-size: 0.7rem;
+    opacity: 0.7;
+    transition: transform 0.3s var(--ease-out);
+}
+
+.umu-nav__item--mega.is-open .umu-nav__chevron {
+    transform: rotate(180deg);
+}
+
+.umu-nav .dropdown-menu {
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius-sm);
+    box-shadow: var(--umu-shadow);
+    padding: 0.4rem;
+    background: var(--umu-paper);
+}
+
+.umu-nav .dropdown-item {
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.umu-nav__backdrop {
+    position: fixed;
+    inset: 0;
+    top: var(--umu-nav-h);
+    background: rgba(26, 33, 28, 0.35);
+    z-index: 997;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s var(--ease-out);
+}
+
+.umu-nav__backdrop.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.umu-nav__cart {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: var(--umu-ink);
+    border-radius: 50%;
+    transition: color 0.2s var(--ease-out), background 0.2s;
+}
+
+.umu-nav__cart:hover {
+    color: var(--umu-forest);
+    background: rgba(42, 69, 52, 0.08);
+}
+
+.umu-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: 1px solid var(--umu-line);
+    border-radius: 50%;
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
+    cursor: pointer;
+    transition: color 0.2s var(--ease-out), background 0.2s, border-color 0.2s, transform 0.2s var(--ease-out), box-shadow 0.2s;
+}
+
+.umu-theme-toggle:hover {
+    color: var(--umu-forest);
+    border-color: rgba(42, 69, 52, 0.28);
+    transform: scale(1.05);
+}
+
+.umu-theme-toggle__sun {
+    display: none;
+}
+
+html[data-theme="dark"] .umu-theme-toggle__moon {
+    display: none;
+}
+
+html[data-theme="dark"] .umu-theme-toggle__sun {
+    display: block;
+}
+
+/* Hors navbar : flottant juste sous le header, à droite */
+.umu-theme-toggle--float {
+    position: fixed;
+    top: calc(var(--umu-nav-h) + 0.55rem);
+    right: 1.15rem;
+    z-index: 1100;
+    box-shadow: 0 10px 26px rgba(26, 33, 28, 0.16);
+}
+
+html[data-theme="dark"] .umu-theme-toggle--float {
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
+}
+
+body.is-dashboard .umu-theme-toggle--float {
+    top: 0.85rem;
+    right: 4.35rem;
+    width: 42px;
+    height: 42px;
+    z-index: 90;
+}
+
+@media (min-width: 1025px) {
+    body.is-dashboard .umu-theme-toggle--float {
+        top: 1rem;
+        right: 1rem;
+    }
+}
+
+.umu-nav__item--mega {
+    position: relative;
+}
+
+.umu-mega {
+    position: absolute;
+    top: calc(100% + 0.65rem);
+    left: 0;
+    min-width: min(720px, 88vw);
+    background: rgba(250, 251, 248, 0.98);
+    border: 1px solid var(--umu-line);
+    border-radius: calc(var(--umu-radius) + 2px);
+    box-shadow: 0 18px 48px rgba(26, 33, 28, 0.12);
+    padding: 1.1rem;
+    z-index: 1001;
+    transform-origin: top left;
+    animation: umuMegaDrop 0.28s var(--ease-out);
+}
+
+@keyframes umuMegaDrop {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.umu-mega__inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem 1.25rem;
+}
+
+.umu-mega__title {
+    margin: 0 0 0.45rem;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--umu-forest);
+}
+
+.umu-mega__col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.umu-mega__col a {
+    display: block;
+    padding: 0.35rem 0.45rem;
+    border-radius: 6px;
+    color: var(--umu-ink);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.umu-mega__col a:hover {
+    background: rgba(42, 69, 52, 0.08);
+    color: var(--umu-forest);
+    transform: translateX(2px);
+}
+
+.umu-mega__empty {
+    font-size: 0.85rem;
+    color: var(--umu-muted-soft);
+}
+
+.umu-nav__search {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-left: auto;
+    margin-right: 0.35rem;
+    flex: 0 1 200px;
+}
+
+.umu-nav__search input {
+    width: 100%;
+    border: 1px solid var(--umu-line);
+    background: var(--umu-surface);
+    color: var(--umu-ink);
+    border-radius: 999px;
+    padding: 0.45rem 0.9rem;
+    font: inherit;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.umu-nav__search input:focus {
+    border-color: var(--umu-moss);
+    box-shadow: 0 0 0 3px rgba(74, 107, 86, 0.15);
+}
+
+.umu-nav__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.umu-nav__hello {
+    font-size: 0.88rem;
+    color: var(--umu-moss);
+    font-weight: 600;
+    padding: 0 0.35rem;
+}
+
+/* ---------- Buttons ---------- */
+.umu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.7rem 1.25rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-decoration: none !important;
+    transition: transform 0.2s var(--ease-out), background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.umu-btn:hover {
+    transform: translateY(-1px);
+}
+
+.umu-btn:active {
+    transform: translateY(0);
+}
+
+.umu-btn--primary {
+    background: var(--umu-forest);
+    color: var(--umu-on-primary) !important;
+}
+
+.umu-btn--primary:hover {
+    background: var(--umu-btn-hover);
+    color: var(--umu-on-primary) !important;
+}
+
+.umu-btn--copper {
+    background: var(--umu-copper);
+    color: #fff !important;
+}
+
+.umu-btn--copper:hover {
+    background: var(--umu-copper-deep);
+    color: #fff !important;
+}
+
+.umu-btn--ghost {
+    background: transparent;
+    border-color: var(--umu-line);
+    color: var(--umu-ink) !important;
+}
+
+.umu-btn--ghost:hover {
+    border-color: var(--umu-forest);
+    color: var(--umu-forest) !important;
+}
+
+.umu-btn--danger {
+    background: #b33a3a;
+    color: #fff !important;
+}
+
+.umu-btn--sm {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+}
+
+.umu-btn--icon {
+    min-width: 42px;
+    height: 42px;
+    padding: 0 0.75rem;
+    border-radius: 10px;
+    background: var(--umu-forest);
+    color: var(--umu-on-primary) !important;
+    position: relative;
+}
+
+.umu-cart-count {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.1rem;
+    height: 1.1rem;
+    padding: 0 0.28rem;
+    border-radius: 999px;
+    background: var(--umu-copper);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1;
+    pointer-events: none;
+}
+
+/* ---------- Hero ---------- */
+.umu-hero {
+    position: relative;
+    min-height: clamp(420px, 62vh, 640px);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+.umu-hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.umu-hero__media img,
+.umu-hero__media video,
+.umu-hero__fallback {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.06);
+    animation: umuZoom 1.6s var(--ease-out) forwards;
+}
+
+.umu-hero__video {
+    display: block;
+    background: #0d0d0d;
+    transform: none !important;
+    animation: none !important;
+}
+
+.umu-hero--video .umu-hero__media::after {
+    background:
+        linear-gradient(180deg,
+            rgba(15, 18, 16, 0.35) 0%,
+            rgba(15, 18, 16, 0.45) 40%,
+            rgba(15, 18, 16, 0.78) 72%,
+            rgba(15, 18, 16, 0.92) 100%);
+}
+
+.umu-hero__media-logo {
+    object-fit: contain !important;
+    background:
+        radial-gradient(circle at 30% 20%, rgba(212, 175, 55, 0.28), transparent 45%),
+        linear-gradient(135deg, #0d0d0d, #1a1a1a 55%, #2a2118);
+    padding: clamp(2rem, 8vw, 6rem);
+    transform: none !important;
+    animation: none !important;
+}
+
+.umu-hero__fallback {
+    display: block;
+    background:
+        linear-gradient(145deg, #2a4534 0%, #4a6b56 45%, #b86b3a 100%);
+}
+
+.umu-hero__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(26, 33, 28, 0.15) 0%, rgba(26, 33, 28, 0.55) 55%, rgba(26, 33, 28, 0.82) 100%);
+}
+
+.umu-hero__content {
+    position: relative;
+    z-index: 1;
+    width: min(1200px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: clamp(2.5rem, 8vh, 5rem) 0;
+}
+
+.umu-hero__brand {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 9vw, 6rem);
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    line-height: 0.92;
+    color: #f7f8f4;
+    margin: 0 0 1rem;
+    opacity: 0;
+    transform: translateY(24px);
+    animation: umuRise 0.9s var(--ease-out) 0.1s forwards;
+}
+
+.umu-hero__headline {
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2.4vw, 1.65rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.75rem;
+    color: rgba(247, 248, 244, 0.92);
+    opacity: 0;
+    transform: translateY(24px);
+    animation: umuRise 0.9s var(--ease-out) 0.25s forwards;
+}
+
+.umu-hero__text {
+    font-size: 1.05rem;
+    color: rgba(247, 248, 244, 0.78);
+    margin: 0 0 1.75rem;
+    max-width: 38ch;
+    opacity: 0;
+    transform: translateY(24px);
+    animation: umuRise 0.9s var(--ease-out) 0.4s forwards;
+}
+
+.umu-hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    opacity: 0;
+    transform: translateY(24px);
+    animation: umuRise 0.9s var(--ease-out) 0.55s forwards;
+}
+
+.umu-hero .umu-btn--primary {
+    background: #f7f8f4;
+    color: var(--umu-ink) !important;
+}
+
+.umu-hero .umu-btn--primary:hover {
+    background: #fff;
+    color: var(--umu-ink) !important;
+}
+
+.umu-hero .umu-btn--ghost {
+    border-color: rgba(247, 248, 244, 0.45);
+    color: #f7f8f4 !important;
+}
+
+.umu-hero .umu-btn--ghost:hover {
+    border-color: #f7f8f4;
+    background: rgba(247, 248, 244, 0.1);
+    color: #fff !important;
+}
+
+@keyframes umuRise {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes umuZoom {
+    to {
+        transform: scale(1);
+    }
+}
+
+/* ---------- Sections ---------- */
+.umu-section {
+    width: min(1200px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 4.5rem 0 3rem;
+}
+
+.umu-section__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.umu-section__title {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    margin: 0 0 0.35rem;
+}
+
+.umu-section__lead {
+    margin: 0;
+    color: var(--umu-muted);
+    max-width: 42ch;
+}
+
+/* ---------- Product grid / cards (interaction) ---------- */
+.umu-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+}
+
+.umu-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--umu-surface);
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    overflow: hidden;
+    color: var(--umu-ink);
+    transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out), border-color 0.35s, opacity 0.35s var(--ease-out);
+    opacity: 1;
+    transform: none;
+}
+
+/* Animation d’apparition uniquement si le JS a pu s’initialiser */
+.umu-card.js-reveal:not(.is-visible) {
+    opacity: 0;
+    transform: translateY(28px);
+}
+
+.umu-card.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.umu-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--umu-shadow);
+    border-color: rgba(42, 69, 52, 0.28);
+}
+
+.umu-card__media-wrap {
+    position: relative;
+}
+
+.umu-card__media {
+    aspect-ratio: 1 / 1.05;
+    overflow: hidden;
+    background: var(--umu-sand);
+}
+
+.umu-card__media-btn {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+}
+
+/* ---------- Favorites (heart) ---------- */
+.umu-fav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.28rem;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 0.55rem;
+    border: 1px solid var(--umu-line);
+    border-radius: 999px;
+    background: var(--umu-surface-strong);
+    color: var(--umu-muted-soft);
+    cursor: pointer;
+    box-shadow: var(--umu-shadow);
+    transition: color 0.2s var(--ease-out), background 0.2s, border-color 0.2s, transform 0.2s var(--ease-out);
+}
+
+.umu-fav__count {
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1;
+    color: inherit;
+    min-width: 0.7rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.umu-fav:hover {
+    color: #c45c5c;
+    border-color: rgba(196, 92, 92, 0.35);
+    background: var(--umu-surface-strong);
+    transform: scale(1.06);
+}
+
+.umu-fav.is-active {
+    color: #c45c5c;
+    border-color: rgba(196, 92, 92, 0.4);
+    background: var(--umu-surface-strong);
+}
+
+.umu-fav:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+.umu-fav__icon {
+    display: block;
+    position: relative;
+}
+
+.umu-fav__outline,
+.umu-fav__fill {
+    transition: opacity 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+    transform-origin: center;
+}
+
+.umu-fav__fill {
+    opacity: 0;
+}
+
+.umu-fav.is-active .umu-fav__outline {
+    opacity: 0;
+}
+
+.umu-fav.is-active .umu-fav__fill {
+    opacity: 1;
+    transform: scale(1.06);
+}
+
+.umu-fav--card {
+    position: absolute;
+    top: 0.65rem;
+    right: 0.65rem;
+    z-index: 3;
+}
+
+.umu-fav--action {
+    min-width: 44px;
+    height: 44px;
+    flex: 0 0 auto;
+    box-shadow: none;
+}
+
+.umu-product__likes {
+    margin: 0.35rem 0 0;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--umu-muted);
+}
+
+.umu-product__likes [data-umu-likes-count] {
+    color: #c45c5c;
+    font-variant-numeric: tabular-nums;
+}
+
+.umu-product__actions {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.umu-nav__fav.is-active,
+.umu-nav__fav:hover {
+    color: #c45c5c;
+}
+
+.umu-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s var(--ease-out);
+}
+
+.umu-card:hover .umu-card__media img {
+    transform: scale(1.04);
+}
+
+.umu-card__title-btn {
+    display: inline;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.umu-card__title-btn:hover {
+    color: var(--umu-forest);
+}
+
+.umu-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 1rem 1.05rem 1.15rem;
+    flex: 1;
+}
+
+.umu-card__title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    margin: 0;
+    color: var(--umu-ink);
+}
+
+.umu-card__title a {
+    color: inherit;
+}
+
+.umu-card__title a:hover {
+    color: var(--umu-forest);
+}
+
+.umu-card__desc {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--umu-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.umu-card__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.65rem;
+}
+
+.umu-price {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--umu-forest);
+}
+
+.umu-stock {
+    font-size: 0.78rem;
+    color: var(--umu-muted);
+    font-weight: 600;
+}
+
+.umu-card__actions {
+    margin-top: 0.75rem;
+    display: grid;
+    gap: 0.45rem;
+}
+
+.umu-card__actions .umu-btn {
+    width: 100%;
+}
+
+/* ---------- Product modal ---------- */
+.umu-modal[hidden] {
+    display: none !important;
+}
+
+.umu-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+}
+
+.umu-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 18, 16, 0.62);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.umu-modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: min(960px, 100%);
+    max-height: min(90dvh, 920px);
+    overflow: auto;
+    background: var(--umu-paper);
+    color: var(--umu-ink);
+    border: 1px solid var(--umu-line);
+    border-radius: calc(var(--umu-radius) + 6px);
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+    animation: umuModalIn 0.28s var(--ease-out);
+}
+
+@keyframes umuModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.umu-modal__close {
+    position: sticky;
+    top: 0.75rem;
+    float: right;
+    z-index: 2;
+    margin: 0.75rem 0.75rem 0 0;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--umu-line);
+    border-radius: 10px;
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
+    font-size: 1.05rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.umu-modal__close:hover {
+    border-color: var(--umu-forest);
+    color: var(--umu-forest);
+}
+
+.umu-modal__body {
+    padding: 1.25rem 1.25rem 1.5rem;
+    clear: both;
+}
+
+.umu-modal-product {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.umu-modal-product__gallery {
+    display: grid;
+    gap: 0.55rem;
+}
+
+.umu-modal-product__media {
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--umu-sand);
+    border: 1px solid var(--umu-line);
+    aspect-ratio: 1 / 1.05;
+}
+
+.umu-modal-product__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.umu-modal-product__eyebrow {
+    margin: 0 0 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--umu-moss);
+}
+
+.umu-modal-product__title {
+    margin: 0 0 0.85rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.55rem, 3vw, 2.1rem);
+    line-height: 1.1;
+    color: var(--umu-ink);
+}
+
+.umu-modal-product__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem 1rem;
+    margin-bottom: 0.85rem;
+}
+
+.umu-stock--ok {
+    color: var(--umu-forest);
+}
+
+.umu-stock--alert {
+    color: #8a2424;
+}
+
+.umu-modal-product__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+}
+
+.umu-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.28rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(42, 69, 52, 0.08);
+    color: var(--umu-forest);
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.umu-modal-product__desc h3,
+.umu-modal-product__details + .umu-modal-product__actions {
+    margin-top: 0;
+}
+
+.umu-modal-product__desc h3 {
+    margin: 0 0 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--umu-muted-soft);
+}
+
+.umu-modal-product__desc p {
+    margin: 0 0 1.1rem;
+    color: var(--umu-muted);
+    line-height: 1.55;
+}
+
+.umu-modal-product__details {
+    display: grid;
+    gap: 0.55rem;
+    margin: 0 0 1.25rem;
+    padding: 0.85rem 0;
+    border-top: 1px solid var(--umu-line);
+    border-bottom: 1px solid var(--umu-line);
+}
+
+.umu-modal-product__details > div {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 0.5rem;
+}
+
+.umu-modal-product__details dt {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--umu-muted-soft);
+}
+
+.umu-modal-product__details dd {
+    margin: 0;
+    font-weight: 600;
+    color: var(--umu-ink);
+}
+
+.umu-modal-product__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.umu-modal-product__actions .umu-btn {
+    flex: 1 1 10rem;
+    justify-content: center;
+    text-align: center;
+}
+
+.umu-modal-product__actions .umu-fav--action {
+    flex: 0 0 auto;
+}
+
+body.umu-modal-open {
+    overflow: hidden;
+}
+
+@media (max-width: 800px) {
+    .umu-modal {
+        padding: 0.5rem;
+        align-items: end;
+    }
+
+    .umu-modal__dialog {
+        width: 100%;
+        max-height: 92dvh;
+        border-radius: 18px 18px 10px 10px;
+    }
+
+    .umu-modal-product {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .umu-modal-product__media {
+        aspect-ratio: 1 / 1;
+    }
+}
+
+/* ---------- Product detail ---------- */
+.umu-product {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+    width: min(1100px, calc(100% - 2rem));
+    margin: 2.5rem auto 3rem;
+}
+
+.umu-product__gallery {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.umu-product__media {
+    border-radius: calc(var(--umu-radius) + 4px);
+    overflow: hidden;
+    background: var(--umu-sand);
+    border: 1px solid var(--umu-line);
+    aspect-ratio: 1 / 1.05;
+}
+
+.umu-product__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.umu-product__media-fallback,
+.umu-card__media-fallback {
+    object-fit: contain;
+    padding: 1.5rem;
+    background: #0d0d0d;
+}
+
+.umu-product__thumbs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    gap: 0.45rem;
+}
+
+.umu-product__thumb {
+    aspect-ratio: 1;
+    padding: 0;
+    border: 1px solid var(--umu-line);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--umu-surface-strong);
+    cursor: pointer;
+    opacity: 0.75;
+    transition: opacity 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.umu-product__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.umu-product__thumb:hover,
+.umu-product__thumb.is-active {
+    opacity: 1;
+    border-color: var(--umu-forest);
+    box-shadow: 0 0 0 1px rgba(42, 69, 52, 0.25);
+}
+
+.dash-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.75rem;
+}
+
+.dash-gallery__item {
+    margin: 0;
+    position: relative;
+    display: grid;
+    gap: 0.4rem;
+}
+
+.dash-gallery__item img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--umu-line);
+    background: var(--umu-sand);
+}
+
+.dash-gallery__badge {
+    position: absolute;
+    top: 0.4rem;
+    left: 0.4rem;
+    padding: 0.2rem 0.45rem;
+    border-radius: 999px;
+    background: rgba(26, 33, 28, 0.85);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.umu-product__info h1 {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    margin-bottom: 0.75rem;
+}
+
+.umu-product__info p {
+    color: var(--umu-muted);
+}
+
+.umu-product__price {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    color: var(--umu-copper);
+    margin: 1.25rem 0 0.35rem;
+}
+
+.umu-slider-wrap {
+    position: relative;
+    width: min(1200px, calc(100% - 2rem));
+    margin: 0 auto 4rem;
+}
+
+.umu-slider {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    padding: 0.5rem 0 1rem;
+    scrollbar-width: none;
+}
+
+.umu-slider::-webkit-scrollbar {
+    display: none;
+}
+
+.umu-slider .umu-card {
+    flex: 0 0 min(260px, 78vw);
+    scroll-snap-align: start;
+    opacity: 1;
+    transform: none;
+}
+
+.umu-slider__btn {
+    position: absolute;
+    top: 40%;
+    z-index: 5;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid var(--umu-line);
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
+    cursor: pointer;
+    font-size: 1.4rem;
+    line-height: 1;
+    transition: background 0.2s;
+}
+
+.umu-slider__btn:hover {
+    background: var(--umu-forest);
+    color: #fff;
+    border-color: var(--umu-forest);
+}
+
+.umu-slider__btn--prev { left: -0.25rem; }
+.umu-slider__btn--next { right: -0.25rem; }
+
+/* ---------- Auth ---------- */
+.umu-auth {
+    min-height: calc(100vh - var(--umu-nav-h));
+    display: grid;
+    place-items: center;
+    padding: 2rem 1rem;
+}
+
+.umu-auth__panel {
+    width: min(420px, 100%);
+    background: var(--umu-surface);
+    border: 1px solid var(--umu-line);
+    border-radius: calc(var(--umu-radius) + 4px);
+    padding: 2rem 1.75rem;
+    box-shadow: var(--umu-shadow);
+    backdrop-filter: blur(10px);
+    color: var(--umu-ink);
+}
+
+.umu-auth__panel h1 {
+    text-align: center;
+    font-size: 1.85rem;
+    margin-bottom: 1.25rem;
+}
+
+.umu-auth__panel label {
+    display: block;
+    margin: 0.85rem 0 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.umu-auth__panel .form-control,
+.umu-auth__panel input[type="email"],
+.umu-auth__panel input[type="password"],
+.umu-auth__panel input[type="text"] {
+    width: 100%;
+    border: 1px solid var(--umu-line);
+    border-radius: 10px;
+    padding: 0.7rem 0.85rem;
+    font: inherit;
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
+}
+
+.umu-password {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.umu-password .form-control,
+.umu-password input {
+    width: 100%;
+    padding-right: 2.6rem;
+}
+
+.umu-password__toggle {
+    position: absolute;
+    right: 0.35rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border: none;
+    background: transparent;
+    color: var(--umu-moss);
+    padding: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.umu-password__toggle:hover {
+    background: rgba(42, 69, 52, 0.1);
+    color: var(--umu-forest);
+}
+
+.umu-password__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.umu-btn-google {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    width: 100%;
+    min-height: 48px;
+    margin: 0.25rem 0 0.35rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--umu-line);
+    border-radius: 10px;
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink) !important;
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s var(--ease-out), border-color 0.2s, box-shadow 0.2s;
+}
+
+.umu-btn-google:hover {
+    background: var(--umu-sand);
+    border-color: var(--umu-line);
+    box-shadow: var(--umu-shadow);
+    color: var(--umu-ink) !important;
+}
+
+.umu-btn-google svg {
+    flex-shrink: 0;
+}
+
+.umu-auth__divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1rem 0 0.35rem;
+    color: var(--umu-muted-soft);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.umu-auth__divider::before,
+.umu-auth__divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--umu-line);
+}
+
+.umu-auth__panel .btn,
+.umu-auth__panel button[type="submit"] {
+    width: 100%;
+    margin-top: 1.25rem;
+    background: var(--umu-forest);
+    border: none;
+    color: var(--umu-on-primary);
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    font-weight: 600;
+    font-family: var(--font-body);
+}
+
+.umu-auth__panel .btn:hover,
+.umu-auth__panel button[type="submit"]:hover {
+    background: var(--umu-btn-hover);
+    color: var(--umu-on-primary);
+}
+
+.umu-alert {
+    border-radius: 10px;
+    padding: 0.75rem 0.9rem;
+    margin-bottom: 1rem;
+    font-size: 0.92rem;
+}
+
+.umu-alert--danger {
+    background: #fde8e8;
+    color: #8a2424;
+    border: 1px solid #f3c1c1;
+}
+
+.umu-alert--success {
+    background: #e7f3eb;
+    color: #1f4d32;
+    border: 1px solid #b9d8c4;
+}
+
+html[data-theme="dark"] .umu-alert--danger {
+    background: rgba(179, 58, 58, 0.22);
+    color: #f0a0a0;
+    border-color: rgba(179, 58, 58, 0.4);
+}
+
+html[data-theme="dark"] .umu-alert--success {
+    background: rgba(143, 184, 154, 0.18);
+    color: #a8d4b4;
+    border-color: rgba(143, 184, 154, 0.35);
+}
+
+/* ---------- Cart / tables ---------- */
+.umu-page-title {
+    width: min(1100px, calc(100% - 2rem));
+    margin: 2rem auto 1.25rem;
+}
+
+.umu-page-title h1 {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    margin: 0 0 0.35rem;
+}
+
+.umu-page-title p {
+    margin: 0;
+    color: var(--umu-muted);
+}
+
+.umu-cart {
+    width: min(1100px, calc(100% - 2rem));
+    margin: 0 auto 3.5rem;
+}
+
+.umu-cart__empty {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    border: 1px dashed var(--umu-line);
+    border-radius: var(--umu-radius);
+    background: var(--umu-surface);
+    color: var(--umu-ink);
+}
+
+.umu-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    background: var(--umu-surface);
+    color: var(--umu-ink);
+}
+
+.umu-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 680px;
+}
+
+.umu-table th,
+.umu-table td {
+    padding: 0.95rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--umu-line);
+    vertical-align: middle;
+}
+
+.umu-table th {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: color-mix(in srgb, var(--umu-ink) 55%, transparent);
+    background: color-mix(in srgb, var(--umu-forest) 8%, transparent);
+}
+
+.umu-table tr:last-child td {
+    border-bottom: none;
+}
+
+.umu-thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.umu-qty {
+    display: inline-flex;
+    border: 1px solid var(--umu-line);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.umu-qty a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    color: var(--umu-ink);
+    background: transparent;
+    font-weight: 700;
+}
+
+.umu-qty a:hover {
+    background: var(--umu-forest);
+    color: #fff;
+}
+
+.umu-cart__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.umu-cart__total {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    margin: 0;
+}
+
+.umu-cart__total span {
+    color: var(--umu-copper);
+}
+
+/* ---------- Checkout ---------- */
+.umu-checkout {
+    width: min(1080px, calc(100% - 2rem));
+    margin: 1.5rem auto 3.5rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.85fr);
+    gap: 1.35rem;
+    align-items: start;
+}
+
+.umu-checkout__form,
+.umu-checkout__summary {
+    background: var(--umu-surface);
+    border: 1px solid var(--umu-line);
+    border-radius: calc(var(--umu-radius) + 4px);
+    color: var(--umu-ink);
+    box-shadow: 0 12px 32px rgba(26, 33, 28, 0.05);
+}
+
+.umu-checkout__form {
+    padding: 1.35rem 1.4rem 1.5rem;
+}
+
+.umu-checkout__summary {
+    padding: 1.35rem 1.35rem 1.25rem;
+    position: sticky;
+    top: calc(var(--umu-nav-h) + 1rem);
+}
+
+.umu-checkout__section {
+    margin: 0 0 1.5rem;
+    padding: 0 0 1.35rem;
+    border-bottom: 1px solid var(--umu-line);
+}
+
+.umu-checkout__section:last-of-type {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 1.15rem;
+}
+
+.umu-checkout__section-title {
+    margin: 0 0 1rem;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+}
+
+.umu-checkout__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem 1rem;
+}
+
+.umu-checkout__field {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+}
+
+.umu-checkout__field label,
+.umu-checkout-form label {
+    margin: 0;
+    font-weight: 650;
+    font-size: 0.88rem;
+    color: var(--umu-ink);
+}
+
+.umu-checkout__field .form-control,
+.umu-checkout-form .form-control,
+.umu-checkout select,
+.umu-checkout input:not([type="radio"]):not([type="checkbox"]),
+.umu-checkout textarea {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--umu-line);
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
+    padding: 0.75rem 0.9rem;
+    font: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.umu-checkout__field .form-control:focus,
+.umu-checkout-form .form-control:focus,
+.umu-checkout select:focus,
+.umu-checkout input:focus {
+    outline: none;
+    border-color: var(--umu-moss);
+    box-shadow: 0 0 0 3px rgba(74, 107, 86, 0.15);
+}
+
+.umu-checkout__submit {
+    width: 100%;
+    min-height: 48px;
+    justify-content: center;
+    margin-top: 0.25rem;
+}
+
+.umu-checkout__summary-title {
+    margin: 0 0 1rem;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 750;
+}
+
+.umu-checkout__summary-rows {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.umu-checkout__summary-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.umu-checkout__summary-row span {
+    color: var(--umu-muted);
+    font-weight: 600;
+}
+
+.umu-checkout__summary-row strong {
+    font-weight: 750;
+}
+
+.umu-checkout__summary-total {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--umu-line);
+}
+
+.umu-checkout__summary-total span {
+    font-weight: 700;
+}
+
+.umu-checkout__summary-total strong {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    color: var(--umu-copper);
+    font-weight: 800;
+}
+
+.umu-checkout__summary-note {
+    margin: 0.85rem 0 0;
+    font-size: 0.82rem;
+    color: var(--umu-muted);
+    line-height: 1.4;
+}
+
+.visually-hidden {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (max-width: 900px) {
+    .umu-checkout {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .umu-checkout__summary {
+        position: static;
+        order: -1;
+    }
+}
+
+@media (max-width: 560px) {
+    .umu-checkout__grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem 0.65rem;
+    }
+
+    .umu-checkout__field label,
+    .umu-checkout-form label {
+        font-size: 0.8rem;
+    }
+
+    .umu-checkout__field .form-control,
+    .umu-checkout-form .form-control,
+    .umu-checkout select,
+    .umu-checkout input:not([type="radio"]):not([type="checkbox"]),
+    .umu-checkout textarea {
+        padding: 0.65rem 0.7rem;
+        border-radius: 10px;
+        font-size: 0.92rem;
+    }
+
+    .umu-checkout__form,
+    .umu-checkout__summary {
+        padding: 1.1rem;
+        border-radius: 14px;
+    }
+}
+
+.umu-checkout button[type="submit"] {
+    margin-top: 0.35rem;
+    width: 100%;
+    background: var(--umu-forest);
+    border: none;
+    color: var(--umu-on-primary);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    font-weight: 700;
+}
+
+.umu-checkout button[type="submit"]:hover {
+    background: var(--umu-btn-hover);
+    color: var(--umu-on-primary);
+}
+
+.umu-pay {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.umu-pay__legend {
+    display: block;
+    margin: 0 0 0.75rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.umu-pay__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.65rem;
+}
+
+.umu-pay__option {
+    display: block;
+    cursor: pointer;
+    margin: 0;
+    min-width: 0;
+}
+
+.umu-pay__option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.umu-pay__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.85rem 0.5rem 0.7rem;
+    border: 1px solid var(--umu-line);
+    border-radius: 14px;
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
+    text-align: center;
+    min-height: 96px;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s, transform 0.15s;
+}
+
+.umu-pay__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+}
+
+.umu-pay__icon svg {
+    display: block;
+    width: 40px;
+    height: 40px;
+}
+
+.umu-pay__logo {
+    display: block;
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.umu-pay__card--wave .umu-pay__icon {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.umu-pay__name {
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.umu-pay__option input:checked + .umu-pay__card {
+    border-color: var(--umu-forest);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--umu-forest) 22%, transparent);
+    background: color-mix(in srgb, var(--umu-forest) 8%, var(--umu-surface-strong));
+    transform: translateY(-1px);
+}
+
+.umu-pay__option input:focus-visible + .umu-pay__card {
+    outline: 2px solid var(--umu-moss);
+    outline-offset: 2px;
+}
+
+.umu-pay__stripe {
+    margin-top: 0.65rem;
+}
+
+.umu-pay__option--stripe .umu-pay__card {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    min-height: 0;
+    padding: 0.7rem 0.9rem;
+    text-align: left;
+}
+
+.umu-pay__option--stripe .umu-pay__icon svg {
+    width: 36px;
+    height: 36px;
+}
+
+@media (max-width: 420px) {
+    .umu-pay__name {
+        font-size: 0.72rem;
+    }
+
+    .umu-pay__icon svg {
+        width: 34px;
+        height: 34px;
+    }
+
+    .umu-pay__card {
+        padding: 0.7rem 0.35rem 0.55rem;
+        min-height: 88px;
+    }
+}
+
+.umu-pay-hint {
+    margin: 0.85rem 0 0;
+    padding: 1rem 1.1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(37, 211, 102, 0.28);
+    background: rgba(37, 211, 102, 0.08);
+    color: var(--umu-ink);
+}
+
+.umu-pay-hint--success {
+    border-color: rgba(42, 69, 52, 0.22);
+    background: color-mix(in srgb, var(--umu-forest) 10%, var(--umu-surface));
+}
+
+.umu-pay-hint__title {
+    margin: 0 0 0.5rem;
+    font-weight: 800;
+    font-family: var(--font-display);
+}
+
+.umu-pay-hint__phone {
+    margin: 0.35rem 0 0.65rem;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--umu-forest);
+    font-variant-numeric: tabular-nums;
+}
+
+html[data-theme="dark"] .umu-pay-hint {
+    background: rgba(37, 211, 102, 0.12);
+}
+
+.umu-pay-done {
+    text-align: center;
+    max-width: 440px;
+}
+
+.umu-pay-done__brand-logo {
+    display: block;
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 16px;
+    margin: 0 auto 0.85rem;
+    box-shadow: 0 6px 18px rgba(29, 200, 255, 0.28);
+}
+
+.umu-pay-done__lead {
+    margin: 0 0 1.15rem;
+    color: var(--umu-muted);
+    line-height: 1.5;
+}
+
+.umu-pay-done__amount {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0 0 1rem;
+    padding: 1rem 1.1rem;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--umu-forest) 8%, var(--umu-surface-strong));
+    border: 1px solid color-mix(in srgb, var(--umu-forest) 22%, var(--umu-line));
+}
+
+.umu-pay-done__amount span {
+    font-size: 0.82rem;
+    font-weight: 650;
+    color: var(--umu-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.umu-pay-done__amount strong {
+    font-family: var(--font-display);
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: var(--umu-forest);
+}
+
+.umu-pay-done__meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+    margin: 0 0 1.15rem;
+    text-align: left;
+}
+
+.umu-pay-done__meta > div {
+    padding: 0.7rem 0.8rem;
+    border-radius: 12px;
+    border: 1px solid var(--umu-line);
+    background: var(--umu-surface-strong);
+}
+
+.umu-pay-done__meta span {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 650;
+    color: var(--umu-muted);
+    margin-bottom: 0.2rem;
+}
+
+.umu-pay-done__meta strong {
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+.umu-pay-done__cta {
+    width: 100%;
+    justify-content: center;
+    min-height: 50px;
+    margin-bottom: 0.65rem;
+}
+
+.umu-pay-done__secondary {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 0.85rem;
+}
+
+.umu-pay-done__ussd {
+    margin: 0 0 0.75rem;
+    font-size: 0.88rem;
+    color: var(--umu-muted);
+    line-height: 1.45;
+}
+
+.umu-pay-done__ussd code {
+    display: inline-block;
+    margin-top: 0.25rem;
+    padding: 0.2rem 0.45rem;
+    border-radius: 6px;
+    background: var(--umu-surface-strong);
+    border: 1px solid var(--umu-line);
+    font-size: 0.85rem;
+    color: var(--umu-ink);
+}
+
+.umu-pay-done__mail {
+    text-align: left;
+    margin: 0.5rem 0 0.85rem;
+}
+
+.umu-pay-done__hint {
+    margin: 0 0 1.25rem;
+    font-size: 0.88rem;
+    color: var(--umu-muted);
+    line-height: 1.45;
+}
+
+@media (max-width: 420px) {
+    .umu-pay-done__meta {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- Pagination ---------- */
+.umu-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.35rem;
+    list-style: none;
+    padding: 2rem 0 0;
+    margin: 0;
+}
+
+.umu-pagination a,
+.umu-pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--umu-line);
+    color: var(--umu-ink);
+    background: var(--umu-surface);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.umu-pagination .active span,
+.umu-pagination a:hover {
+    background: var(--umu-forest);
+    border-color: var(--umu-forest);
+    color: var(--umu-on-primary);
+}
+
+.umu-pagination .disabled span {
+    opacity: 0.45;
+}
+
+/* ---------- Footer ---------- */
+.umu-footer {
+    position: relative;
+    z-index: 1;
+    margin-top: 2rem;
+    border-top: 1px solid var(--umu-line);
+    background: rgba(42, 69, 52, 0.06);
+}
+
+.umu-footer__inner {
+    width: min(1200px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 2.5rem 0 1.5rem;
+    display: grid;
+    grid-template-columns: minmax(280px, 1.85fr) repeat(auto-fit, minmax(140px, 1fr));
+    gap: 2rem 1.75rem;
+    align-items: start;
+}
+
+.umu-footer__brand-col {
+    min-width: 0;
+    max-width: 24rem;
+}
+
+.umu-footer__brand-link {
+    display: inline-block;
+    margin-bottom: 0.7rem;
+}
+
+.umu-footer__logo {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    background: #0d0d0d;
+}
+
+.umu-footer__brand {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    font-weight: 800;
+    margin: 0 0 0.4rem;
+    color: var(--umu-ink);
+}
+
+.umu-footer__tagline {
+    margin: 0;
+    color: var(--umu-muted);
+    max-width: 42ch;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+.umu-footer__email {
+    margin: 0.75rem 0 0;
+}
+
+.umu-footer__email a {
+    font-weight: 600;
+    color: var(--umu-forest);
+    word-break: break-word;
+}
+
+/* WhatsApp contact buttons */
+.umu-wa {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.umu-wa__label {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #128c7e;
+}
+
+.umu-wa__list {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.umu-wa__btn {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid rgba(18, 140, 126, 0.22);
+    border-radius: 12px;
+    background: rgba(37, 211, 102, 0.08);
+    color: inherit;
+    text-decoration: none;
+    transition: background 0.2s var(--ease-out), border-color 0.2s, transform 0.2s var(--ease-out);
+}
+
+.umu-wa__btn:hover {
+    background: rgba(37, 211, 102, 0.16);
+    border-color: rgba(18, 140, 126, 0.4);
+    color: inherit;
+    transform: translateY(-1px);
+}
+
+.umu-wa__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #25d366;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.umu-wa__meta {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 0;
+}
+
+.umu-wa__meta small {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--umu-muted-soft);
+}
+
+.umu-wa__meta strong {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #075e54;
+    letter-spacing: 0.01em;
+}
+
+.umu-wa--footer {
+    margin-top: 1rem;
+}
+
+.umu-wa--contact {
+    margin-top: 1.25rem;
+    padding-top: 1.15rem;
+    border-top: 1px solid var(--umu-line);
+}
+
+.umu-wa--contact .umu-wa__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 700px) {
+    .umu-wa--contact .umu-wa__list {
+        grid-template-columns: 1fr;
+    }
+}
+
+.umu-footer__col {
+    min-width: 0;
+}
+
+.umu-footer__title {
+    margin: 0 0 0.95rem;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--umu-ink);
+}
+
+.umu-footer__title--cat {
+    text-transform: none;
+    letter-spacing: -0.01em;
+    font-size: 0.95rem;
+    color: var(--umu-moss);
+}
+
+.umu-footer__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.45rem;
+}
+
+.umu-footer__links a {
+    font-weight: 600;
+    color: var(--umu-muted);
+    text-decoration: none;
+    transition: color 0.2s var(--ease-out);
+}
+
+.umu-footer__links a:hover {
+    color: var(--umu-forest);
+}
+
+.umu-footer__logout {
+    color: #8a2424 !important;
+}
+
+.umu-footer__muted {
+    color: var(--umu-muted-soft);
+    font-size: 0.9rem;
+}
+
+.umu-footer__copy {
+    grid-column: 1 / -1;
+    margin: 0.15rem 0 0;
+    padding-top: 1.15rem;
+    border-top: 1px solid var(--umu-line);
+    font-size: 0.85rem;
+    color: var(--umu-muted-soft);
+}
+
+.dash-form__checks {
+    display: grid;
+    gap: 0.85rem;
+    margin: 1rem 0 1.5rem;
+}
+
+.dash-form__checks .form-check,
+.dash-form__checks > div {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--umu-line);
+    border-radius: 12px;
+    background: var(--umu-surface);
+    color: var(--umu-ink);
+}
+
+.dash-form__checks label {
+    margin: 0;
+    font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+    .umu-footer__inner {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.75rem 1.35rem;
+        padding: 2.15rem 0 1.35rem;
+    }
+
+    .umu-footer__brand-col {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto auto;
+        column-gap: 1rem;
+        row-gap: 0.2rem;
+        align-items: center;
+        padding-bottom: 1.15rem;
+        border-bottom: 1px solid var(--umu-line);
+    }
+
+    .umu-footer__brand-link {
+        grid-row: 1 / span 3;
+        margin-bottom: 0;
+    }
+
+    .umu-footer__logo {
+        width: 64px;
+        height: 64px;
+    }
+
+    .umu-footer__tagline {
+        max-width: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .umu-footer__inner {
+        width: min(1200px, calc(100% - 1.25rem));
+        grid-template-columns: 1fr 1fr;
+        gap: 1.35rem 1rem;
+        padding: 1.75rem 0 1.25rem;
+    }
+
+    .umu-footer__brand-col {
+        grid-template-columns: 1fr;
+        justify-items: start;
+    }
+
+    .umu-footer__brand-link {
+        grid-row: auto;
+    }
+
+    .umu-footer__logo {
+        width: 56px;
+        height: 56px;
+    }
+
+    .umu-footer__brand {
+        font-size: 1.25rem;
+    }
+
+    .umu-footer__title {
+        margin-bottom: 0.7rem;
+        font-size: 0.82rem;
+    }
+
+    .umu-footer__title--cat {
+        font-size: 0.9rem;
+    }
+
+    .umu-footer__links a {
+        font-size: 0.95rem;
+    }
+
+    .umu-footer__copy {
+        font-size: 0.8rem;
+    }
+}
+
+/* ---------- Content pages (About / Contact) ---------- */
+.umu-content {
+    width: min(1100px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 3rem 0 4rem;
+}
+
+.umu-content__intro {
+    max-width: 640px;
+    margin-bottom: 2.5rem;
+}
+
+.umu-content__logo {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 14px;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    background: #0d0d0d;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.umu-content__eyebrow {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--umu-moss);
+}
+
+.umu-content__intro h1 {
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    margin-bottom: 0.85rem;
+}
+
+.umu-content__lead {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--umu-muted);
+}
+
+.umu-content__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+}
+
+.umu-content__block {
+    padding: 1.4rem;
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    background: var(--umu-surface);
+    color: var(--umu-ink);
+}
+
+.umu-content__block h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.65rem;
+}
+
+.umu-content__block p {
+    margin: 0;
+    color: var(--umu-muted);
+}
+
+.umu-content__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+}
+
+.umu-contact {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.umu-contact__info {
+    padding: 1.5rem;
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    background: var(--umu-surface);
+    color: var(--umu-ink);
+}
+
+.umu-contact__info h2 {
+    margin-bottom: 0.5rem;
+}
+
+.umu-contact__list {
+    list-style: none;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.85rem 1.25rem;
+}
+
+.umu-contact__list li {
+    display: grid;
+    gap: 0.15rem;
+}
+
+.umu-contact__list strong {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--umu-moss);
+}
+
+.umu-contact__main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: stretch;
+}
+
+.umu-contact__form {
+    padding: 1.5rem;
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    background: var(--umu-surface);
+    color: var(--umu-ink);
+}
+
+.umu-contact__map {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    overflow: hidden;
+    background: var(--umu-surface);
+    color: var(--umu-ink);
+}
+
+.umu-contact__map-frame {
+    flex: 1 1 auto;
+    min-height: 420px;
+    background: var(--umu-sand);
+}
+
+.umu-contact__map-frame iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 420px;
+    border: 0;
+}
+
+.umu-contact__map-link {
+    display: block;
+    padding: 0.85rem 1rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--umu-forest);
+    border-top: 1px solid var(--umu-line);
+    background: var(--umu-surface-strong);
+}
+
+.umu-contact__map-link:hover {
+    color: var(--umu-copper);
+}
+
+@media (max-width: 900px) {
+    .umu-contact__main {
+        grid-template-columns: 1fr;
+    }
+
+    .umu-contact__list {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .umu-contact__list {
+        grid-template-columns: 1fr;
+    }
+}
+
+.umu-form__row {
+    margin-bottom: 1rem;
+}
+
+.umu-form__row label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.umu-form .form-control,
+.umu-form textarea {
+    width: 100%;
+    border: 1px solid var(--umu-line);
+    border-radius: 10px;
+    padding: 0.7rem 0.85rem;
+    font: inherit;
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
+}
+
+.umu-form .form-control:focus,
+.umu-form textarea:focus {
+    outline: none;
+    border-color: var(--umu-moss);
+    box-shadow: 0 0 0 3px rgba(74, 107, 86, 0.15);
+}
+
+.umu-form .umu-btn {
+    margin-top: 0.35rem;
+}
+
+.umu-form .invalid-feedback,
+.umu-form ul {
+    color: #8a2424;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+}
+
+/* ---------- Dashboard ---------- */
+body.is-dashboard {
+    padding-top: 0;
+    overflow-x: hidden;
+}
+
+body.is-dashboard main.umu-main,
+body.is-dashboard .umu-main--dashboard {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+body.is-dashboard .flash-message {
+    width: calc(100% - 2rem);
+    max-width: none;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Mobile-first : pleine largeur par défaut ; sidebar fixe seulement ≥1025px */
+.dash {
+    --dash-sidebar-w: 0px;
+    width: 100%;
+    max-width: none;
+    min-height: 100vh;
+    min-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.dash--standalone {
+    min-height: 100vh;
+    min-height: 100dvh;
+    width: 100%;
+}
+
+.dash__sidebar {
+    position: relative;
+    top: auto;
+    left: auto;
+    bottom: auto;
+    width: 100%;
+    max-width: none;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
+    border-right: none;
+    border-bottom: 1px solid var(--umu-line);
+    border-radius: 0;
+    padding: 0.75rem 1rem;
+    overflow: visible;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 24px rgba(26, 33, 28, 0.06);
+    box-sizing: border-box;
+    flex: 0 0 auto;
+}
+
+.dash__topbar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0;
+    padding: 0;
+    border-bottom: none;
+    width: 100%;
+}
+
+.dash__brand-link {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: inherit;
+    text-decoration: none;
+    min-width: 0;
+}
+
+.dash__brand-link:hover {
+    color: inherit;
+}
+
+.dash__menu {
+    display: none;
+    flex-direction: column;
+    flex: none;
+    min-height: 0;
+    overflow: visible;
+    width: 100%;
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--umu-line);
+}
+
+.dash__menu.is-open {
+    display: flex;
+}
+
+.dash__brand-logo {
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    background: #0d0d0d;
+    flex-shrink: 0;
+}
+
+.dash__brand-link span {
+    display: grid;
+    gap: 0.1rem;
+}
+
+.dash__brand-link small {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--umu-moss);
+    font-weight: 700;
+}
+
+.dash__brand-link strong {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    color: var(--umu-ink);
+}
+
+.umu-auth__brand {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.umu-auth__brand img {
+    width: 88px;
+    height: 88px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    background: #0d0d0d;
+    margin: 0 auto;
+}
+
+.dash__nav {
+    display: grid;
+    gap: 0.2rem;
+    flex: 1 1 auto;
+    align-content: start;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 0.15rem;
+    padding-bottom: 0.5rem;
+}
+
+.dash__label {
+    margin: 0.85rem 0 0.25rem;
+    padding: 0 0.4rem;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: color-mix(in srgb, var(--umu-ink) 45%, transparent);
+    font-weight: 700;
+}
+
+.dash__link {
+    display: block;
+    padding: 0.55rem 0.65rem;
+    border-radius: 8px;
+    color: var(--umu-ink);
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+
+.dash__link:hover,
+.dash__link.is-active {
+    background: rgba(42, 69, 52, 0.1);
+    color: var(--umu-forest);
+}
+
+.dash__footer {
+    flex-shrink: 0;
+    margin-top: auto;
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.85rem 0.35rem 0.15rem;
+    border-top: 1px solid var(--umu-line);
+    background: transparent;
+}
+
+.dash__back,
+.dash__logout {
+    display: block;
+    padding: 0.55rem 0.65rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.dash__back {
+    color: var(--umu-moss);
+}
+
+.dash__back:hover {
+    background: rgba(42, 69, 52, 0.08);
+    color: var(--umu-forest);
+}
+
+.dash__logout {
+    color: #8a2424;
+}
+
+.dash__logout:hover {
+    background: rgba(179, 58, 58, 0.1);
+    color: #8a2424;
+}
+
+.dash__main {
+    box-sizing: border-box;
+    position: relative;
+    min-width: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 1rem 1rem 2.5rem;
+    flex: 1 1 auto;
+}
+
+.dash__top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.85rem 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.dash__top-text {
+    min-width: 0;
+    flex: 1 1 12rem;
+}
+
+.dash__title {
+    margin: 0 0 0.25rem;
+    font-size: clamp(1.45rem, 4.5vw, 2.1rem);
+    line-height: 1.15;
+    word-break: break-word;
+}
+
+.dash__subtitle {
+    margin: 0;
+    color: color-mix(in srgb, var(--umu-ink) 62%, transparent);
+    font-size: clamp(0.88rem, 2.8vw, 1rem);
+    line-height: 1.4;
+}
+
+.dash__top-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.dash-stats {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    width: 100%;
+}
+
+.dash-stat {
+    background: var(--umu-surface);
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius-sm);
+    padding: 0.95rem;
+    display: grid;
+    gap: 0.35rem;
+    color: var(--umu-ink);
+    transition: transform 0.2s var(--ease-out), border-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+
+.dash-stat:hover {
+    transform: translateY(-2px);
+    border-color: rgba(42, 69, 52, 0.28);
+    box-shadow: 0 10px 24px rgba(26, 33, 28, 0.06);
+}
+
+.dash-stat span {
+    font-size: 0.8rem;
+    color: color-mix(in srgb, var(--umu-ink) 55%, transparent);
+    font-weight: 600;
+}
+
+.dash-stat strong {
+    font-family: var(--font-display);
+    font-size: 1.55rem;
+    color: var(--umu-forest);
+}
+
+.dash-stat--warn strong { color: var(--umu-copper); }
+.dash-stat--alert strong { color: #b33a3a; }
+
+.dash-panels {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.dash-panels--split {
+    grid-template-columns: 1.2fr 0.8fr;
+}
+
+.dash-panels--split-wide {
+    grid-template-columns: 1.35fr 0.65fr;
+}
+
+.dash-panel {
+    background: var(--umu-surface);
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    padding: 1rem;
+    color: var(--umu-ink);
+}
+
+.dash-panel__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+}
+
+.dash-panel__head h2 {
+    margin: 0;
+    font-size: 1.15rem;
+}
+
+.dash-panel__head a {
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.dash-empty,
+.dash-empty-box {
+    margin: 0;
+    color: color-mix(in srgb, var(--umu-ink) 55%, transparent);
+}
+
+.dash-empty-box {
+    padding: 1.5rem;
+    border: 1px dashed var(--umu-line);
+    border-radius: var(--umu-radius);
+    background: var(--umu-surface);
+    text-align: center;
+}
+
+.dash-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.65rem;
+}
+
+.dash-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.2rem;
+    border-bottom: 1px solid var(--umu-line);
+}
+
+.dash-list li:last-child {
+    border-bottom: none;
+}
+
+.dash-list strong {
+    display: block;
+}
+
+.dash-list span {
+    font-size: 0.85rem;
+    color: color-mix(in srgb, var(--umu-ink) 55%, transparent);
+}
+
+.dash-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: rgba(26, 33, 28, 0.08);
+    color: var(--umu-ink);
+    white-space: nowrap;
+}
+
+.dash-badge--ok {
+    background: rgba(42, 69, 52, 0.12);
+    color: var(--umu-forest);
+}
+
+.dash-badge--warn {
+    background: rgba(184, 107, 58, 0.15);
+    color: var(--umu-copper-deep);
+}
+
+.dash-badge--info {
+    background: rgba(74, 107, 86, 0.14);
+    color: var(--umu-moss);
+}
+
+.dash-badge--alert {
+    background: rgba(179, 58, 58, 0.12);
+    color: #8a2424;
+}
+
+.dash-quick {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem;
+}
+
+.dash-quick__card {
+    display: grid;
+    gap: 0.3rem;
+    padding: 1rem;
+    border-radius: var(--umu-radius-sm);
+    border: 1px solid var(--umu-line);
+    background: var(--umu-surface);
+    color: var(--umu-ink);
+    transition: transform 0.2s var(--ease-out), border-color 0.2s;
+}
+
+.dash-quick__card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(42, 69, 52, 0.3);
+    color: var(--umu-ink);
+}
+
+.dash-quick__card strong {
+    font-family: var(--font-display);
+}
+
+.dash-quick__card span {
+    font-size: 0.88rem;
+    color: color-mix(in srgb, var(--umu-ink) 58%, transparent);
+}
+
+.dash-row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.4rem;
+}
+
+.dash-order {
+    background: var(--umu-surface);
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    padding: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--umu-ink);
+}
+
+.dash-order__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
+}
+
+.dash-order__head h2 {
+    margin: 0 0 0.2rem;
+    font-size: 1.25rem;
+}
+
+.dash-order__head p {
+    margin: 0;
+    color: color-mix(in srgb, var(--umu-ink) 62%, transparent);
+    font-size: 0.9rem;
+}
+
+.dash-order__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: start;
+}
+
+.dash-order__products-title {
+    margin: 1rem 0 0.55rem;
+    font-size: 1rem;
+}
+
+.dash-order__totals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin: 0.9rem 0;
+}
+
+.dash-order__totals p {
+    margin: 0;
+}
+
+.dash-order__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* Dashboard cards / forms / details */
+.dash-card {
+    background: var(--umu-surface);
+    border: 1px solid var(--umu-line);
+    border-radius: var(--umu-radius);
+    padding: 1.35rem 1.4rem;
+    color: var(--umu-ink);
+    box-shadow: 0 10px 28px rgba(26, 33, 28, 0.04);
+    margin-bottom: 1rem;
+}
+
+.dash-card--narrow {
+    max-width: 720px;
+    width: 100%;
+}
+
+.dash-card__hint {
+    margin: 0 0 1.1rem;
+    color: color-mix(in srgb, var(--umu-ink) 58%, transparent);
+    font-size: 0.92rem;
+}
+
+.dash-form .form-group,
+.dash-form .mb-3,
+.dash-form > div {
+    margin-bottom: 1rem;
+}
+
+.dash-form label,
+.dash-form .form-label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--umu-ink);
+}
+
+.dash-form .form-control,
+.dash-form .form-select,
+.dash-form select,
+.dash-form textarea,
+.dash-form input[type="text"],
+.dash-form input[type="number"],
+.dash-form input[type="email"],
+.dash-form input[type="file"] {
+    width: 100%;
+    border: 1px solid var(--umu-line);
+    border-radius: 10px;
+    padding: 0.72rem 0.9rem;
+    font: inherit;
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
+    transition: border-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+
+.dash-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.dash-form .form-control:focus,
+.dash-form .form-select:focus,
+.dash-form select:focus,
+.dash-form textarea:focus,
+.dash-form input:focus {
+    outline: none;
+    border-color: var(--umu-moss);
+    box-shadow: 0 0 0 3px rgba(74, 107, 86, 0.15);
+}
+
+.dash-form .form-text,
+.dash-form .help-text {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.82rem;
+    color: color-mix(in srgb, var(--umu-ink) 55%, transparent);
+}
+
+.dash-form .invalid-feedback,
+.dash-form ul {
+    color: #8a2424;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+    padding-left: 1rem;
+}
+
+.dash-card__section-title {
+    margin: 1.5rem 0 0.85rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--umu-line);
+    font-size: 1.05rem;
+    font-family: var(--font-display, Georgia, serif);
+    color: var(--umu-ink);
+}
+
+.dash-card__section-title:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+}
+
+.dash-collection {
+    display: grid;
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+}
+
+.dash-collection__item {
+    display: grid;
+    gap: 0.65rem;
+    padding: 0.9rem;
+    border: 1px solid var(--umu-line);
+    border-radius: 12px;
+    background: var(--umu-surface);
+    color: var(--umu-ink);
+}
+
+.dash-collection__fields {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.dash-form__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--umu-line);
+}
+
+.dash-form__actions form {
+    display: inline;
+    margin: 0;
+}
+
+.dash-detail {
+    display: grid;
+    gap: 0;
+}
+
+.dash-detail__row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 1rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--umu-line);
+    align-items: start;
+}
+
+.dash-detail__row:last-child {
+    border-bottom: none;
+}
+
+.dash-detail__label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    color: var(--umu-moss);
+    padding-top: 0.15rem;
+}
+
+.dash-detail__value {
+    font-weight: 500;
+    color: var(--umu-ink);
+    word-break: break-word;
+}
+
+.dash-detail__media {
+    width: min(220px, 100%);
+    border-radius: var(--umu-radius-sm);
+    border: 1px solid var(--umu-line);
+    overflow: hidden;
+    background: var(--umu-mist);
+}
+
+.dash-detail__media img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.dash-product-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.dash-product-cell img {
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--umu-line);
+    flex-shrink: 0;
+}
+
+.dash-flash {
+    margin-bottom: 1rem;
+}
+
+.umu-table td.text-end,
+.umu-table th.text-end {
+    text-align: right;
+}
+
+.umu-checkout__form button[type="submit"],
+.umu-checkout__form .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.5rem;
+    padding: 0.85rem 1.25rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--umu-forest);
+    color: var(--umu-on-primary);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s var(--ease-out), transform 0.15s var(--ease-out);
+}
+
+.umu-checkout__form button[type="submit"]:hover,
+.umu-checkout__form .btn:hover {
+    background: var(--umu-btn-hover);
+    color: var(--umu-on-primary);
+}
+
+@media (max-width: 1100px) {
+    .dash-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .dash-quick {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Tablette / mobile — shell + contenus dashboard */
+@media (max-width: 1024px) {
+    .dash__sidebar {
+        position: sticky;
+        top: 0;
+        z-index: 80;
+        padding: 0.7rem 0.85rem;
+        box-shadow: 0 10px 28px rgba(26, 33, 28, 0.08);
+    }
+
+    .dash__brand-logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    .dash__brand-link strong {
+        font-size: 1.05rem;
+    }
+
+    .dash__brand-link small {
+        font-size: 0.68rem;
+    }
+
+    .dash__menu {
+        max-height: min(70dvh, 520px);
+        overflow: hidden;
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+    }
+
+    .dash__menu.is-open {
+        display: flex;
+        animation: umuNavPanelIn 0.3s var(--ease-out);
+        overflow: hidden;
+    }
+
+    .dash__nav {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.3rem;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        flex: 1 1 auto;
+        width: 100%;
+        max-height: min(52dvh, 380px);
+        padding-bottom: 0.35rem;
+        padding-right: 0.15rem;
+    }
+
+    .dash__link {
+        padding: 0.8rem 0.9rem;
+        border-radius: 12px;
+        background: var(--umu-surface);
+        border: 1px solid transparent;
+        font-size: 0.95rem;
+        color: var(--umu-ink);
+    }
+
+    .dash__link:hover,
+    .dash__link.is-active {
+        background: var(--umu-surface-strong);
+        border-color: var(--umu-line);
+    }
+
+    .dash__footer {
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        display: grid;
+        gap: 0.45rem;
+        width: 100%;
+    }
+
+    .dash__main {
+        padding: 0.9rem 0.9rem 2.75rem;
+    }
+
+    .dash-stats,
+    .dash-panels,
+    .dash-quick,
+    .dash-card,
+    .dash__top,
+    .dash-flash,
+    .dash-order,
+    .umu-table-wrap {
+        width: 100%;
+        max-width: none;
+    }
+
+    .dash-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.65rem;
+    }
+
+    .dash-stat {
+        padding: 0.85rem 0.9rem;
+    }
+
+    .dash-stat strong {
+        font-size: 1.45rem;
+    }
+
+    .dash-panels,
+    .dash-panels--split,
+    .dash-panels--split-wide {
+        grid-template-columns: 1fr;
+    }
+
+    .dash__top-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .dash__top-actions .umu-btn {
+        flex: 1 1 auto;
+        justify-content: center;
+        text-align: center;
+        min-height: 42px;
+    }
+
+    .dash-order {
+        padding: 0.95rem;
+    }
+
+    .dash-order__head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dash-order__actions {
+        width: 100%;
+    }
+
+    .dash-order__actions .umu-btn,
+    .dash-order__actions form {
+        flex: 1 1 100%;
+    }
+
+    .dash-order__actions .umu-btn,
+    .dash-order__actions button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .dash-row-actions {
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .dash-row-actions .umu-btn,
+    .dash-row-actions button {
+        flex: 1 1 auto;
+        justify-content: center;
+        min-height: 40px;
+    }
+
+    .dash-form__actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dash-form__actions .umu-btn,
+    .dash-form__actions button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .dash-collection__item {
+        padding: 0.8rem;
+    }
+
+    body.is-dashboard .umu-table-wrap {
+        margin: 0 0 1rem;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+        scrollbar-width: thin;
+        box-shadow: inset -18px 0 16px -18px rgba(26, 33, 28, 0.18);
+    }
+
+    body.is-dashboard .umu-table {
+        min-width: 560px;
+    }
+
+    body.is-dashboard .umu-table th,
+    body.is-dashboard .umu-table td {
+        padding: 0.75rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    body.is-dashboard .flash-message {
+        width: calc(100% - 0.5rem);
+        margin-bottom: 0.75rem;
+    }
+}
+
+@media (max-width: 700px) {
+    .dash-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dash-quick {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .dash-detail__row {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+    }
+
+    .dash-card {
+        padding: 1rem;
+        border-radius: 14px;
+    }
+
+    .dash-card--narrow {
+        max-width: none;
+    }
+
+    .dash-product-cell {
+        align-items: flex-start;
+    }
+
+    .dash-product-cell img {
+        width: 40px;
+        height: 40px;
+    }
+
+    body.is-dashboard .umu-table {
+        min-width: 0;
+        width: 100%;
+    }
+
+    /* Tableaux → cartes empilées */
+    body.is-dashboard .umu-table-wrap {
+        border: none;
+        background: transparent;
+        overflow: visible;
+        box-shadow: none;
+    }
+
+    body.is-dashboard .umu-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    body.is-dashboard .umu-table,
+    body.is-dashboard .umu-table tbody {
+        display: block;
+        width: 100%;
+    }
+
+    body.is-dashboard .umu-table tr {
+        display: grid;
+        gap: 0.55rem;
+        margin-bottom: 0.75rem;
+        padding: 0.9rem;
+        border: 1px solid var(--umu-line);
+        border-radius: 14px;
+        background: var(--umu-surface-strong);
+        color: var(--umu-ink);
+    }
+
+    body.is-dashboard .umu-table td {
+        display: grid;
+        grid-template-columns: minmax(5.5rem, 34%) 1fr;
+        gap: 0.55rem;
+        align-items: start;
+        padding: 0;
+        border: none;
+        font-size: 0.92rem;
+        color: var(--umu-ink);
+    }
+
+    body.is-dashboard .umu-table td::before {
+        content: attr(data-label);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--umu-ink) 48%, transparent);
+        padding-top: 0.15rem;
+    }
+
+    body.is-dashboard .umu-table td:not([data-label]) {
+        grid-template-columns: 1fr;
+    }
+
+    body.is-dashboard .umu-table td .dash-row-actions {
+        margin-top: 0.15rem;
+    }
+
+    body.is-dashboard .dash-order .umu-table tr {
+        margin-bottom: 0.55rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .dash-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.55rem;
+    }
+
+    .dash-stat {
+        padding: 0.75rem;
+    }
+
+    .dash-stat span {
+        font-size: 0.74rem;
+    }
+
+    .dash-stat strong {
+        font-size: 1.3rem;
+    }
+
+    .dash-quick {
+        grid-template-columns: 1fr;
+    }
+
+    .dash__top-actions .umu-btn {
+        flex: 1 1 100%;
+    }
+
+    body.is-dashboard .umu-table td {
+        grid-template-columns: 1fr;
+        gap: 0.2rem;
+    }
+
+    body.is-dashboard .umu-table td::before {
+        padding-top: 0;
+    }
+}
+
+/* ---------- Admin compatibility ---------- */
+.login-form {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.btn-yellow {
+    background-color: var(--umu-copper);
+    color: #fff;
+    border: 1px solid var(--umu-copper-deep);
+}
+
+.btn-yellow:hover {
+    background-color: var(--umu-copper-deep);
+    color: #fff;
+}
+
+.security-form {
+    display: block;
+    width: auto;
+    height: auto;
+}
+
+.actions-cell {
+    display: flex !important;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Flash */
+.flash-message {
+    width: min(1100px, calc(100% - 2rem));
+    margin: 1rem auto 0;
+}
+
+/* ---------- Mobile helpers (default desktop) ---------- */
+.umu-nav__panel-head,
+.umu-nav__mobile-account,
+.umu-cart__mobile {
+    display: none;
+}
+
+.dash__menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    padding: 0;
+    border: 1px solid var(--umu-line);
+    border-radius: 12px;
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.dash__menu-toggle:hover,
+.dash__menu-toggle[aria-expanded="true"] {
+    border-color: var(--umu-forest);
+    background: color-mix(in srgb, var(--umu-forest) 12%, transparent);
+    color: var(--umu-forest);
+}
+
+.dash__burger {
+    width: 18px;
+    height: 14px;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.dash__burger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform 0.3s var(--ease-out), opacity 0.25s;
+}
+
+.dash__menu-toggle[aria-expanded="true"] .dash__burger span:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+}
+
+.dash__menu-toggle[aria-expanded="true"] .dash__burger span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.dash__menu-toggle[aria-expanded="true"] .dash__burger span:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+}
+
+.umu-cart__product {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.umu-qty span {
+    min-width: 2rem;
+    text-align: center;
+    line-height: 34px;
+    font-weight: 600;
+}
+
+.umu-cart__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+.umu-nav__link--danger {
+    color: #8a2424 !important;
+}
+
+.umu-nav__mobile-auth {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem;
+}
+
+.umu-nav__mobile-account-label {
+    margin: 0 0 0.45rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--umu-muted-soft);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1024px) {
+    .umu-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    :root {
+        --umu-nav-h: 64px;
+    }
+
+    .umu-nav__inner {
+        width: calc(100% - 1rem);
+        gap: 0.45rem;
+    }
+
+    .umu-brand__text small {
+        display: none;
+    }
+
+    .umu-brand__text strong {
+        font-size: 1rem;
+    }
+
+    .umu-brand__logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    .umu-nav__auth--desktop,
+    .umu-profile-menu--desktop {
+        display: none !important;
+    }
+
+    .umu-nav__toggle {
+        display: inline-flex;
+        padding: 0.45rem 0.7rem;
+    }
+
+    .umu-nav__toolbar {
+        margin-left: auto;
+        gap: 0.3rem;
+    }
+
+    .umu-theme-toggle--float {
+        top: calc(var(--umu-nav-h) + 0.5rem);
+        right: 0.85rem;
+        width: 46px;
+        height: 46px;
+    }
+
+    .umu-nav__panel-head,
+    .umu-nav__mobile-account {
+        display: block;
+    }
+
+    .umu-nav__panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.35rem;
+        padding-bottom: 0.65rem;
+        border-bottom: 1px solid var(--umu-line);
+    }
+
+    .umu-nav__panel-head p {
+        margin: 0;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--umu-muted-soft);
+    }
+
+    .umu-nav__panel-close {
+        border: 1px solid var(--umu-line);
+        background: var(--umu-surface-strong);
+        color: var(--umu-ink);
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        line-height: 1;
+    }
+
+    .umu-header.is-nav-open {
+        height: 100dvh;
+        max-height: 100vh;
+        align-items: stretch;
+        flex-direction: column;
+        background:
+            radial-gradient(circle at 100% 0%, rgba(196, 163, 90, 0.12), transparent 40%),
+            radial-gradient(circle at 0% 100%, rgba(42, 69, 52, 0.1), transparent 45%),
+            var(--umu-paper);
+        overflow: hidden;
+        animation: umuNavOverlayIn 0.35s var(--ease-out);
+    }
+
+    @keyframes umuNavOverlayIn {
+        from { opacity: 0.65; }
+        to { opacity: 1; }
+    }
+
+    .umu-header.is-nav-open .umu-nav__glass {
+        height: 100%;
+        background: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        box-shadow: none;
+    }
+
+    .umu-header.is-nav-open .umu-nav__inner {
+        width: 100%;
+        flex: 1;
+        min-height: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 0.55rem 0.75rem 0;
+    }
+
+    .umu-header.is-nav-open .umu-brand,
+    .umu-header.is-nav-open .umu-nav__toolbar {
+        flex-shrink: 0;
+    }
+
+    .umu-header.is-nav-open .umu-nav__toolbar {
+        position: absolute;
+        top: 0.55rem;
+        right: 0.75rem;
+    }
+
+    .umu-nav__panel {
+        display: none;
+        position: static;
+        width: 100%;
+        flex: 1;
+        min-height: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.85rem;
+        margin: 0.5rem 0 0;
+        padding: 0.75rem 0 max(1.25rem, env(safe-area-inset-bottom));
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        background: transparent;
+        box-shadow: none;
+        max-width: none;
+        z-index: 1;
+    }
+
+    .umu-nav__panel.is-open,
+    .umu-header.is-nav-open .umu-nav__panel {
+        display: flex;
+        animation: umuNavPanelIn 0.4s var(--ease-out);
+    }
+
+    @keyframes umuNavPanelIn {
+        from {
+            opacity: 0;
+            transform: translateY(18px);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    .umu-nav__links {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        gap: 0.35rem;
+    }
+
+    .umu-header.is-nav-open .umu-nav__links > li {
+        opacity: 0;
+        animation: umuNavItemIn 0.45s var(--ease-out) forwards;
+    }
+
+    .umu-header.is-nav-open .umu-nav__links > li:nth-child(1) { animation-delay: 0.06s; }
+    .umu-header.is-nav-open .umu-nav__links > li:nth-child(2) { animation-delay: 0.12s; }
+    .umu-header.is-nav-open .umu-nav__links > li:nth-child(3) { animation-delay: 0.18s; }
+    .umu-header.is-nav-open .umu-nav__links > li:nth-child(4) { animation-delay: 0.24s; }
+    .umu-header.is-nav-open .umu-nav__links > li:nth-child(5) { animation-delay: 0.3s; }
+
+    @keyframes umuNavItemIn {
+        from {
+            opacity: 0;
+            transform: translateX(-14px);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    .umu-nav__link,
+    .umu-nav__mega-btn {
+        width: 100%;
+        justify-content: space-between;
+        padding: 1rem 1rem;
+        font-size: 1.12rem;
+        border-radius: 14px;
+        background: var(--umu-surface);
+        border: 1px solid var(--umu-line);
+        color: var(--umu-ink);
+        box-shadow: 0 6px 18px rgba(26, 33, 28, 0.04);
+        transition: transform 0.2s var(--ease-out), background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .umu-nav__link::after {
+        display: none;
+    }
+
+    .umu-nav__link:hover,
+    .umu-nav__link.is-active,
+    .umu-nav__mega-btn.is-active,
+    .umu-nav__mega-btn:hover {
+        background: var(--umu-surface-strong);
+        border-color: var(--umu-line);
+        box-shadow: var(--umu-shadow);
+        transform: translateX(3px);
+        color: var(--umu-ink);
+    }
+
+    .umu-nav__search {
+        margin: 0;
+        flex: none;
+        width: 100%;
+        gap: 0.5rem;
+        animation: umuNavItemIn 0.45s var(--ease-out) 0.28s both;
+    }
+
+    .umu-nav__search input {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+
+    .umu-nav__mobile-account {
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(42, 69, 52, 0.12);
+        animation: umuNavItemIn 0.45s var(--ease-out) 0.32s both;
+    }
+
+    .umu-nav__mobile-account .umu-nav__link {
+        margin-bottom: 0.35rem;
+    }
+
+    .umu-mega {
+        position: static;
+        min-width: 0;
+        width: 100%;
+        margin-top: 0.45rem;
+        box-shadow: none;
+        animation: umuMegaIn 0.3s var(--ease-out);
+        background: var(--umu-surface);
+        border: 1px solid var(--umu-line);
+        border-radius: 14px;
+        padding: 0.85rem;
+        color: var(--umu-ink);
+    }
+
+    @keyframes umuMegaIn {
+        from {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    .umu-mega__inner {
+        grid-template-columns: 1fr;
+        gap: 0.85rem;
+    }
+
+    .umu-mega__col a {
+        padding: 0.6rem 0.7rem;
+        font-size: 0.95rem;
+        border-radius: 10px;
+        transition: background 0.2s, transform 0.2s;
+    }
+
+    .umu-mega__col a:hover {
+        transform: translateX(3px);
+    }
+
+    .umu-nav__backdrop {
+        display: none !important;
+    }
+
+    body.umu-nav-open {
+        overflow: hidden;
+        touch-action: none;
+    }
+
+    .umu-hero {
+        min-height: clamp(360px, 52svh, 480px);
+        max-height: 56svh;
+        align-items: flex-end;
+        justify-content: flex-end;
+    }
+
+    .umu-hero__media {
+        background:
+            radial-gradient(circle at 50% 28%, rgba(212, 175, 55, 0.22), transparent 42%),
+            linear-gradient(165deg, #121412 0%, #1a211c 48%, #0f1210 100%);
+    }
+
+    .umu-hero__media-logo {
+        width: 38%;
+        max-width: 150px;
+        height: auto;
+        aspect-ratio: 1;
+        object-fit: contain !important;
+        position: absolute;
+        left: 50%;
+        top: 26%;
+        transform: translate(-50%, -50%) !important;
+        padding: 0;
+        background: transparent;
+        opacity: 0.9;
+        filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.35));
+    }
+
+    .umu-hero__media::after {
+        background:
+            linear-gradient(180deg,
+                rgba(15, 18, 16, 0.2) 0%,
+                rgba(15, 18, 16, 0.28) 40%,
+                rgba(15, 18, 16, 0.78) 72%,
+                rgba(15, 18, 16, 0.94) 100%);
+    }
+
+    .umu-hero__content {
+        width: 100%;
+        max-width: none;
+        padding: 1.1rem 1.15rem calc(1.25rem + env(safe-area-inset-bottom));
+    }
+
+    .umu-hero__brand {
+        font-size: clamp(2rem, 9.5vw, 2.55rem);
+        line-height: 0.95;
+        margin-bottom: 0.45rem;
+        max-width: 12ch;
+    }
+
+    .umu-hero__headline {
+        font-size: 1.02rem;
+        line-height: 1.3;
+        margin-bottom: 0.4rem;
+        max-width: 22ch;
+    }
+
+    .umu-hero__text {
+        font-size: 0.9rem;
+        line-height: 1.4;
+        margin-bottom: 1rem;
+        max-width: 34ch;
+    }
+
+    .umu-hero__cta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.55rem;
+        width: 100%;
+        max-width: none;
+    }
+
+    .umu-hero__cta .umu-btn {
+        width: 100%;
+        justify-content: center;
+        min-height: 44px;
+        padding-inline: 0.75rem;
+        font-size: 0.92rem;
+    }
+
+    .umu-product,
+    .umu-checkout,
+    .umu-content__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .umu-contact__main {
+        grid-template-columns: 1fr;
+    }
+
+    .umu-checkout,
+    .umu-page-title,
+    .umu-cart,
+    .umu-content,
+    .umu-auth {
+        width: min(1100px, calc(100% - 1.25rem));
+    }
+
+    .umu-section {
+        padding-left: 0.65rem;
+        padding-right: 0.65rem;
+    }
+
+    .umu-profile,
+    .umu-profile--edit {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 1.1rem;
+    }
+
+    .umu-profile__form-wrap {
+        border-left: none;
+        border-top: 1px solid var(--umu-line);
+        padding: 1.25rem 0 0;
+        width: 100%;
+        text-align: left;
+    }
+
+    .umu-form__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .umu-cart__desktop {
+        display: none;
+    }
+
+    .umu-cart__mobile {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .umu-cart-card {
+        display: grid;
+        grid-template-columns: 88px 1fr;
+        gap: 0.85rem;
+        padding: 0.85rem;
+        border: 1px solid var(--umu-line);
+        border-radius: var(--umu-radius-sm);
+        background: var(--umu-surface);
+        color: var(--umu-ink);
+    }
+
+    .umu-cart-card__img {
+        width: 88px;
+        height: 88px;
+        object-fit: cover;
+        border-radius: 10px;
+        background: var(--umu-mist);
+    }
+
+    .umu-cart-card__body h3 {
+        margin: 0 0 0.25rem;
+        font-size: 1rem;
+    }
+
+    .umu-cart-card__price {
+        margin: 0 0 0.55rem;
+        color: var(--umu-muted);
+        font-size: 0.9rem;
+    }
+
+    .umu-cart-card__row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-bottom: 0.65rem;
+    }
+
+    .umu-cart__footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.85rem;
+    }
+
+    .umu-cart__actions {
+        flex-direction: column;
+    }
+
+    .umu-cart__actions .umu-btn {
+        width: 100%;
+        justify-content: center;
+        min-height: 46px;
+    }
+
+    .dash__label {
+        margin-top: 0.65rem;
+    }
+
+    .dash__top {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@media (min-width: 901px) {
+    .umu-nav__toggle,
+    .umu-nav__panel-head,
+    .umu-nav__mobile-account,
+    .umu-cart__mobile {
+        display: none !important;
+    }
+}
+
+@media (min-width: 1025px) {
+    .dash {
+        --dash-sidebar-w: 260px;
+        display: block;
+    }
+
+    .dash__menu-toggle {
+        display: none !important;
+    }
+
+    .dash__sidebar {
+        display: flex !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        right: auto !important;
+        width: 260px !important;
+        max-width: 260px !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        padding: 1.15rem 0.95rem;
+        border-right: 1px solid var(--umu-line);
+        border-bottom: none;
+        box-shadow: 8px 0 24px rgba(26, 33, 28, 0.04);
+        overflow: hidden;
+    }
+
+    .dash__topbar {
+        margin-bottom: 1rem;
+        padding: 0 0.15rem 0.85rem;
+        border-bottom: 1px solid var(--umu-line);
+    }
+
+    .dash__menu {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: hidden;
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+    }
+
+    .dash__main {
+        width: calc(100% - 260px) !important;
+        margin-left: 260px !important;
+        max-width: none !important;
+        padding: 1.5rem clamp(1rem, 2.5vw, 2.25rem) 3rem;
+    }
+
+    .umu-nav__panel {
+        display: flex !important;
+        position: static;
+        top: auto;
+        left: auto;
+        right: auto;
+        bottom: auto;
+        width: auto;
+        height: auto;
+        max-height: none;
+        flex: 1;
+        min-width: 0;
+        padding: 0;
+        overflow: visible;
+        background: transparent;
+        box-shadow: none;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .umu-nav__links {
+        flex: 1;
+    }
+
+    .umu-nav__search {
+        margin-left: auto;
+        margin-right: 0.5rem;
+    }
+
+    .umu-nav__toolbar {
+        margin-left: 0;
+    }
+
+    .umu-nav__backdrop {
+        display: none !important;
+    }
+
+    .umu-cart__desktop {
+        display: block;
+    }
+}
+
+@media (max-width: 720px) {
+    .umu-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.85rem;
+    }
+
+    .umu-card__body {
+        padding: 0.8rem;
+    }
+
+    .umu-nav__toggle-label {
+        display: none;
+    }
+
+    .umu-nav__toggle {
+        width: 42px;
+        height: 42px;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .umu-auth__panel {
+        padding: 1.25rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .umu-hero {
+        min-height: clamp(320px, 48svh, 420px);
+        max-height: 52svh;
+    }
+
+    .umu-hero__media-logo {
+        width: 34%;
+        max-width: 120px;
+        top: 24%;
+    }
+
+    .umu-hero__content {
+        padding: 0.95rem 1rem calc(1.1rem + env(safe-area-inset-bottom));
+    }
+
+    .umu-hero__brand {
+        font-size: clamp(1.85rem, 11vw, 2.25rem);
+    }
+
+    .umu-hero__headline {
+        font-size: 0.98rem;
+    }
+
+    .umu-hero__text {
+        font-size: 0.88rem;
+        margin-bottom: 0.85rem;
+    }
+
+    .umu-hero__cta {
+        grid-template-columns: 1fr;
+    }
+
+    .umu-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .umu-brand__text {
+        display: none;
+    }
+
+    .umu-cart-card {
+        grid-template-columns: 72px 1fr;
+    }
+
+    .umu-cart-card__img {
+        width: 72px;
+        height: 72px;
+    }
+
+    .umu-slider__btn {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .umu-card,
+    .umu-card.js-reveal:not(.is-visible) {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ---------- Dark mode surfaces ---------- */
+/* Navbar : barre entière sombre (gagne aussi sur .is-scrolled) */
+html[data-theme="dark"] .umu-header,
+html[data-theme="dark"] .umu-nav__glass,
+html[data-theme="dark"] .umu-header.is-scrolled .umu-nav__glass {
+    background: rgba(16, 21, 18, 0.96);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .umu-header.is-scrolled .umu-nav__glass {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+}
+
+html[data-theme="dark"] .umu-brand,
+html[data-theme="dark"] .umu-brand:hover,
+html[data-theme="dark"] .umu-brand__text strong,
+html[data-theme="dark"] .umu-nav__cart,
+html[data-theme="dark"] .umu-nav__fav,
+html[data-theme="dark"] .umu-nav__toggle {
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .umu-nav__cart:hover,
+html[data-theme="dark"] .umu-nav__fav:hover,
+html[data-theme="dark"] .umu-nav__fav.is-active {
+    color: var(--umu-copper);
+    background: rgba(143, 184, 154, 0.12);
+}
+
+html[data-theme="dark"] .umu-nav__burger span {
+    background: var(--umu-ink);
+}
+
+/* Desktop : panneau transparent (évite le rectangle noir au centre) */
+html[data-theme="dark"] .umu-nav__panel {
+    background: transparent;
+    border-color: transparent;
+    color: var(--umu-ink);
+    box-shadow: none;
+}
+
+html[data-theme="dark"] .umu-mega,
+html[data-theme="dark"] .umu-profile-menu__dropdown {
+    background: var(--umu-surface-strong);
+    border-color: var(--umu-line);
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .umu-card,
+html[data-theme="dark"] .umu-contact__info,
+html[data-theme="dark"] .umu-contact__form,
+html[data-theme="dark"] .umu-contact__map,
+html[data-theme="dark"] .umu-content__block,
+html[data-theme="dark"] .dash-card,
+html[data-theme="dark"] .dash-stat,
+html[data-theme="dark"] .dash-panel,
+html[data-theme="dark"] .dash-quick__card,
+html[data-theme="dark"] .umu-auth,
+html[data-theme="dark"] .umu-modal__dialog,
+html[data-theme="dark"] .umu-cart-card,
+html[data-theme="dark"] .dash__sidebar {
+    background: var(--umu-surface);
+    border-color: var(--umu-line);
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .umu-footer {
+    background: rgba(12, 16, 14, 0.72);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .umu-btn--ghost {
+    background: transparent;
+    color: var(--umu-ink);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .umu-btn--ghost:hover {
+    background: rgba(143, 184, 154, 0.12);
+}
+
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .form-select,
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select {
+    background: rgba(12, 16, 14, 0.65);
+    color: var(--umu-ink);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .form-control::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+    color: rgba(232, 237, 232, 0.4);
+}
+
+html[data-theme="dark"] .umu-table-wrap {
+    background: var(--umu-surface);
+    border-color: var(--umu-line);
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .umu-table,
+html[data-theme="dark"] .umu-table th,
+html[data-theme="dark"] .umu-table td {
+    color: var(--umu-ink);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .umu-table th {
+    background: rgba(143, 184, 154, 0.1);
+    color: rgba(232, 237, 232, 0.62);
+}
+
+html[data-theme="dark"] body.is-dashboard .umu-table-wrap {
+    background: transparent;
+}
+
+html[data-theme="dark"] body.is-dashboard .umu-table tr {
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] body.is-dashboard .umu-table td {
+    background: transparent;
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] body.is-dashboard .umu-table td::before {
+    color: rgba(232, 237, 232, 0.48);
+}
+
+html[data-theme="dark"] .dash-order,
+html[data-theme="dark"] .dash-order__head h2,
+html[data-theme="dark"] .dash-order__products-title,
+html[data-theme="dark"] .dash-order__totals,
+html[data-theme="dark"] .dash-panel__head h2,
+html[data-theme="dark"] .dash__title,
+html[data-theme="dark"] .dash__brand-link,
+html[data-theme="dark"] .dash__brand-link strong,
+html[data-theme="dark"] .dash-card__section-title,
+html[data-theme="dark"] .dash-detail__value,
+html[data-theme="dark"] .dash-list strong {
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .dash-order__head p,
+html[data-theme="dark"] .dash-detail__label,
+html[data-theme="dark"] .dash__label,
+html[data-theme="dark"] .dash-card__hint,
+html[data-theme="dark"] .dash-form .form-text,
+html[data-theme="dark"] .dash-form .help-text {
+    color: rgba(232, 237, 232, 0.58);
+}
+
+html[data-theme="dark"] .dash__footer {
+    background: transparent;
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .dash__menu-toggle {
+    background: var(--umu-surface);
+    color: var(--umu-ink);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .dash-badge {
+    background: rgba(232, 237, 232, 0.1);
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .dash-badge--ok {
+    background: rgba(143, 184, 154, 0.18);
+    color: #a8d4b4;
+}
+
+html[data-theme="dark"] .dash-badge--warn {
+    background: rgba(212, 146, 90, 0.18);
+    color: #e0a574;
+}
+
+html[data-theme="dark"] .dash-badge--info {
+    background: rgba(111, 145, 122, 0.2);
+    color: #9ec2a8;
+}
+
+html[data-theme="dark"] .dash-badge--alert {
+    background: rgba(179, 58, 58, 0.22);
+    color: #f0a0a0;
+}
+
+html[data-theme="dark"] .dash-form .form-control,
+html[data-theme="dark"] .dash-form .form-select,
+html[data-theme="dark"] .dash-form select,
+html[data-theme="dark"] .dash-form textarea,
+html[data-theme="dark"] .dash-form input[type="text"],
+html[data-theme="dark"] .dash-form input[type="number"],
+html[data-theme="dark"] .dash-form input[type="email"],
+html[data-theme="dark"] .dash-form input[type="file"],
+html[data-theme="dark"] .dash-form input[type="url"] {
+    background: rgba(12, 16, 14, 0.72);
+    color: var(--umu-ink);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .umu-nav__link,
+html[data-theme="dark"] .umu-footer__links a,
+html[data-theme="dark"] .dash__link {
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .umu-card__desc,
+html[data-theme="dark"] .umu-footer__tagline,
+html[data-theme="dark"] .umu-content__lead,
+html[data-theme="dark"] .dash__subtitle {
+    color: rgba(232, 237, 232, 0.62);
+}
+
+html[data-theme="dark"] .umu-wa__btn {
+    background: rgba(37, 211, 102, 0.12);
+    border-color: rgba(37, 211, 102, 0.28);
+}
+
+html[data-theme="dark"] .umu-wa__meta strong {
+    color: #7ddea4;
+}
+
+html[data-theme="dark"] .umu-wa__meta small {
+    color: rgba(232, 237, 232, 0.5);
+}
+
+html[data-theme="dark"] body.is-dashboard {
+    background: #121816;
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .dash-form label,
+html[data-theme="dark"] .dash-form .form-label {
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .umu-auth__panel,
+html[data-theme="dark"] .umu-checkout__form,
+html[data-theme="dark"] .umu-checkout__summary,
+html[data-theme="dark"] .umu-profile,
+html[data-theme="dark"] .umu-cart__empty,
+html[data-theme="dark"] .umu-pagination a,
+html[data-theme="dark"] .umu-pagination span,
+html[data-theme="dark"] .umu-fav,
+html[data-theme="dark"] .umu-fav:hover,
+html[data-theme="dark"] .umu-fav.is-active,
+html[data-theme="dark"] .umu-btn-google,
+html[data-theme="dark"] .umu-modal__close,
+html[data-theme="dark"] .umu-product__thumb,
+html[data-theme="dark"] .umu-slider__btn,
+html[data-theme="dark"] .dash-form__checks .form-check,
+html[data-theme="dark"] .dash-form__checks > div {
+    background: var(--umu-surface-strong);
+    border-color: var(--umu-line);
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .umu-nav__search input {
+    background: rgba(10, 14, 12, 0.75);
+    border-color: var(--umu-line);
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .umu-auth__panel input,
+html[data-theme="dark"] .umu-auth__panel .form-control,
+html[data-theme="dark"] .umu-form .form-control,
+html[data-theme="dark"] .umu-form textarea,
+html[data-theme="dark"] .umu-checkout .form-control,
+html[data-theme="dark"] .umu-checkout select,
+html[data-theme="dark"] .umu-checkout input,
+html[data-theme="dark"] .umu-checkout textarea {
+    background: rgba(12, 16, 14, 0.72);
+    color: var(--umu-ink);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .umu-header.is-nav-open {
+    background:
+        radial-gradient(circle at 100% 0%, rgba(196, 163, 90, 0.1), transparent 40%),
+        radial-gradient(circle at 0% 100%, rgba(111, 145, 122, 0.12), transparent 45%),
+        #121816;
+}
+
+html[data-theme="dark"] .umu-header.is-nav-open .umu-nav__glass {
+    background: transparent;
+}
+
+/* Liens desktop : fond transparent (pas de pastilles sombres) */
+html[data-theme="dark"] .umu-nav__link,
+html[data-theme="dark"] .umu-nav__mega-btn {
+    background: transparent;
+    color: var(--umu-ink);
+    border-color: transparent;
+}
+
+html[data-theme="dark"] .umu-nav__link:hover,
+html[data-theme="dark"] .umu-nav__link.is-active,
+html[data-theme="dark"] .umu-nav__mega-btn.is-active,
+html[data-theme="dark"] .umu-nav__mega-btn:hover {
+    background: rgba(143, 184, 154, 0.14);
+    color: var(--umu-moss);
+}
+
+/* Menu mobile ouvert : cartes de liens lisibles */
+@media (max-width: 900px) {
+    html[data-theme="dark"] .umu-header.is-nav-open .umu-nav__link,
+    html[data-theme="dark"] .umu-header.is-nav-open .umu-nav__mega-btn {
+        background: rgba(28, 36, 32, 0.92);
+        border: 1px solid var(--umu-line);
+        color: var(--umu-ink);
+    }
+
+    html[data-theme="dark"] .umu-header.is-nav-open .umu-nav__link:hover,
+    html[data-theme="dark"] .umu-header.is-nav-open .umu-nav__link.is-active,
+    html[data-theme="dark"] .umu-header.is-nav-open .umu-nav__mega-btn.is-active,
+    html[data-theme="dark"] .umu-header.is-nav-open .umu-nav__mega-btn:hover {
+        background: rgba(143, 184, 154, 0.16);
+        color: var(--umu-moss);
+    }
+
+    html[data-theme="dark"] .umu-header.is-nav-open .umu-nav__panel-head,
+    html[data-theme="dark"] .umu-header.is-nav-open .umu-nav__mobile-account {
+        background: rgba(28, 36, 32, 0.92);
+        border-color: var(--umu-line);
+        color: var(--umu-ink);
+    }
+}
+
+html[data-theme="dark"] .umu-brand__text small,
+html[data-theme="dark"] .umu-section__lead,
+html[data-theme="dark"] .umu-page-title p,
+html[data-theme="dark"] .umu-product__info p,
+html[data-theme="dark"] .umu-product__likes,
+html[data-theme="dark"] .umu-modal-product__desc h3,
+html[data-theme="dark"] .umu-modal-product__desc p,
+html[data-theme="dark"] .umu-modal-product__details dt,
+html[data-theme="dark"] .umu-footer__muted,
+html[data-theme="dark"] .umu-footer__copy,
+html[data-theme="dark"] .umu-content__block p,
+html[data-theme="dark"] .umu-mega__empty,
+html[data-theme="dark"] .umu-auth__divider,
+html[data-theme="dark"] .umu-cart-card__price {
+    color: var(--umu-muted);
+}
+
+html[data-theme="dark"] .umu-tag {
+    background: rgba(143, 184, 154, 0.16);
+    color: var(--umu-forest);
+}
+
+html[data-theme="dark"] .flash-message,
+html[data-theme="dark"] .alert {
+    color: var(--umu-ink);
+}

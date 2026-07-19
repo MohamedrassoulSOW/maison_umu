@@ -20,6 +20,8 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        {# CSS boutique hors Asset Mapper : évite les 404 /assets/styles/app-XXXX.css en prod #}
+        <link rel="stylesheet" href="{{ asset('css/umu.css') }}">
         {% set favicon_path = brand_logo_path|default('images/logo.jpeg') %}
         {% set favicon_ext = favicon_path|split('.')|last|lower %}
         {% set favicon_type = favicon_ext in ['jpg', 'jpeg'] ? 'image/jpeg' : (favicon_ext == 'png' ? 'image/png' : (favicon_ext == 'webp' ? 'image/webp' : 'image/jpeg')) %}
