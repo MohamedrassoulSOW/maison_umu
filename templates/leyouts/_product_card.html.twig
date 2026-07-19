@@ -1,29 +1,54 @@
 {% set cover = product.coverImage %}
 {% set gallery = product.images %}
-<article class="umu-card" data-umu-product-card>
+{% set firstSub = product.subcategories|first %}
+<article class="umu-card{% if product.stock <= 0 %} umu-card--oos{% endif %}" data-umu-product-card>
     <div class="umu-card__media-wrap">
-        <button type="button" class="umu-card__media umu-card__media-btn" data-umu-product-open aria-haspopup="dialog">
+        <button type="button" class="umu-card__media umu-card__media-btn" data-umu-product-open aria-haspopup="dialog" aria-label="Voir {{ product.name }}">
             {% if cover %}
                 <img src="{{ asset('uploads/images/' ~ cover) }}" alt="{{ product.name }}" loading="lazy">
             {% else %}
                 <img src="{{ asset(brand_logo_path) }}" alt="{{ product.name }}" loading="lazy" class="umu-card__media-fallback">
             {% endif %}
+            <span class="umu-card__media-shade" aria-hidden="true"></span>
+            <span class="umu-card__peek">Voir</span>
         </button>
+
+        {% if firstSub %}
+            <span class="umu-card__badge">{{ firstSub.name }}</span>
+        {% endif %}
+
+        {% if product.stock <= 0 %}
+            <span class="umu-card__badge umu-card__badge--alert">Rupture</span>
+        {% elseif product.stock <= 5 %}
+            <span class="umu-card__badge umu-card__badge--warn">Stock bas</span>
+        {% endif %}
+
         {% include 'leyouts/_favorite_button.html.twig' with { product: product, class: 'umu-fav--card' } %}
     </div>
+
     <div class="umu-card__body">
         <h3 class="umu-card__title">
             <button type="button" class="umu-card__title-btn" data-umu-product-open>{{ product.name }}</button>
         </h3>
-        <p class="umu-card__desc">{{ product.description|default('')|slice(0, 80) }}{% if product.description|default('')|length > 80 %}…{% endif %}</p>
+        {% if product.description %}
+            <p class="umu-card__desc">{{ product.description|striptags|slice(0, 72) }}{% if product.description|striptags|length > 72 %}…{% endif %}</p>
+        {% endif %}
         <div class="umu-card__meta">
-            <span class="umu-price">{{ product.price }} CFA</span>
-            <span class="umu-stock">Stock {{ product.stock }}</span>
+            <span class="umu-price">{{ product.price|number_format(0, ',', ' ') }} <small>CFA</small></span>
+            {% if product.stock > 0 %}
+                <span class="umu-stock umu-stock--ok">Dispo</span>
+            {% else %}
+                <span class="umu-stock umu-stock--alert">Épuisé</span>
+            {% endif %}
         </div>
         <div class="umu-card__actions">
-            <a href="{{ path('app_cart_new', {'id': product.id}) }}" class="umu-btn umu-btn--primary umu-btn--sm">
-                Ajouter au panier
-            </a>
+            {% if product.stock > 0 %}
+                <a href="{{ path('app_cart_new', {'id': product.id}) }}" class="umu-btn umu-btn--primary umu-btn--sm umu-card__add">
+                    Ajouter au panier
+                </a>
+            {% else %}
+                <button type="button" class="umu-btn umu-btn--ghost umu-btn--sm" disabled>Indisponible</button>
+            {% endif %}
         </div>
     </div>
 
@@ -57,7 +82,7 @@
                 <h2 class="umu-modal-product__title" id="umuProductModalTitle">{{ product.name }}</h2>
 
                 <div class="umu-modal-product__meta">
-                    <span class="umu-price">{{ product.price }} CFA</span>
+                    <span class="umu-price">{{ product.price|number_format(0, ',', ' ') }} CFA</span>
                     {% if product.stock > 0 %}
                         <span class="umu-stock umu-stock--ok">En stock : {{ product.stock }}</span>
                     {% else %}
@@ -88,7 +113,7 @@
                     </div>
                     <div>
                         <dt>Prix</dt>
-                        <dd>{{ product.price }} CFA</dd>
+                        <dd>{{ product.price|number_format(0, ',', ' ') }} CFA</dd>
                     </div>
                     <div>
                         <dt>Disponibilité</dt>

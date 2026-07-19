@@ -1104,19 +1104,24 @@ body.is-dashboard .umu-theme-toggle--float {
 /* ---------- Product grid / cards (interaction) ---------- */
 .umu-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.25rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.35rem;
 }
 
 .umu-card {
     display: flex;
     flex-direction: column;
     background: var(--umu-surface);
-    border: 1px solid var(--umu-line);
-    border-radius: var(--umu-radius);
+    border: 1px solid transparent;
+    border-radius: 18px;
     overflow: hidden;
     color: var(--umu-ink);
-    transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out), border-color 0.35s, opacity 0.35s var(--ease-out);
+    box-shadow: 0 1px 0 rgba(26, 33, 28, 0.04);
+    transition:
+        transform 0.4s var(--ease-out),
+        box-shadow 0.4s var(--ease-out),
+        border-color 0.35s,
+        opacity 0.35s var(--ease-out);
     opacity: 1;
     transform: none;
 }
@@ -1133,28 +1138,109 @@ body.is-dashboard .umu-theme-toggle--float {
 }
 
 .umu-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--umu-shadow);
-    border-color: rgba(42, 69, 52, 0.28);
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(26, 33, 28, 0.1);
+    border-color: color-mix(in srgb, var(--umu-forest) 22%, transparent);
+}
+
+.umu-card--oos {
+    opacity: 0.92;
 }
 
 .umu-card__media-wrap {
     position: relative;
+    isolation: isolate;
 }
 
 .umu-card__media {
-    aspect-ratio: 1 / 1.05;
+    position: relative;
+    aspect-ratio: 4 / 5;
     overflow: hidden;
-    background: var(--umu-sand);
+    background:
+        linear-gradient(160deg, color-mix(in srgb, var(--umu-sand) 70%, #fff), var(--umu-mist));
 }
 
 .umu-card__media-btn {
     display: block;
     width: 100%;
+    height: 100%;
     padding: 0;
     border: none;
     cursor: pointer;
     text-align: left;
+    background: transparent;
+}
+
+.umu-card__media-shade {
+    position: absolute;
+    inset: auto 0 0;
+    height: 42%;
+    background: linear-gradient(to top, rgba(16, 21, 18, 0.38), transparent);
+    opacity: 0.55;
+    pointer-events: none;
+    transition: opacity 0.35s var(--ease-out);
+}
+
+.umu-card:hover .umu-card__media-shade {
+    opacity: 0.75;
+}
+
+.umu-card__peek {
+    position: absolute;
+    left: 50%;
+    bottom: 0.85rem;
+    transform: translate(-50%, 8px);
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(250, 251, 248, 0.92);
+    color: var(--umu-forest);
+    font-size: 0.72rem;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+}
+
+.umu-card:hover .umu-card__peek {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+.umu-card__badge {
+    position: absolute;
+    top: 0.7rem;
+    left: 0.7rem;
+    z-index: 2;
+    max-width: calc(100% - 4.5rem);
+    padding: 0.28rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(250, 251, 248, 0.92);
+    color: var(--umu-forest);
+    font-size: 0.68rem;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-shadow: 0 4px 12px rgba(26, 33, 28, 0.08);
+}
+
+.umu-card__badge--warn {
+    background: rgba(184, 107, 58, 0.92);
+    color: #fff;
+}
+
+.umu-card__badge--alert {
+    background: rgba(138, 36, 36, 0.92);
+    color: #fff;
+}
+
+.umu-card__badge + .umu-card__badge--warn,
+.umu-card__badge + .umu-card__badge--alert {
+    top: 2.55rem;
 }
 
 /* ---------- Favorites (heart) ---------- */
@@ -1231,6 +1317,11 @@ body.is-dashboard .umu-theme-toggle--float {
     top: 0.65rem;
     right: 0.65rem;
     z-index: 3;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background: rgba(250, 251, 248, 0.9);
+    border-color: rgba(26, 33, 28, 0.08);
+    box-shadow: 0 6px 16px rgba(26, 33, 28, 0.1);
 }
 
 .umu-fav--action {
@@ -1269,15 +1360,16 @@ body.is-dashboard .umu-theme-toggle--float {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s var(--ease-out);
+    transition: transform 0.7s var(--ease-out);
 }
 
 .umu-card:hover .umu-card__media img {
-    transform: scale(1.04);
+    transform: scale(1.06);
 }
 
 .umu-card__title-btn {
-    display: inline;
+    display: block;
+    width: 100%;
     padding: 0;
     border: none;
     background: none;
@@ -1294,16 +1386,25 @@ body.is-dashboard .umu-theme-toggle--float {
 .umu-card__body {
     display: flex;
     flex-direction: column;
-    gap: 0.45rem;
-    padding: 1rem 1.05rem 1.15rem;
+    gap: 0.4rem;
+    padding: 1rem 1.05rem 1.1rem;
     flex: 1;
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--umu-surface) 92%, #fff), var(--umu-surface));
 }
 
 .umu-card__title {
     font-family: var(--font-display);
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
     margin: 0;
     color: var(--umu-ink);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .umu-card__title a {
@@ -1316,12 +1417,14 @@ body.is-dashboard .umu-theme-toggle--float {
 
 .umu-card__desc {
     margin: 0;
-    font-size: 0.88rem;
+    font-size: 0.84rem;
+    line-height: 1.4;
     color: var(--umu-muted);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    min-height: 2.35em;
 }
 
 .umu-card__meta {
@@ -1330,29 +1433,58 @@ body.is-dashboard .umu-theme-toggle--float {
     justify-content: space-between;
     gap: 0.5rem;
     margin-top: auto;
-    padding-top: 0.65rem;
+    padding-top: 0.7rem;
 }
 
 .umu-price {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+    color: var(--umu-copper);
+    font-variant-numeric: tabular-nums;
+}
+
+.umu-price small {
+    font-size: 0.72rem;
     font-weight: 700;
-    font-size: 1rem;
-    color: var(--umu-forest);
+    letter-spacing: 0.04em;
+    color: var(--umu-muted);
 }
 
 .umu-stock {
-    font-size: 0.78rem;
+    font-size: 0.72rem;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     color: var(--umu-muted);
-    font-weight: 600;
+    padding: 0.22rem 0.5rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--umu-ink) 6%, transparent);
+}
+
+.umu-stock--ok {
+    color: var(--umu-forest);
+    background: color-mix(in srgb, var(--umu-forest) 12%, transparent);
+}
+
+.umu-stock--alert {
+    color: #8a2424;
+    background: rgba(138, 36, 36, 0.1);
 }
 
 .umu-card__actions {
-    margin-top: 0.75rem;
+    margin-top: 0.7rem;
     display: grid;
     gap: 0.45rem;
 }
 
-.umu-card__actions .umu-btn {
+.umu-card__actions .umu-btn,
+.umu-card__add {
     width: 100%;
+    justify-content: center;
+    min-height: 40px;
+    border-radius: 12px;
 }
 
 /* ---------- Product modal ---------- */
@@ -5167,12 +5299,40 @@ body.is-dashboard .flash-message {
 
 @media (max-width: 720px) {
     .umu-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.85rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+    }
+
+    .umu-card {
+        border-radius: 14px;
     }
 
     .umu-card__body {
-        padding: 0.8rem;
+        padding: 0.75rem 0.8rem 0.9rem;
+        gap: 0.3rem;
+    }
+
+    .umu-card__title {
+        font-size: 0.95rem;
+    }
+
+    .umu-card__desc {
+        font-size: 0.78rem;
+        min-height: 0;
+        -webkit-line-clamp: 1;
+    }
+
+    .umu-price {
+        font-size: 1rem;
+    }
+
+    .umu-card__peek {
+        display: none;
+    }
+
+    .umu-card__actions .umu-btn {
+        min-height: 36px;
+        font-size: 0.82rem;
     }
 
     .umu-nav__toggle-label {
@@ -5301,6 +5461,7 @@ html[data-theme="dark"] .umu-profile-menu__dropdown {
 }
 
 html[data-theme="dark"] .umu-card,
+html[data-theme="dark"] .umu-card__body,
 html[data-theme="dark"] .umu-contact__info,
 html[data-theme="dark"] .umu-contact__form,
 html[data-theme="dark"] .umu-contact__map,
@@ -5463,6 +5624,20 @@ html[data-theme="dark"] .umu-nav__link,
 html[data-theme="dark"] .umu-footer__links a,
 html[data-theme="dark"] .dash__link {
     color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .umu-card__badge {
+    background: rgba(22, 28, 25, 0.9);
+    color: var(--umu-moss);
+}
+
+html[data-theme="dark"] .umu-card__peek {
+    background: rgba(22, 28, 25, 0.92);
+    color: var(--umu-moss);
+}
+
+html[data-theme="dark"] .umu-fav--card {
+    background: rgba(22, 28, 25, 0.9);
 }
 
 html[data-theme="dark"] .umu-card__desc,
