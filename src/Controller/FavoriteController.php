@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\ProductRepository;
 use App\Service\Favorite;
+use App\Service\ProductPersonalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +18,7 @@ final class FavoriteController extends AbstractController
     public function __construct(
         private readonly ProductRepository $productRepository,
         private readonly Favorite $favorite,
+        private readonly ProductPersonalizer $personalizer,
     ) {
     }
 
@@ -46,6 +48,9 @@ final class FavoriteController extends AbstractController
         $user = $this->getUser();
         $userEntity = $user instanceof User ? $user : null;
         $result = $this->favorite->toggle($session, $product, $userEntity);
+        if ($result['liked']) {
+            $this->personalizer->rememberProduct($session, $product, 4);
+        }
 
         if ($this->wantsJson($request)) {
             return new JsonResponse([

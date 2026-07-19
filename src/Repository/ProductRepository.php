@@ -25,6 +25,29 @@ class ProductRepository extends ServiceEntityRepository
         ->getResult();
     }
 
+    /**
+     * @param list<int> $subCategoryIds
+     * @return list<Product>
+     */
+    public function findRelatedBySubCategories(Product $product, array $subCategoryIds, int $limit = 5): array
+    {
+        if ($subCategoryIds === []) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('p')
+            ->innerJoin('p.subcategories', 's')
+            ->andWhere('s.id IN (:subIds)')
+            ->andWhere('p.id != :productId')
+            ->setParameter('subIds', $subCategoryIds)
+            ->setParameter('productId', $product->getId())
+            ->orderBy('p.likesCount', 'DESC')
+            ->addOrderBy('p.id', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Product[] Returns an array of Product objects
     //     */

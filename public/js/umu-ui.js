@@ -119,6 +119,16 @@
         });
     }
 
+    function rememberPreference(card) {
+        var url = card ? card.getAttribute('data-preference-url') : null;
+        if (!url || !window.fetch) return;
+        fetch(url, {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+            credentials: 'same-origin'
+        }).catch(function () {});
+    }
+
     function openProductModal(card) {
         var modal = getProductModal();
         var body = modal ? modal.querySelector('[data-umu-product-modal-body]') : null;
@@ -129,6 +139,7 @@
         modal.hidden = false;
         document.body.classList.add('umu-modal-open');
         initProductGallery(body);
+        rememberPreference(card);
         var closeBtn = modal.querySelector('.umu-modal__close');
         if (closeBtn && closeBtn.focus) {
             try { closeBtn.focus({ preventScroll: true }); } catch (e) { closeBtn.focus(); }

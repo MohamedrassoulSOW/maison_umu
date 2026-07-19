@@ -16,6 +16,34 @@ class OrderRepository extends ServiceEntityRepository
         parent::__construct($registry, Order::class);
     }
 
+    /**
+     * Sous-catégories des produits récemment commandés par e-mail.
+     *
+     * @return array<int, int> subcategoryId => occurrence count
+     */
+    public function findRecentSubCategoryIdsByEmail(string $email, int $orderLimit = 8): array
+    {
+        $rows = $this->createQueryBuilder('o')
+            ->select('s.id AS subId, COUNT(s.id) AS cnt')
+            ->innerJoin('o.orderProducts', 'op')
+            ->innerJoin('op.product', 'p')
+            ->innerJoin('p.subcategories', 's')
+            ->andWhere('LOWER(o.email) = LOWER(:email)')
+            ->setParameter('email', $email)
+            ->groupBy('s.id')
+            ->orderBy('cnt', 'DESC')
+            ->setMaxResults($orderLimit * 4)
+            ->getQuery()
+            ->getScalarResult();
+
+        $weights = [];
+        foreach ($rows as $row) {
+            $weights[(int) $row['subId']] = (int) $row['cnt'];
+        }
+
+        return $weights;
+    }
+
     //    /**
     //     * @return Order[] Returns an array of Order objects
     //     */

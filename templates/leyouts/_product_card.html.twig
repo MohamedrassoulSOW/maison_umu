@@ -1,7 +1,10 @@
 {% set cover = product.coverImage %}
 {% set gallery = product.images %}
 {% set firstSub = product.subcategories|first %}
-<article class="umu-card{% if product.stock <= 0 %} umu-card--oos{% endif %}" data-umu-product-card>
+<article class="umu-card{% if product.stock <= 0 %} umu-card--oos{% endif %}"
+         data-umu-product-card
+         data-product-id="{{ product.id }}"
+         data-preference-url="{{ path('app_preference_view', { id: product.id }) }}">
     <div class="umu-card__media-wrap">
         <button type="button" class="umu-card__media umu-card__media-btn" data-umu-product-open aria-haspopup="dialog" aria-label="Voir {{ product.name }}">
             {% if cover %}

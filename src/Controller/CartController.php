@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\ProductRepository;
 use App\Service\Cart;
+use App\Service\ProductPersonalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -11,8 +12,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class CartController extends AbstractController
 {
-    public function __construct(private readonly ProductRepository $productRepository)
-    {
+    public function __construct(
+        private readonly ProductRepository $productRepository,
+        private readonly ProductPersonalizer $personalizer,
+    ) {
     }
 
     #[Route('/cart', name: 'app_cart', methods: ['GET'])]
@@ -51,6 +54,7 @@ final class CartController extends AbstractController
 
         $cart[$id] = $currentQty + 1;
         $session->set('cart', $cart);
+        $this->personalizer->rememberProduct($session, $product, 3);
 
         return $this->redirectToRoute('app_cart');
     }

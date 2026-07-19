@@ -29,8 +29,13 @@
 <section class="umu-section" id="collection">
     <div class="umu-section__head">
         <div>
-            <h2 class="umu-section__title">La collection</h2>
-            <p class="umu-section__lead">Des pièces sélectionnées pour leur qualité et leur présence.</p>
+            {% if personalized %}
+                <h2 class="umu-section__title">Pour vous</h2>
+                <p class="umu-section__lead">Sélection arrangée selon vos goûts — favoris, panier et styles explorés.</p>
+            {% else %}
+                <h2 class="umu-section__title">La collection</h2>
+                <p class="umu-section__lead">Des pièces sélectionnées pour leur qualité et leur présence.</p>
+            {% endif %}
         </div>
     </div>
 
