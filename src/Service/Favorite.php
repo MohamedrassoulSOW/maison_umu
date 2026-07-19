@@ -113,4 +113,49 @@ class Favorite
 
         return $products;
     }
+
+    /** Transfère les favoris `sess:…` vers `user:{id}` après connexion. */
+    public function mergeGuestIntoUser(SessionInterface $session, User $user): void
+    {
+        if (!$user->getId()) {
+            return;
+        }
+
+        if (!$session->isStarted()) {
+            $session->start();
+        }
+
+        $guestKey = 'sess:'.$session->getId();
+        $userKey = 'user:'.$user->getId();
+        if ($guestKey === $userKey) {
+            return;
+        }
+
+        $guestLikes = $this->likeRepository->findByVisitorKey($guestKey);
+        if ($guestLikes === []) {
+            $this->getIds($session, $user);
+
+            return;
+        }
+
+        foreach ($guestLikes as $like) {
+            $product = $like->getProduct();
+            if (!$product) {
+                $this->em->remove($like);
+                continue;
+            }
+
+            $existing = $this->likeRepository->findOneByProductAndVisitor($product, $userKey);
+            if ($existing) {
+                $this->em->remove($like);
+                continue;
+            }
+
+            $like->setVisitorKey($userKey);
+            $like->setUser($user);
+        }
+
+        $this->em->flush();
+        $this->getIds($session, $user);
+    }
 }

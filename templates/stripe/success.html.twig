@@ -10,9 +10,15 @@
         </div>
         <h1>Paiement réussi</h1>
         <div class="umu-alert umu-alert--success">
-            Merci pour votre commande. Un e-mail de confirmation vous sera envoyé.
+            Merci{% if order %} pour votre commande n° {{ '%05d'|format(order.id) }}{% endif %}.
+            Un e-mail de confirmation avec la facture vous a été envoyé.
         </div>
-        <a class="umu-btn umu-btn--primary" href="{{ path('app_home_page') }}">Retour à la boutique</a>
+        {% if trackingUrl %}
+            <a class="umu-btn umu-btn--primary" href="{{ trackingUrl }}">Suivre ma commande</a>
+            <a class="umu-btn umu-btn--ghost" href="{{ path('app_home_page') }}" style="margin-top:0.65rem;">Retour à la boutique</a>
+        {% else %}
+            <a class="umu-btn umu-btn--primary" href="{{ path('app_home_page') }}">Retour à la boutique</a>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

@@ -11,6 +11,7 @@ use App\Repository\ProductRepository;
 use App\Service\Cart;
 use App\Service\MobileMoneyConfig;
 use App\Service\OrderMailer;
+use App\Service\OrderStock;
 use App\Service\StripePayment;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -28,6 +29,7 @@ final class OrderController extends AbstractController
         private OrderMailer $orderMailer,
         private StripePayment $stripePayment,
         private MobileMoneyConfig $mobileMoney,
+        private OrderStock $orderStock,
     ) {
     }
 
@@ -89,12 +91,13 @@ final class OrderController extends AbstractController
                 $orderProduct->setProduct($product);
                 $orderProduct->setQte($qty);
                 $entityManager->persist($orderProduct);
-
-                $product->setStock((int) $product->getStock() - $qty);
             }
             $entityManager->flush();
 
             if ($order->isManualPayment()) {
+                // Wave / OM / COD : réserve le stock dès la commande
+                $this->orderStock->reserve($order);
+
                 $session->set('cart', []);
                 $session->set('last_order_id', $order->getId());
 
@@ -102,14 +105,16 @@ final class OrderController extends AbstractController
                 // Le client paie ensuite ; le dashboard confirme la réception du transfert.
                 try {
                     $this->orderMailer->sendOrderConfirmation($order);
+                    $this->addFlash('success', 'Votre commande a été passée avec succès ! Consultez votre e-mail.');
                 } catch (\Throwable) {
-                    // Order is saved even if mail fails
+                    $this->addFlash('success', 'Votre commande a été enregistrée.');
+                    $this->addFlash('danger', 'L’e-mail n’a pas pu être envoyé. Conservez le numéro de commande et contactez-nous si besoin.');
                 }
-                $this->addFlash('success', 'Votre commande a été passée avec succès ! Consultez votre e-mail.');
 
                 return $this->redirectToRoute('app_order-ok-message');
             }
 
+            // Stripe : stock réservé seulement après paiement confirmé
             $session->set('pending_stripe_order_id', $order->getId());
             $this->stripePayment->startPayment($data, $order->getCity()->getShippingConst(), $order->getId());
 
@@ -130,6 +135,11 @@ final class OrderController extends AbstractController
         $data = match ($type) {
             'is-Complted' => $orderRepository->findBy(['isComplted' => 1], ['id' => 'DESC']),
             'not-Complted' => $orderRepository->findBy(['isComplted' => null, 'payOnDelivery' => 1, 'isPaymentCompleted' => 0], ['id' => 'DESC']),
+            'stripe-pending' => $orderRepository->findBy([
+                'paymentMethod' => 'stripe',
+                'isPaymentCompleted' => 0,
+                'isComplted' => null,
+            ], ['id' => 'DESC']),
             'pay-on-line-not-delivered' => $orderRepository->findBy(['isComplted' => null, 'payOnDelivery' => 0, 'isPaymentCompleted' => 1], ['id' => 'DESC']),
             'pay-on-line-is-delivered' => $orderRepository->findBy(['isComplted' => 1, 'payOnDelivery' => 0, 'isPaymentCompleted' => 1], ['id' => 'DESC']),
             default => $orderRepository->findBy([], ['id' => 'DESC']),
@@ -229,6 +239,9 @@ final class OrderController extends AbstractController
 
         $order = $orderRepository->find($id);
         if ($order) {
+            if ($this->orderStock->wasReserved($order)) {
+                $this->orderStock->restore($order);
+            }
             $entityManager->remove($order);
             $entityManager->flush();
             $this->addFlash('success', 'La commande a été supprimée avec succès.');

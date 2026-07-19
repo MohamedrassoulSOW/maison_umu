@@ -54,14 +54,20 @@ final class DashboardController extends AbstractController
             'payOnDelivery' => 0,
             'isPaymentCompleted' => 1,
         ]);
+        $stripePendingCount = $orderRepository->count([
+            'paymentMethod' => 'stripe',
+            'isPaymentCompleted' => 0,
+            'isComplted' => null,
+        ]);
 
         return $this->render('dashboard/index.html.twig', [
             'stats' => [
                 'products' => $productRepository->count([]),
                 'orders' => $orderRepository->count([]),
-                'pending' => $pendingCodCount + $pendingPaidCount,
+                'pending' => $pendingCodCount + $pendingPaidCount + $stripePendingCount,
                 'pendingCod' => $pendingCodCount,
                 'pendingPaid' => $pendingPaidCount,
+                'stripePending' => $stripePendingCount,
                 'users' => $userRepository->count([]),
                 'categories' => $categoryRepository->count([]),
                 'cities' => $cityRepository->count([]),

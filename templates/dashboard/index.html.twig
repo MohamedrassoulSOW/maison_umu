@@ -119,6 +119,10 @@
         <strong>COD à traiter</strong>
         <span>{{ stats.pendingCod }} commande(s)</span>
     </a>
+    <a class="dash-quick__card" href="{{ path('app_order_show', {type: 'stripe-pending'}) }}">
+        <strong>Stripe en attente</strong>
+        <span>{{ stats.stripePending|default(0) }} non payée(s)</span>
+    </a>
     <a class="dash-quick__card" href="{{ path('app_order_show', {type: 'pay-on-line-not-delivered'}) }}">
         <strong>Payées en ligne</strong>
         <span>{{ stats.pendingPaid }} à livrer</span>

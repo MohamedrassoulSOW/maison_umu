@@ -139,6 +139,7 @@
 
                 <p class="dash__label">Commandes</p>
                 <a class="dash__link {% if currentRoute == 'app_order_show' and app.request.attributes.get('type') == 'not-Complted' %}is-active{% endif %}" href="{{ path('app_order_show', {type: 'not-Complted'}) }}">À traiter</a>
+                <a class="dash__link {% if currentRoute == 'app_order_show' and app.request.attributes.get('type') == 'stripe-pending' %}is-active{% endif %}" href="{{ path('app_order_show', {type: 'stripe-pending'}) }}">Stripe en attente</a>
                 <a class="dash__link {% if currentRoute == 'app_order_show' and app.request.attributes.get('type') == 'pay-on-line-not-delivered' %}is-active{% endif %}" href="{{ path('app_order_show', {type: 'pay-on-line-not-delivered'}) }}">Payées non livrées</a>
                 <a class="dash__link {% if currentRoute == 'app_order_show' and app.request.attributes.get('type') == 'is-Complted' %}is-active{% endif %}" href="{{ path('app_order_show', {type: 'is-Complted'}) }}">Livrées</a>
 

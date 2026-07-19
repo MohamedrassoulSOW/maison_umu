@@ -3,7 +3,8 @@
 namespace App\Controller;
 
 use App\Repository\OrderRepository;
-use App\Service\OrderMailer;
+use App\Service\OrderPaymentCompleter;
+use App\Service\OrderStock;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Stripe\Checkout\Session as StripeSession;
@@ -17,7 +18,8 @@ use Symfony\Component\Routing\Attribute\Route;
 final class StripeController extends AbstractController
 {
     public function __construct(
-        private OrderMailer $orderMailer,
+        private OrderPaymentCompleter $paymentCompleter,
+        private OrderStock $orderStock,
         private string $stripeSecretKey,
         private string $stripeWebhookSecret,
         private LoggerInterface $logger,
@@ -33,6 +35,8 @@ final class StripeController extends AbstractController
         EntityManagerInterface $entityManager,
     ): Response {
         $checkoutSessionId = (string) $request->query->get('session_id', '');
+        $order = null;
+        $trackingUrl = null;
 
         if ($checkoutSessionId !== '') {
             try {
@@ -48,18 +52,27 @@ final class StripeController extends AbstractController
                         $orderId = $paymentIntent->metadata->orderId ?? null;
                     }
 
-                    $order = $orderId ? $orderRepository->find($orderId) : null;
-                    if ($order && !$order->isPaymentCompleted()) {
-                        $order->setIsPaymentCompleted(true);
-                        $order->setPaymentMethod('stripe');
-                        $order->setPayOnDelivery(false);
-                        $entityManager->flush();
+                    $paidAmount = null;
+                    if (is_object($paymentIntent) && isset($paymentIntent->amount_received)) {
+                        $paidAmount = (int) $paymentIntent->amount_received;
+                    } elseif (is_object($paymentIntent) && isset($paymentIntent->amount)) {
+                        $paidAmount = (int) $paymentIntent->amount;
+                    } elseif (isset($checkoutSession->amount_total)) {
+                        $paidAmount = (int) $checkoutSession->amount_total;
+                    }
 
-                        try {
-                            $this->orderMailer->sendPaymentConfirmed($order);
-                        } catch (\Throwable) {
-                            // Payment saved even if mail fails
+                    if ($orderId && $paidAmount !== null) {
+                        $this->paymentCompleter->completeStripePayment((int) $orderId, $paidAmount);
+                    }
+
+                    $order = $orderId ? $orderRepository->find($orderId) : null;
+                    if ($order) {
+                        $hadToken = (bool) $order->getTrackingToken();
+                        $token = $order->ensureTrackingToken();
+                        if (!$hadToken) {
+                            $entityManager->flush();
                         }
+                        $trackingUrl = $this->generateUrl('app_order_track', ['token' => $token]);
                     }
 
                     $session->set('cart', []);
@@ -70,20 +83,39 @@ final class StripeController extends AbstractController
             }
         }
 
-        return $this->render('stripe/success.html.twig');
+        return $this->render('stripe/success.html.twig', [
+            'order' => $order,
+            'trackingUrl' => $trackingUrl,
+        ]);
     }
 
     #[Route('/pay/cancel', name: 'app_stripe_cancel')]
-    public function cancel(): Response
-    {
+    public function cancel(
+        SessionInterface $session,
+        OrderRepository $orderRepository,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $orderId = $session->get('pending_stripe_order_id');
+        if ($orderId) {
+            $order = $orderRepository->find($orderId);
+            // Annulation Checkout : commande Stripe non payée → supprimer (stock jamais réservé)
+            if ($order
+                && $order->getPaymentMethod() === 'stripe'
+                && !$order->isPaymentCompleted()
+                && !$this->orderStock->wasReserved($order)
+            ) {
+                $entityManager->remove($order);
+                $entityManager->flush();
+            }
+            $session->remove('pending_stripe_order_id');
+        }
+
         return $this->render('stripe/cancel.html.twig');
     }
 
     #[Route('/stripe/notify', name: 'app_stripe_notify', methods: ['POST'])]
     public function stripeNotify(
         Request $request,
-        OrderRepository $orderRepository,
-        EntityManagerInterface $entityManager,
     ): Response {
         $payload = $request->getContent();
         $sigHeader = $request->headers->get('stripe-signature');
@@ -103,30 +135,11 @@ final class StripeController extends AbstractController
         if ($event->type === 'payment_intent.succeeded') {
             $paymentIntent = $event->data->object;
             $orderId = $paymentIntent->metadata->orderId ?? null;
-            $order = $orderId ? $orderRepository->find($orderId) : null;
-
-            if ($order && !$order->isPaymentCompleted()) {
-                $cartPrice = (int) round((float) $order->getTotalPrice());
-                $stripeTotalAmount = (int) $paymentIntent->amount;
-
-                if ($cartPrice === $stripeTotalAmount) {
-                    $order->setIsPaymentCompleted(true);
-                    $order->setPaymentMethod('stripe');
-                    $order->setPayOnDelivery(false);
-                    $entityManager->flush();
-
-                    try {
-                        $this->orderMailer->sendPaymentConfirmed($order);
-                    } catch (\Throwable) {
-                        // Payment saved even if mail fails
-                    }
-                } else {
-                    $this->logger->warning('Stripe amount mismatch', [
-                        'orderId' => $order->getId(),
-                        'orderTotal' => $cartPrice,
-                        'stripeAmount' => $stripeTotalAmount,
-                    ]);
-                }
+            if ($orderId) {
+                $this->paymentCompleter->completeStripePayment(
+                    (int) $orderId,
+                    (int) $paymentIntent->amount
+                );
             }
         }
 

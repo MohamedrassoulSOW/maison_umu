@@ -123,10 +123,18 @@ class OrderMailer
         }
 
         $trackingUrl = $this->trackingUrl($order);
+        $paymentLinks = null;
+        if ($order->isMobileMoney() && !$order->isPaymentCompleted()) {
+            $paymentLinks = $this->mobileMoney->paymentLinksFor(
+                $order->getPaymentMethod(),
+                (float) $order->getTotalPrice()
+            );
+        }
 
         $html = $this->twig->render($template, [
             'order' => $order,
             'mobileMoneyPhone' => $this->mobileMoney->getDisplayPhone(),
+            'paymentLinks' => $paymentLinks,
             'trackingUrl' => $trackingUrl,
         ]);
 

@@ -49,4 +49,16 @@ class ProductLikeRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    /**
+     * @return list<ProductLike>
+     */
+    public function findByVisitorKey(string $visitorKey): array
+    {
+        return $this->createQueryBuilder('l')
+            ->andWhere('l.visitorKey = :key')
+            ->setParameter('key', $visitorKey)
+            ->getQuery()
+            ->getResult();
+    }
 }

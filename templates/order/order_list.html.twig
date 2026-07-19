@@ -7,6 +7,7 @@
 {% block dash_actions %}
     {% set type = app.request.attributes.get('type') %}
     <a class="umu-btn umu-btn--sm {% if type == 'not-Complted' %}umu-btn--primary{% else %}umu-btn--ghost{% endif %}" href="{{ path('app_order_show', {type: 'not-Complted'}) }}">À traiter</a>
+    <a class="umu-btn umu-btn--sm {% if type == 'stripe-pending' %}umu-btn--primary{% else %}umu-btn--ghost{% endif %}" href="{{ path('app_order_show', {type: 'stripe-pending'}) }}">Stripe en attente</a>
     <a class="umu-btn umu-btn--sm {% if type == 'pay-on-line-not-delivered' %}umu-btn--primary{% else %}umu-btn--ghost{% endif %}" href="{{ path('app_order_show', {type: 'pay-on-line-not-delivered'}) }}">Payées</a>
     <a class="umu-btn umu-btn--sm {% if type == 'is-Complted' %}umu-btn--primary{% else %}umu-btn--ghost{% endif %}" href="{{ path('app_order_show', {type: 'is-Complted'}) }}">Livrées</a>
 {% endblock %}
@@ -34,6 +35,8 @@
                         <span class="dash-badge dash-badge--warn">Wave — en attente</span>
                     {% elseif order.paymentMethod == 'orange_money' %}
                         <span class="dash-badge dash-badge--warn">Orange Money — en attente</span>
+                    {% elseif order.paymentMethod == 'stripe' and not order.isPaymentCompleted %}
+                        <span class="dash-badge dash-badge--warn">Stripe — non payée</span>
                     {% elseif order.payOnDelivery %}
                         <span class="dash-badge">Paiement à la livraison</span>
                     {% else %}

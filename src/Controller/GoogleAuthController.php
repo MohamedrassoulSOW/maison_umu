@@ -82,6 +82,13 @@ class GoogleAuthController extends AbstractController
 
         $googleId = (string) $googleUser['sub'];
         $email = strtolower(trim((string) $googleUser['email']));
+        $emailVerified = filter_var($googleUser['email_verified'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+        if ($email === '' || !$emailVerified) {
+            $this->addFlash('danger', 'Votre e-mail Google doit être vérifié pour vous connecter.');
+
+            return $this->redirectToRoute('app_login');
+        }
 
         $user = $userRepository->findOneBy(['googleId' => $googleId])
             ?? $userRepository->findOneBy(['email' => $email]);

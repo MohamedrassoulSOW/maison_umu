@@ -10,9 +10,10 @@
         </div>
         <h1>Paiement annulé</h1>
         <div class="umu-alert umu-alert--danger">
-            Le paiement n’a pas abouti. Vous pouvez réessayer depuis votre panier.
+            Le paiement n’a pas abouti. Votre panier est intact — vous pouvez réessayer.
         </div>
         <a class="umu-btn umu-btn--primary" href="{{ path('app_cart') }}">Retour au panier</a>
+        <a class="umu-btn umu-btn--ghost" href="{{ path('app_order') }}" style="margin-top:0.65rem;">Choisir un autre paiement</a>
     </div>
 </div>
 {% endblock %}
