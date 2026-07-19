@@ -18,35 +18,56 @@
             <p>Service client disponible pour vos demandes boutique et suivi de commande.</p>
             <ul class="umu-contact__list">
                 <li><strong>Email</strong><span><a href="mailto:{{ contact_email }}">{{ contact_email }}</a></span></li>
+                <li><strong>Adresse</strong><span>Dakar, Sénégal</span></li>
                 <li><strong>Horaires</strong><span>Lun — Sam, 9h — 18h</span></li>
                 <li><strong>Réponse</strong><span>Sous 24 à 48 heures</span></li>
             </ul>
         </div>
 
-        <div class="umu-contact__form">
-            {{ form_start(contactForm, { attr: { class: 'umu-form', 'data-turbo': 'false' } }) }}
-                <div class="umu-form__row">
-                    {{ form_label(contactForm.name) }}
-                    {{ form_widget(contactForm.name, { attr: { class: 'form-control', placeholder: 'Votre nom' } }) }}
-                    {{ form_errors(contactForm.name) }}
+        <div class="umu-contact__main">
+            <div class="umu-contact__form">
+                {{ form_start(contactForm, { attr: { class: 'umu-form', 'data-turbo': 'false' } }) }}
+                    <div class="umu-form__row">
+                        {{ form_label(contactForm.name) }}
+                        {{ form_widget(contactForm.name, { attr: { class: 'form-control', placeholder: 'Votre nom' } }) }}
+                        {{ form_errors(contactForm.name) }}
+                    </div>
+                    <div class="umu-form__row">
+                        {{ form_label(contactForm.email) }}
+                        {{ form_widget(contactForm.email, { attr: { class: 'form-control', placeholder: 'vous@email.com' } }) }}
+                        {{ form_errors(contactForm.email) }}
+                    </div>
+                    <div class="umu-form__row">
+                        {{ form_label(contactForm.subject) }}
+                        {{ form_widget(contactForm.subject, { attr: { class: 'form-control', placeholder: 'Sujet de votre message' } }) }}
+                        {{ form_errors(contactForm.subject) }}
+                    </div>
+                    <div class="umu-form__row">
+                        {{ form_label(contactForm.message) }}
+                        {{ form_widget(contactForm.message, { attr: { class: 'form-control', placeholder: 'Votre message…', rows: 6 } }) }}
+                        {{ form_errors(contactForm.message) }}
+                    </div>
+                    <button type="submit" class="umu-btn umu-btn--primary">Envoyer le message</button>
+                {{ form_end(contactForm) }}
+            </div>
+
+            <div class="umu-contact__map">
+                <div class="umu-contact__map-frame">
+                    <iframe
+                        title="Localisation Maison UMU — Dakar"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                        src="https://www.openstreetmap.org/export/embed.html?bbox=-17.4805%2C14.6680%2C-17.4205%2C14.7160&amp;layer=mapnik&amp;marker=14.6928%2C-17.4467"
+                        allowfullscreen>
+                    </iframe>
                 </div>
-                <div class="umu-form__row">
-                    {{ form_label(contactForm.email) }}
-                    {{ form_widget(contactForm.email, { attr: { class: 'form-control', placeholder: 'vous@email.com' } }) }}
-                    {{ form_errors(contactForm.email) }}
-                </div>
-                <div class="umu-form__row">
-                    {{ form_label(contactForm.subject) }}
-                    {{ form_widget(contactForm.subject, { attr: { class: 'form-control', placeholder: 'Sujet de votre message' } }) }}
-                    {{ form_errors(contactForm.subject) }}
-                </div>
-                <div class="umu-form__row">
-                    {{ form_label(contactForm.message) }}
-                    {{ form_widget(contactForm.message, { attr: { class: 'form-control', placeholder: 'Votre message…' } }) }}
-                    {{ form_errors(contactForm.message) }}
-                </div>
-                <button type="submit" class="umu-btn umu-btn--primary">Envoyer le message</button>
-            {{ form_end(contactForm) }}
+                <a class="umu-contact__map-link"
+                   href="https://www.openstreetmap.org/?mlat=14.6928&amp;mlon=-17.4467#map=14/14.6928/-17.4467"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Ouvrir la carte
+                </a>
+            </div>
         </div>
     </div>
 </section>

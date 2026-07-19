@@ -27,7 +27,7 @@
         </main>
 
         {% block footer %}
-            {% include 'leyouts/footer.html.twig' %}
+            {{ render(path('app_footer')) }}
         {% endblock %}
 
         {% include 'leyouts/_product_modal_shell.html.twig' %}

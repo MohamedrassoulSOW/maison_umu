@@ -18,4 +18,12 @@ class MenuController extends AbstractController
             'categories' => $categories
         ]);
     }
+
+    #[Route('/footer', name: 'app_footer')]
+    public function footer(CategoryRepository $categoryRepository): Response
+    {
+        return $this->render('leyouts/footer.html.twig', [
+            'categories' => $categoryRepository->findAll(),
+        ]);
+    }
 }
