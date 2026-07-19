@@ -17,12 +17,6 @@
             <span class="umu-card__badge">{{ firstSub.name }}</span>
         {% endif %}
 
-        {% if product.stock <= 0 %}
-            <span class="umu-card__badge umu-card__badge--alert">Rupture</span>
-        {% elseif product.stock <= 5 %}
-            <span class="umu-card__badge umu-card__badge--warn">Stock bas</span>
-        {% endif %}
-
         {% include 'leyouts/_favorite_button.html.twig' with { product: product, class: 'umu-fav--card' } %}
     </div>
 

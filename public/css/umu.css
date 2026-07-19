@@ -1228,21 +1228,6 @@ body.is-dashboard .umu-theme-toggle--float {
     box-shadow: 0 4px 12px rgba(26, 33, 28, 0.08);
 }
 
-.umu-card__badge--warn {
-    background: rgba(184, 107, 58, 0.92);
-    color: #fff;
-}
-
-.umu-card__badge--alert {
-    background: rgba(138, 36, 36, 0.92);
-    color: #fff;
-}
-
-.umu-card__badge + .umu-card__badge--warn,
-.umu-card__badge + .umu-card__badge--alert {
-    top: 2.55rem;
-}
-
 /* ---------- Favorites (heart) ---------- */
 .umu-fav {
     display: inline-flex;
