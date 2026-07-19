@@ -87,7 +87,6 @@
     }
 
     var FAV_WELCOME_KEY = 'umu-fav-welcome-seen';
-    var favWelcomeHideTimer = null;
 
     function getProductModal() {
         return document.querySelector('[data-umu-product-modal]');
@@ -99,10 +98,6 @@
 
     function dismissFavWelcome() {
         var modal = getFavWelcome();
-        if (favWelcomeHideTimer) {
-            window.clearTimeout(favWelcomeHideTimer);
-            favWelcomeHideTimer = null;
-        }
         if (!modal || modal.hidden) return;
         modal.hidden = true;
         document.body.classList.remove('umu-modal-open');
@@ -143,7 +138,6 @@
         if (closeBtn && closeBtn.focus) {
             try { closeBtn.focus({ preventScroll: true }); } catch (e) { closeBtn.focus(); }
         }
-        favWelcomeHideTimer = window.setTimeout(dismissFavWelcome, 3000);
     }
 
     function scheduleFavWelcome() {
