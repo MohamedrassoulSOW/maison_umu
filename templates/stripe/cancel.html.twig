@@ -1,12 +1,12 @@
-{% extends 'base.html.twig' %}
+﻿{% extends 'base.html.twig' %}
 
-{% block title %}Paiement annulé — Maison UMU{% endblock %}
+{% block title %}Paiement annulé — {{ brand_name }}{% endblock %}
 
 {% block body %}
 <div class="umu-auth">
     <div class="umu-auth__panel" style="text-align:center;">
         <div class="umu-auth__brand">
-            <img src="{{ asset(brand_logo_path) }}" alt="Maison UMU">
+            <img src="{{ asset(brand_logo_path|default('images/logo.jpeg')) }}" alt="{{ brand_name }}">
         </div>
         <h1>Paiement annulé</h1>
         <div class="umu-alert umu-alert--danger">

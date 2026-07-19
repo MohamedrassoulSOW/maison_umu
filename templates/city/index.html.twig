@@ -22,10 +22,10 @@
         <tbody>
         {% for city in cities %}
             <tr>
-                <td>{{ city.id }}</td>
-                <td><strong>{{ city.name }}</strong></td>
-                <td>{{ city.shippingConst }} CFA</td>
-                <td>
+                <td data-label="ID">{{ city.id }}</td>
+                <td data-label="Ville"><strong>{{ city.name }}</strong></td>
+                <td data-label="Frais">{{ city.shippingConst }} CFA</td>
+                <td data-label="Actions">
                     <div class="dash-row-actions">
                         <a class="umu-btn umu-btn--ghost umu-btn--sm" href="{{ path('app_city_show', {'id': city.id}) }}">Voir</a>
                         <a class="umu-btn umu-btn--primary umu-btn--sm" href="{{ path('app_city_edit', {'id': city.id}) }}">Modifier</a>

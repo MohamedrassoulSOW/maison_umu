@@ -11,12 +11,39 @@
     --umu-copper-deep: #94542c;
     --umu-line: rgba(26, 33, 28, 0.12);
     --umu-shadow: 0 18px 40px rgba(26, 33, 28, 0.08);
+    --umu-surface: rgba(255, 255, 255, 0.6);
+    --umu-surface-strong: rgba(250, 251, 248, 0.98);
+    --umu-muted: color-mix(in srgb, var(--umu-ink) 58%, transparent);
+    --umu-muted-soft: color-mix(in srgb, var(--umu-ink) 45%, transparent);
+    --umu-on-primary: #fff;
+    --umu-btn-hover: #1a211c;
     --umu-radius: 14px;
     --umu-radius-sm: 10px;
     --umu-nav-h: 72px;
     --font-display: "Syne", sans-serif;
     --font-body: "Figtree", sans-serif;
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+    --umu-ink: #e8ede8;
+    --umu-forest: #8fb89a;
+    --umu-moss: #9ec2a8;
+    --umu-leaf: #6f917a;
+    --umu-sand: #1c2420;
+    --umu-mist: #121816;
+    --umu-paper: #161c19;
+    --umu-copper: #d4925a;
+    --umu-copper-deep: #e0a574;
+    --umu-line: rgba(232, 237, 232, 0.14);
+    --umu-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+    --umu-surface: rgba(28, 36, 32, 0.88);
+    --umu-surface-strong: rgba(22, 28, 25, 0.96);
+    --umu-muted: rgba(232, 237, 232, 0.62);
+    --umu-muted-soft: rgba(232, 237, 232, 0.48);
+    --umu-on-primary: #101512;
+    --umu-btn-hover: #6f9a7c;
 }
 
 *,
@@ -41,6 +68,14 @@ body {
     background-attachment: fixed;
     line-height: 1.55;
     padding-top: var(--umu-nav-h);
+    transition: background 0.35s var(--ease-out), color 0.25s var(--ease-out);
+}
+
+html[data-theme="dark"] body {
+    background:
+        radial-gradient(1000px 520px at 8% -8%, rgba(111, 145, 122, 0.16), transparent 55%),
+        radial-gradient(800px 480px at 100% 0%, rgba(184, 107, 58, 0.1), transparent 50%),
+        linear-gradient(180deg, #101512 0%, #151b18 45%, #1a211c 100%);
 }
 
 body::before {
@@ -178,7 +213,7 @@ h1, h2, h3, h4,
     font-size: 0.68rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(26, 33, 28, 0.55);
+    color: var(--umu-muted);
     font-weight: 600;
 }
 
@@ -268,7 +303,7 @@ h1, h2, h3, h4,
 
 .umu-profile-menu__head small {
     display: block;
-    color: rgba(26, 33, 28, 0.55);
+    color: var(--umu-muted);
     font-size: 0.78rem;
     margin-top: 0.15rem;
     word-break: break-all;
@@ -317,7 +352,8 @@ h1, h2, h3, h4,
     padding: 1.5rem;
     border: 1px solid var(--umu-line);
     border-radius: var(--umu-radius);
-    background: rgba(255, 255, 255, 0.6);
+    background: var(--umu-surface);
+    color: var(--umu-ink);
 }
 
 .umu-profile--edit {
@@ -339,7 +375,7 @@ h1, h2, h3, h4,
 
 .umu-profile__aside > p {
     margin: 0;
-    color: rgba(26, 33, 28, 0.62);
+    color: var(--umu-muted);
     word-break: break-all;
 }
 
@@ -372,7 +408,7 @@ h1, h2, h3, h4,
 
 .umu-profile__hint {
     margin: 0 0 1.25rem;
-    color: rgba(26, 33, 28, 0.58);
+    color: var(--umu-muted);
     font-size: 0.92rem;
 }
 
@@ -415,7 +451,7 @@ h1, h2, h3, h4,
 
 .umu-profile__info > p {
     margin: 0 0 1rem;
-    color: rgba(26, 33, 28, 0.62);
+    color: var(--umu-muted);
 }
 
 .umu-profile__meta {
@@ -617,6 +653,67 @@ h1, h2, h3, h4,
     background: rgba(42, 69, 52, 0.08);
 }
 
+.umu-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: 1px solid var(--umu-line);
+    border-radius: 50%;
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
+    cursor: pointer;
+    transition: color 0.2s var(--ease-out), background 0.2s, border-color 0.2s, transform 0.2s var(--ease-out), box-shadow 0.2s;
+}
+
+.umu-theme-toggle:hover {
+    color: var(--umu-forest);
+    border-color: rgba(42, 69, 52, 0.28);
+    transform: scale(1.05);
+}
+
+.umu-theme-toggle__sun {
+    display: none;
+}
+
+html[data-theme="dark"] .umu-theme-toggle__moon {
+    display: none;
+}
+
+html[data-theme="dark"] .umu-theme-toggle__sun {
+    display: block;
+}
+
+/* Hors navbar : flottant juste sous le header, à droite */
+.umu-theme-toggle--float {
+    position: fixed;
+    top: calc(var(--umu-nav-h) + 0.55rem);
+    right: 1.15rem;
+    z-index: 1100;
+    box-shadow: 0 10px 26px rgba(26, 33, 28, 0.16);
+}
+
+html[data-theme="dark"] .umu-theme-toggle--float {
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
+}
+
+body.is-dashboard .umu-theme-toggle--float {
+    top: 0.85rem;
+    right: 4.35rem;
+    width: 42px;
+    height: 42px;
+    z-index: 90;
+}
+
+@media (min-width: 1025px) {
+    body.is-dashboard .umu-theme-toggle--float {
+        top: 1rem;
+        right: 1rem;
+    }
+}
+
 .umu-nav__item--mega {
     position: relative;
 }
@@ -685,7 +782,7 @@ h1, h2, h3, h4,
 
 .umu-mega__empty {
     font-size: 0.85rem;
-    color: rgba(26, 33, 28, 0.45);
+    color: var(--umu-muted-soft);
 }
 
 .umu-nav__search {
@@ -700,7 +797,8 @@ h1, h2, h3, h4,
 .umu-nav__search input {
     width: 100%;
     border: 1px solid var(--umu-line);
-    background: rgba(255, 255, 255, 0.7);
+    background: var(--umu-surface);
+    color: var(--umu-ink);
     border-radius: 999px;
     padding: 0.45rem 0.9rem;
     font: inherit;
@@ -757,12 +855,12 @@ h1, h2, h3, h4,
 
 .umu-btn--primary {
     background: var(--umu-forest);
-    color: #fff !important;
+    color: var(--umu-on-primary) !important;
 }
 
 .umu-btn--primary:hover {
-    background: var(--umu-ink);
-    color: #fff !important;
+    background: var(--umu-btn-hover);
+    color: var(--umu-on-primary) !important;
 }
 
 .umu-btn--copper {
@@ -802,7 +900,7 @@ h1, h2, h3, h4,
     padding: 0 0.75rem;
     border-radius: 10px;
     background: var(--umu-forest);
-    color: #fff !important;
+    color: var(--umu-on-primary) !important;
     position: relative;
 }
 
@@ -999,7 +1097,7 @@ h1, h2, h3, h4,
 
 .umu-section__lead {
     margin: 0;
-    color: rgba(26, 33, 28, 0.65);
+    color: var(--umu-muted);
     max-width: 42ch;
 }
 
@@ -1013,10 +1111,11 @@ h1, h2, h3, h4,
 .umu-card {
     display: flex;
     flex-direction: column;
-    background: rgba(255, 255, 255, 0.55);
+    background: var(--umu-surface);
     border: 1px solid var(--umu-line);
     border-radius: var(--umu-radius);
     overflow: hidden;
+    color: var(--umu-ink);
     transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out), border-color 0.35s;
     opacity: 0;
     transform: translateY(28px);
@@ -1061,12 +1160,12 @@ h1, h2, h3, h4,
     min-width: 40px;
     height: 40px;
     padding: 0 0.55rem;
-    border: 1px solid rgba(26, 33, 28, 0.12);
+    border: 1px solid var(--umu-line);
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.92);
-    color: rgba(26, 33, 28, 0.45);
+    background: var(--umu-surface-strong);
+    color: var(--umu-muted-soft);
     cursor: pointer;
-    box-shadow: 0 6px 16px rgba(26, 33, 28, 0.1);
+    box-shadow: var(--umu-shadow);
     transition: color 0.2s var(--ease-out), background 0.2s, border-color 0.2s, transform 0.2s var(--ease-out);
 }
 
@@ -1082,14 +1181,14 @@ h1, h2, h3, h4,
 .umu-fav:hover {
     color: #c45c5c;
     border-color: rgba(196, 92, 92, 0.35);
-    background: #fff;
+    background: var(--umu-surface-strong);
     transform: scale(1.06);
 }
 
 .umu-fav.is-active {
     color: #c45c5c;
     border-color: rgba(196, 92, 92, 0.4);
-    background: #fff;
+    background: var(--umu-surface-strong);
 }
 
 .umu-fav:disabled {
@@ -1139,7 +1238,7 @@ h1, h2, h3, h4,
     margin: 0.35rem 0 0;
     font-size: 0.92rem;
     font-weight: 600;
-    color: rgba(26, 33, 28, 0.62);
+    color: var(--umu-muted);
 }
 
 .umu-product__likes [data-umu-likes-count] {
@@ -1212,7 +1311,7 @@ h1, h2, h3, h4,
 .umu-card__desc {
     margin: 0;
     font-size: 0.88rem;
-    color: rgba(26, 33, 28, 0.62);
+    color: var(--umu-muted);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -1236,7 +1335,7 @@ h1, h2, h3, h4,
 
 .umu-stock {
     font-size: 0.78rem;
-    color: rgba(26, 33, 28, 0.55);
+    color: var(--umu-muted);
     font-weight: 600;
 }
 
@@ -1278,8 +1377,9 @@ h1, h2, h3, h4,
     width: min(960px, 100%);
     max-height: min(90dvh, 920px);
     overflow: auto;
-    background: #fafbf8;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: var(--umu-paper);
+    color: var(--umu-ink);
+    border: 1px solid var(--umu-line);
     border-radius: calc(var(--umu-radius) + 6px);
     box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
     animation: umuModalIn 0.28s var(--ease-out);
@@ -1306,7 +1406,7 @@ h1, h2, h3, h4,
     height: 40px;
     border: 1px solid var(--umu-line);
     border-radius: 10px;
-    background: #fff;
+    background: var(--umu-surface-strong);
     color: var(--umu-ink);
     font-size: 1.05rem;
     line-height: 1;
@@ -1412,12 +1512,12 @@ h1, h2, h3, h4,
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: rgba(26, 33, 28, 0.5);
+    color: var(--umu-muted-soft);
 }
 
 .umu-modal-product__desc p {
     margin: 0 0 1.1rem;
-    color: rgba(26, 33, 28, 0.78);
+    color: var(--umu-muted);
     line-height: 1.55;
 }
 
@@ -1440,7 +1540,7 @@ h1, h2, h3, h4,
     margin: 0;
     font-size: 0.82rem;
     font-weight: 700;
-    color: rgba(26, 33, 28, 0.5);
+    color: var(--umu-muted-soft);
 }
 
 .umu-modal-product__details dd {
@@ -1540,7 +1640,7 @@ body.umu-modal-open {
     border: 1px solid var(--umu-line);
     border-radius: 8px;
     overflow: hidden;
-    background: #fff;
+    background: var(--umu-surface-strong);
     cursor: pointer;
     opacity: 0.75;
     transition: opacity 0.2s, border-color 0.2s, box-shadow 0.2s;
@@ -1602,7 +1702,7 @@ body.umu-modal-open {
 }
 
 .umu-product__info p {
-    color: rgba(26, 33, 28, 0.75);
+    color: var(--umu-muted);
 }
 
 .umu-product__price {
@@ -1647,7 +1747,7 @@ body.umu-modal-open {
     height: 42px;
     border-radius: 10px;
     border: 1px solid var(--umu-line);
-    background: rgba(250, 251, 248, 0.92);
+    background: var(--umu-surface-strong);
     color: var(--umu-ink);
     cursor: pointer;
     font-size: 1.4rem;
@@ -1674,12 +1774,13 @@ body.umu-modal-open {
 
 .umu-auth__panel {
     width: min(420px, 100%);
-    background: rgba(255, 255, 255, 0.72);
+    background: var(--umu-surface);
     border: 1px solid var(--umu-line);
     border-radius: calc(var(--umu-radius) + 4px);
     padding: 2rem 1.75rem;
     box-shadow: var(--umu-shadow);
     backdrop-filter: blur(10px);
+    color: var(--umu-ink);
 }
 
 .umu-auth__panel h1 {
@@ -1704,7 +1805,8 @@ body.umu-modal-open {
     border-radius: 10px;
     padding: 0.7rem 0.85rem;
     font: inherit;
-    background: #fff;
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
 }
 
 .umu-password {
@@ -1759,7 +1861,7 @@ body.umu-modal-open {
     padding: 0.75rem 1rem;
     border: 1px solid var(--umu-line);
     border-radius: 10px;
-    background: #fff;
+    background: var(--umu-surface-strong);
     color: var(--umu-ink) !important;
     font: inherit;
     font-weight: 600;
@@ -1768,9 +1870,9 @@ body.umu-modal-open {
 }
 
 .umu-btn-google:hover {
-    background: #f7f8f4;
-    border-color: rgba(26, 33, 28, 0.22);
-    box-shadow: 0 6px 16px rgba(26, 33, 28, 0.06);
+    background: var(--umu-sand);
+    border-color: var(--umu-line);
+    box-shadow: var(--umu-shadow);
     color: var(--umu-ink) !important;
 }
 
@@ -1783,7 +1885,7 @@ body.umu-modal-open {
     align-items: center;
     gap: 0.75rem;
     margin: 1rem 0 0.35rem;
-    color: rgba(26, 33, 28, 0.45);
+    color: var(--umu-muted-soft);
     font-size: 0.82rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -1804,7 +1906,7 @@ body.umu-modal-open {
     margin-top: 1.25rem;
     background: var(--umu-forest);
     border: none;
-    color: #fff;
+    color: var(--umu-on-primary);
     border-radius: 10px;
     padding: 0.8rem 1rem;
     font-weight: 600;
@@ -1813,7 +1915,8 @@ body.umu-modal-open {
 
 .umu-auth__panel .btn:hover,
 .umu-auth__panel button[type="submit"]:hover {
-    background: var(--umu-ink);
+    background: var(--umu-btn-hover);
+    color: var(--umu-on-primary);
 }
 
 .umu-alert {
@@ -1835,6 +1938,18 @@ body.umu-modal-open {
     border: 1px solid #b9d8c4;
 }
 
+html[data-theme="dark"] .umu-alert--danger {
+    background: rgba(179, 58, 58, 0.22);
+    color: #f0a0a0;
+    border-color: rgba(179, 58, 58, 0.4);
+}
+
+html[data-theme="dark"] .umu-alert--success {
+    background: rgba(143, 184, 154, 0.18);
+    color: #a8d4b4;
+    border-color: rgba(143, 184, 154, 0.35);
+}
+
 /* ---------- Cart / tables ---------- */
 .umu-page-title {
     width: min(1100px, calc(100% - 2rem));
@@ -1848,7 +1963,7 @@ body.umu-modal-open {
 
 .umu-page-title p {
     margin: 0;
-    color: rgba(26, 33, 28, 0.62);
+    color: var(--umu-muted);
 }
 
 .umu-cart {
@@ -1861,14 +1976,16 @@ body.umu-modal-open {
     text-align: center;
     border: 1px dashed var(--umu-line);
     border-radius: var(--umu-radius);
-    background: rgba(255, 255, 255, 0.4);
+    background: var(--umu-surface);
+    color: var(--umu-ink);
 }
 
 .umu-table-wrap {
     overflow-x: auto;
     border: 1px solid var(--umu-line);
     border-radius: var(--umu-radius);
-    background: rgba(255, 255, 255, 0.6);
+    background: var(--umu-surface);
+    color: var(--umu-ink);
 }
 
 .umu-table {
@@ -1889,8 +2006,8 @@ body.umu-modal-open {
     font-size: 0.82rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: rgba(26, 33, 28, 0.55);
-    background: rgba(42, 69, 52, 0.05);
+    color: color-mix(in srgb, var(--umu-ink) 55%, transparent);
+    background: color-mix(in srgb, var(--umu-forest) 8%, transparent);
 }
 
 .umu-table tr:last-child td {
@@ -1958,10 +2075,11 @@ body.umu-modal-open {
 
 .umu-checkout__form,
 .umu-checkout__summary {
-    background: rgba(255, 255, 255, 0.65);
+    background: var(--umu-surface);
     border: 1px solid var(--umu-line);
     border-radius: var(--umu-radius);
     padding: 1.5rem;
+    color: var(--umu-ink);
 }
 
 .umu-checkout__summary h3 {
@@ -1987,10 +2105,15 @@ body.umu-modal-open {
     width: 100%;
     background: var(--umu-forest);
     border: none;
-    color: #fff;
+    color: var(--umu-on-primary);
     border-radius: 10px;
     padding: 0.85rem;
     font-weight: 600;
+}
+
+.umu-checkout button[type="submit"]:hover {
+    background: var(--umu-btn-hover);
+    color: var(--umu-on-primary);
 }
 
 /* ---------- Pagination ---------- */
@@ -2014,7 +2137,7 @@ body.umu-modal-open {
     border-radius: 8px;
     border: 1px solid var(--umu-line);
     color: var(--umu-ink);
-    background: rgba(255, 255, 255, 0.55);
+    background: var(--umu-surface);
     font-weight: 600;
     font-size: 0.9rem;
 }
@@ -2023,7 +2146,7 @@ body.umu-modal-open {
 .umu-pagination a:hover {
     background: var(--umu-forest);
     border-color: var(--umu-forest);
-    color: #fff;
+    color: var(--umu-on-primary);
 }
 
 .umu-pagination .disabled span {
@@ -2042,20 +2165,21 @@ body.umu-modal-open {
 .umu-footer__inner {
     width: min(1200px, calc(100% - 2rem));
     margin: 0 auto;
-    padding: 2.75rem 0 1.75rem;
+    padding: 2.5rem 0 1.5rem;
     display: grid;
-    grid-template-columns: minmax(220px, 1.15fr) minmax(0, 2.2fr);
-    gap: 2rem 2.25rem;
+    grid-template-columns: minmax(280px, 1.85fr) repeat(auto-fit, minmax(140px, 1fr));
+    gap: 2rem 1.75rem;
     align-items: start;
 }
 
 .umu-footer__brand-col {
     min-width: 0;
+    max-width: 24rem;
 }
 
 .umu-footer__brand-link {
     display: inline-block;
-    margin-bottom: 0.65rem;
+    margin-bottom: 0.7rem;
 }
 
 .umu-footer__logo {
@@ -2069,20 +2193,22 @@ body.umu-modal-open {
 
 .umu-footer__brand {
     font-family: var(--font-display);
-    font-size: 1.5rem;
+    font-size: 1.45rem;
     font-weight: 800;
-    margin: 0 0 0.35rem;
+    margin: 0 0 0.4rem;
+    color: var(--umu-ink);
 }
 
-.umu-footer__brand-text > p {
+.umu-footer__tagline {
     margin: 0;
-    color: rgba(26, 33, 28, 0.6);
-    max-width: 34ch;
+    color: var(--umu-muted);
+    max-width: 42ch;
     line-height: 1.5;
+    font-size: 0.95rem;
 }
 
 .umu-footer__email {
-    margin-top: 0.75rem !important;
+    margin: 0.75rem 0 0;
 }
 
 .umu-footer__email a {
@@ -2091,11 +2217,101 @@ body.umu-modal-open {
     word-break: break-word;
 }
 
-.umu-footer__menus {
+/* WhatsApp contact buttons */
+.umu-wa {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.5rem 1.25rem;
+    gap: 0.65rem;
+}
+
+.umu-wa__label {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #128c7e;
+}
+
+.umu-wa__list {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.umu-wa__btn {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid rgba(18, 140, 126, 0.22);
+    border-radius: 12px;
+    background: rgba(37, 211, 102, 0.08);
+    color: inherit;
+    text-decoration: none;
+    transition: background 0.2s var(--ease-out), border-color 0.2s, transform 0.2s var(--ease-out);
+}
+
+.umu-wa__btn:hover {
+    background: rgba(37, 211, 102, 0.16);
+    border-color: rgba(18, 140, 126, 0.4);
+    color: inherit;
+    transform: translateY(-1px);
+}
+
+.umu-wa__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #25d366;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.umu-wa__meta {
+    display: grid;
+    gap: 0.1rem;
     min-width: 0;
+}
+
+.umu-wa__meta small {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--umu-muted-soft);
+}
+
+.umu-wa__meta strong {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #075e54;
+    letter-spacing: 0.01em;
+}
+
+.umu-wa--footer {
+    margin-top: 1rem;
+}
+
+.umu-wa--contact {
+    margin-top: 1.25rem;
+    padding-top: 1.15rem;
+    border-top: 1px solid var(--umu-line);
+}
+
+.umu-wa--contact .umu-wa__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 700px) {
+    .umu-wa--contact .umu-wa__list {
+        grid-template-columns: 1fr;
+    }
 }
 
 .umu-footer__col {
@@ -2103,13 +2319,20 @@ body.umu-modal-open {
 }
 
 .umu-footer__title {
-    margin: 0 0 0.85rem;
+    margin: 0 0 0.95rem;
     font-family: var(--font-display);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 700;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--umu-ink);
+}
+
+.umu-footer__title--cat {
+    text-transform: none;
+    letter-spacing: -0.01em;
+    font-size: 0.95rem;
+    color: var(--umu-moss);
 }
 
 .umu-footer__links {
@@ -2122,7 +2345,7 @@ body.umu-modal-open {
 
 .umu-footer__links a {
     font-weight: 600;
-    color: rgba(26, 33, 28, 0.72);
+    color: var(--umu-muted);
     text-decoration: none;
     transition: color 0.2s var(--ease-out);
 }
@@ -2136,49 +2359,63 @@ body.umu-modal-open {
 }
 
 .umu-footer__muted {
-    color: rgba(26, 33, 28, 0.4);
+    color: var(--umu-muted-soft);
     font-size: 0.9rem;
-}
-
-.umu-footer__cats {
-    display: grid;
-    gap: 1rem;
-}
-
-.umu-footer__cat-name {
-    margin: 0 0 0.4rem;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--umu-moss);
 }
 
 .umu-footer__copy {
     grid-column: 1 / -1;
-    margin: 0.25rem 0 0;
+    margin: 0.15rem 0 0;
     padding-top: 1.15rem;
     border-top: 1px solid var(--umu-line);
     font-size: 0.85rem;
-    color: rgba(26, 33, 28, 0.5);
+    color: var(--umu-muted-soft);
 }
 
-/* Tablette */
+.dash-form__checks {
+    display: grid;
+    gap: 0.85rem;
+    margin: 1rem 0 1.5rem;
+}
+
+.dash-form__checks .form-check,
+.dash-form__checks > div {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--umu-line);
+    border-radius: 12px;
+    background: var(--umu-surface);
+    color: var(--umu-ink);
+}
+
+.dash-form__checks label {
+    margin: 0;
+    font-weight: 600;
+}
+
 @media (max-width: 1024px) {
     .umu-footer__inner {
-        grid-template-columns: 1fr;
-        gap: 1.75rem;
-        padding: 2.25rem 0 1.5rem;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.75rem 1.35rem;
+        padding: 2.15rem 0 1.35rem;
     }
 
     .umu-footer__brand-col {
+        grid-column: 1 / -1;
         display: grid;
         grid-template-columns: auto 1fr;
-        gap: 0.9rem 1rem;
+        grid-template-rows: auto auto auto;
+        column-gap: 1rem;
+        row-gap: 0.2rem;
         align-items: center;
-        padding-bottom: 1.25rem;
+        padding-bottom: 1.15rem;
         border-bottom: 1px solid var(--umu-line);
     }
 
     .umu-footer__brand-link {
+        grid-row: 1 / span 3;
         margin-bottom: 0;
     }
 
@@ -2187,46 +2424,26 @@ body.umu-modal-open {
         height: 64px;
     }
 
-    .umu-footer__brand {
-        font-size: 1.3rem;
-    }
-
-    .umu-footer__menus {
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem 1.5rem;
-    }
-
-    .umu-footer__col--categories {
-        grid-column: 1 / -1;
-        padding-top: 0.35rem;
-        border-top: 1px solid rgba(26, 33, 28, 0.08);
-    }
-
-    .umu-footer__cats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1.15rem 1.25rem;
-    }
-
-    .umu-footer__links--inline {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.35rem 0.85rem;
+    .umu-footer__tagline {
+        max-width: none;
     }
 }
 
-/* Mobile */
 @media (max-width: 640px) {
     .umu-footer__inner {
         width: min(1200px, calc(100% - 1.25rem));
-        gap: 1.35rem;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.35rem 1rem;
         padding: 1.75rem 0 1.25rem;
     }
 
     .umu-footer__brand-col {
         grid-template-columns: 1fr;
         justify-items: start;
-        text-align: left;
-        gap: 0.75rem;
+    }
+
+    .umu-footer__brand-link {
+        grid-row: auto;
     }
 
     .umu-footer__logo {
@@ -2235,52 +2452,24 @@ body.umu-modal-open {
     }
 
     .umu-footer__brand {
-        font-size: 1.2rem;
-    }
-
-    .umu-footer__brand-text > p {
-        max-width: none;
-        font-size: 0.95rem;
-    }
-
-    .umu-footer__menus {
-        grid-template-columns: 1fr 1fr;
-        gap: 1.25rem 1rem;
+        font-size: 1.25rem;
     }
 
     .umu-footer__title {
-        margin-bottom: 0.65rem;
+        margin-bottom: 0.7rem;
         font-size: 0.82rem;
     }
 
-    .umu-footer__links {
-        gap: 0.4rem;
+    .umu-footer__title--cat {
+        font-size: 0.9rem;
     }
 
     .umu-footer__links a {
         font-size: 0.95rem;
     }
 
-    .umu-footer__col--categories {
-        grid-column: 1 / -1;
-        margin-top: 0.15rem;
-        padding-top: 1rem;
-    }
-
-    .umu-footer__cats {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .umu-footer__links--inline {
-        gap: 0.3rem 0.75rem;
-    }
-
     .umu-footer__copy {
-        margin-top: 0.15rem;
-        padding-top: 1rem;
         font-size: 0.8rem;
-        text-align: left;
     }
 }
 
@@ -2324,7 +2513,7 @@ body.umu-modal-open {
 .umu-content__lead {
     margin: 0;
     font-size: 1.1rem;
-    color: rgba(26, 33, 28, 0.7);
+    color: var(--umu-muted);
 }
 
 .umu-content__grid {
@@ -2337,7 +2526,8 @@ body.umu-modal-open {
     padding: 1.4rem;
     border: 1px solid var(--umu-line);
     border-radius: var(--umu-radius);
-    background: rgba(255, 255, 255, 0.55);
+    background: var(--umu-surface);
+    color: var(--umu-ink);
 }
 
 .umu-content__block h2 {
@@ -2347,7 +2537,7 @@ body.umu-modal-open {
 
 .umu-content__block p {
     margin: 0;
-    color: rgba(26, 33, 28, 0.72);
+    color: var(--umu-muted);
 }
 
 .umu-content__cta {
@@ -2366,7 +2556,8 @@ body.umu-modal-open {
     padding: 1.5rem;
     border: 1px solid var(--umu-line);
     border-radius: var(--umu-radius);
-    background: rgba(255, 255, 255, 0.6);
+    background: var(--umu-surface);
+    color: var(--umu-ink);
 }
 
 .umu-contact__info h2 {
@@ -2378,7 +2569,7 @@ body.umu-modal-open {
     margin: 1.25rem 0 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 0.85rem 1.25rem;
 }
 
@@ -2405,7 +2596,8 @@ body.umu-modal-open {
     padding: 1.5rem;
     border: 1px solid var(--umu-line);
     border-radius: var(--umu-radius);
-    background: rgba(255, 255, 255, 0.6);
+    background: var(--umu-surface);
+    color: var(--umu-ink);
 }
 
 .umu-contact__map {
@@ -2415,7 +2607,8 @@ body.umu-modal-open {
     border: 1px solid var(--umu-line);
     border-radius: var(--umu-radius);
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.6);
+    background: var(--umu-surface);
+    color: var(--umu-ink);
 }
 
 .umu-contact__map-frame {
@@ -2440,7 +2633,7 @@ body.umu-modal-open {
     font-size: 0.9rem;
     color: var(--umu-forest);
     border-top: 1px solid var(--umu-line);
-    background: rgba(250, 251, 248, 0.9);
+    background: var(--umu-surface-strong);
 }
 
 .umu-contact__map-link:hover {
@@ -2481,7 +2674,8 @@ body.umu-modal-open {
     border-radius: 10px;
     padding: 0.7rem 0.85rem;
     font: inherit;
-    background: #fff;
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
 }
 
 .umu-form .form-control:focus,
@@ -2553,7 +2747,8 @@ body.is-dashboard .flash-message {
     z-index: 50;
     display: flex;
     flex-direction: column;
-    background: rgba(250, 251, 248, 0.98);
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
     border-right: none;
     border-bottom: 1px solid var(--umu-line);
     border-radius: 0;
@@ -2668,7 +2863,7 @@ body.is-dashboard .flash-message {
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.07em;
-    color: rgba(26, 33, 28, 0.45);
+    color: color-mix(in srgb, var(--umu-ink) 45%, transparent);
     font-weight: 700;
 }
 
@@ -2694,7 +2889,7 @@ body.is-dashboard .flash-message {
     gap: 0.35rem;
     padding: 0.85rem 0.35rem 0.15rem;
     border-top: 1px solid var(--umu-line);
-    background: rgba(250, 251, 248, 0.98);
+    background: transparent;
 }
 
 .dash__back,
@@ -2739,18 +2934,28 @@ body.is-dashboard .flash-message {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 1rem;
+    align-items: flex-start;
+    gap: 0.85rem 1rem;
     margin-bottom: 1.25rem;
+}
+
+.dash__top-text {
+    min-width: 0;
+    flex: 1 1 12rem;
 }
 
 .dash__title {
     margin: 0 0 0.25rem;
-    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    font-size: clamp(1.45rem, 4.5vw, 2.1rem);
+    line-height: 1.15;
+    word-break: break-word;
 }
 
 .dash__subtitle {
     margin: 0;
-    color: rgba(26, 33, 28, 0.62);
+    color: color-mix(in srgb, var(--umu-ink) 62%, transparent);
+    font-size: clamp(0.88rem, 2.8vw, 1rem);
+    line-height: 1.4;
 }
 
 .dash__top-actions {
@@ -2758,6 +2963,9 @@ body.is-dashboard .flash-message {
     flex-wrap: wrap;
     gap: 0.5rem;
     align-items: center;
+    justify-content: flex-end;
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .dash-stats {
@@ -2769,12 +2977,13 @@ body.is-dashboard .flash-message {
 }
 
 .dash-stat {
-    background: rgba(255, 255, 255, 0.65);
+    background: var(--umu-surface);
     border: 1px solid var(--umu-line);
     border-radius: var(--umu-radius-sm);
     padding: 0.95rem;
     display: grid;
     gap: 0.35rem;
+    color: var(--umu-ink);
     transition: transform 0.2s var(--ease-out), border-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
 }
 
@@ -2786,7 +2995,7 @@ body.is-dashboard .flash-message {
 
 .dash-stat span {
     font-size: 0.8rem;
-    color: rgba(26, 33, 28, 0.55);
+    color: color-mix(in srgb, var(--umu-ink) 55%, transparent);
     font-weight: 600;
 }
 
@@ -2807,11 +3016,20 @@ body.is-dashboard .flash-message {
     width: 100%;
 }
 
+.dash-panels--split {
+    grid-template-columns: 1.2fr 0.8fr;
+}
+
+.dash-panels--split-wide {
+    grid-template-columns: 1.35fr 0.65fr;
+}
+
 .dash-panel {
-    background: rgba(255, 255, 255, 0.65);
+    background: var(--umu-surface);
     border: 1px solid var(--umu-line);
     border-radius: var(--umu-radius);
     padding: 1rem;
+    color: var(--umu-ink);
 }
 
 .dash-panel__head {
@@ -2835,14 +3053,14 @@ body.is-dashboard .flash-message {
 .dash-empty,
 .dash-empty-box {
     margin: 0;
-    color: rgba(26, 33, 28, 0.55);
+    color: color-mix(in srgb, var(--umu-ink) 55%, transparent);
 }
 
 .dash-empty-box {
     padding: 1.5rem;
     border: 1px dashed var(--umu-line);
     border-radius: var(--umu-radius);
-    background: rgba(255, 255, 255, 0.45);
+    background: var(--umu-surface);
     text-align: center;
 }
 
@@ -2873,7 +3091,7 @@ body.is-dashboard .flash-message {
 
 .dash-list span {
     font-size: 0.85rem;
-    color: rgba(26, 33, 28, 0.55);
+    color: color-mix(in srgb, var(--umu-ink) 55%, transparent);
 }
 
 .dash-badge {
@@ -2920,7 +3138,7 @@ body.is-dashboard .flash-message {
     padding: 1rem;
     border-radius: var(--umu-radius-sm);
     border: 1px solid var(--umu-line);
-    background: rgba(255, 255, 255, 0.55);
+    background: var(--umu-surface);
     color: var(--umu-ink);
     transition: transform 0.2s var(--ease-out), border-color 0.2s;
 }
@@ -2937,7 +3155,7 @@ body.is-dashboard .flash-message {
 
 .dash-quick__card span {
     font-size: 0.88rem;
-    color: rgba(26, 33, 28, 0.58);
+    color: color-mix(in srgb, var(--umu-ink) 58%, transparent);
 }
 
 .dash-row-actions {
@@ -2948,11 +3166,12 @@ body.is-dashboard .flash-message {
 }
 
 .dash-order {
-    background: rgba(255, 255, 255, 0.62);
+    background: var(--umu-surface);
     border: 1px solid var(--umu-line);
     border-radius: var(--umu-radius);
     padding: 1.1rem;
     margin-bottom: 1rem;
+    color: var(--umu-ink);
 }
 
 .dash-order__head {
@@ -2970,7 +3189,7 @@ body.is-dashboard .flash-message {
 
 .dash-order__head p {
     margin: 0;
-    color: rgba(26, 33, 28, 0.58);
+    color: color-mix(in srgb, var(--umu-ink) 62%, transparent);
     font-size: 0.9rem;
 }
 
@@ -3005,10 +3224,11 @@ body.is-dashboard .flash-message {
 
 /* Dashboard cards / forms / details */
 .dash-card {
-    background: rgba(255, 255, 255, 0.72);
+    background: var(--umu-surface);
     border: 1px solid var(--umu-line);
     border-radius: var(--umu-radius);
     padding: 1.35rem 1.4rem;
+    color: var(--umu-ink);
     box-shadow: 0 10px 28px rgba(26, 33, 28, 0.04);
     margin-bottom: 1rem;
 }
@@ -3020,7 +3240,7 @@ body.is-dashboard .flash-message {
 
 .dash-card__hint {
     margin: 0 0 1.1rem;
-    color: rgba(26, 33, 28, 0.58);
+    color: color-mix(in srgb, var(--umu-ink) 58%, transparent);
     font-size: 0.92rem;
 }
 
@@ -3052,7 +3272,7 @@ body.is-dashboard .flash-message {
     border-radius: 10px;
     padding: 0.72rem 0.9rem;
     font: inherit;
-    background: #fff;
+    background: var(--umu-surface-strong);
     color: var(--umu-ink);
     transition: border-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
 }
@@ -3077,7 +3297,7 @@ body.is-dashboard .flash-message {
     display: block;
     margin-top: 0.35rem;
     font-size: 0.82rem;
-    color: rgba(26, 33, 28, 0.55);
+    color: color-mix(in srgb, var(--umu-ink) 55%, transparent);
 }
 
 .dash-form .invalid-feedback,
@@ -3086,6 +3306,42 @@ body.is-dashboard .flash-message {
     font-size: 0.85rem;
     margin-top: 0.3rem;
     padding-left: 1rem;
+}
+
+.dash-card__section-title {
+    margin: 1.5rem 0 0.85rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--umu-line);
+    font-size: 1.05rem;
+    font-family: var(--font-display, Georgia, serif);
+    color: var(--umu-ink);
+}
+
+.dash-card__section-title:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+}
+
+.dash-collection {
+    display: grid;
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+}
+
+.dash-collection__item {
+    display: grid;
+    gap: 0.65rem;
+    padding: 0.9rem;
+    border: 1px solid var(--umu-line);
+    border-radius: 12px;
+    background: var(--umu-surface);
+    color: var(--umu-ink);
+}
+
+.dash-collection__fields {
+    display: grid;
+    gap: 0.65rem;
 }
 
 .dash-form__actions {
@@ -3183,7 +3439,7 @@ body.is-dashboard .flash-message {
     border: none;
     border-radius: 999px;
     background: var(--umu-forest);
-    color: #fff;
+    color: var(--umu-on-primary);
     font: inherit;
     font-weight: 700;
     cursor: pointer;
@@ -3192,8 +3448,8 @@ body.is-dashboard .flash-message {
 
 .umu-checkout__form button[type="submit"]:hover,
 .umu-checkout__form .btn:hover {
-    background: var(--umu-moss);
-    color: #fff;
+    background: var(--umu-btn-hover);
+    color: var(--umu-on-primary);
 }
 
 @media (max-width: 1100px) {
@@ -3206,41 +3462,81 @@ body.is-dashboard .flash-message {
     }
 }
 
-/* Tablette / mobile : stats en 2 colonnes */
+/* Tablette / mobile — shell + contenus dashboard */
 @media (max-width: 1024px) {
+    .dash__sidebar {
+        position: sticky;
+        top: 0;
+        z-index: 80;
+        padding: 0.7rem 0.85rem;
+        box-shadow: 0 10px 28px rgba(26, 33, 28, 0.08);
+    }
+
+    .dash__brand-logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    .dash__brand-link strong {
+        font-size: 1.05rem;
+    }
+
+    .dash__brand-link small {
+        font-size: 0.68rem;
+    }
+
+    .dash__menu {
+        max-height: min(70dvh, 520px);
+        overflow: hidden;
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+    }
+
     .dash__menu.is-open {
+        display: flex;
         animation: umuNavPanelIn 0.3s var(--ease-out);
+        overflow: hidden;
     }
 
     .dash__nav {
         display: grid;
         grid-template-columns: 1fr;
         gap: 0.3rem;
-        overflow: visible;
-        flex: none;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        flex: 1 1 auto;
         width: 100%;
+        max-height: min(52dvh, 380px);
         padding-bottom: 0.35rem;
+        padding-right: 0.15rem;
     }
 
     .dash__link {
-        padding: 0.75rem 0.85rem;
+        padding: 0.8rem 0.9rem;
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.7);
+        background: var(--umu-surface);
         border: 1px solid transparent;
+        font-size: 0.95rem;
+        color: var(--umu-ink);
     }
 
     .dash__link:hover,
     .dash__link.is-active {
-        background: #fff;
-        border-color: rgba(42, 69, 52, 0.14);
+        background: var(--umu-surface-strong);
+        border-color: var(--umu-line);
     }
 
     .dash__footer {
-        margin-top: 0.85rem;
-        padding-top: 0.85rem;
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
         display: grid;
         gap: 0.45rem;
         width: 100%;
+    }
+
+    .dash__main {
+        padding: 0.9rem 0.9rem 2.75rem;
     }
 
     .dash-stats,
@@ -3248,7 +3544,9 @@ body.is-dashboard .flash-message {
     .dash-quick,
     .dash-card,
     .dash__top,
-    .dash-flash {
+    .dash-flash,
+    .dash-order,
+    .umu-table-wrap {
         width: 100%;
         max-width: none;
     }
@@ -3266,14 +3564,106 @@ body.is-dashboard .flash-message {
         font-size: 1.45rem;
     }
 
-    .dash-panels {
+    .dash-panels,
+    .dash-panels--split,
+    .dash-panels--split-wide {
         grid-template-columns: 1fr;
+    }
+
+    .dash__top-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .dash__top-actions .umu-btn {
+        flex: 1 1 auto;
+        justify-content: center;
+        text-align: center;
+        min-height: 42px;
+    }
+
+    .dash-order {
+        padding: 0.95rem;
+    }
+
+    .dash-order__head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dash-order__actions {
+        width: 100%;
+    }
+
+    .dash-order__actions .umu-btn,
+    .dash-order__actions form {
+        flex: 1 1 100%;
+    }
+
+    .dash-order__actions .umu-btn,
+    .dash-order__actions button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .dash-row-actions {
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .dash-row-actions .umu-btn,
+    .dash-row-actions button {
+        flex: 1 1 auto;
+        justify-content: center;
+        min-height: 40px;
+    }
+
+    .dash-form__actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dash-form__actions .umu-btn,
+    .dash-form__actions button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .dash-collection__item {
+        padding: 0.8rem;
+    }
+
+    body.is-dashboard .umu-table-wrap {
+        margin: 0 0 1rem;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+        scrollbar-width: thin;
+        box-shadow: inset -18px 0 16px -18px rgba(26, 33, 28, 0.18);
+    }
+
+    body.is-dashboard .umu-table {
+        min-width: 560px;
+    }
+
+    body.is-dashboard .umu-table th,
+    body.is-dashboard .umu-table td {
+        padding: 0.75rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    body.is-dashboard .flash-message {
+        width: calc(100% - 0.5rem);
+        margin-bottom: 0.75rem;
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
+    .dash-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .dash-quick {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
     }
 
     .dash-detail__row {
@@ -3282,7 +3672,132 @@ body.is-dashboard .flash-message {
     }
 
     .dash-card {
-        padding: 1.1rem;
+        padding: 1rem;
+        border-radius: 14px;
+    }
+
+    .dash-card--narrow {
+        max-width: none;
+    }
+
+    .dash-product-cell {
+        align-items: flex-start;
+    }
+
+    .dash-product-cell img {
+        width: 40px;
+        height: 40px;
+    }
+
+    body.is-dashboard .umu-table {
+        min-width: 0;
+        width: 100%;
+    }
+
+    /* Tableaux → cartes empilées */
+    body.is-dashboard .umu-table-wrap {
+        border: none;
+        background: transparent;
+        overflow: visible;
+        box-shadow: none;
+    }
+
+    body.is-dashboard .umu-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    body.is-dashboard .umu-table,
+    body.is-dashboard .umu-table tbody {
+        display: block;
+        width: 100%;
+    }
+
+    body.is-dashboard .umu-table tr {
+        display: grid;
+        gap: 0.55rem;
+        margin-bottom: 0.75rem;
+        padding: 0.9rem;
+        border: 1px solid var(--umu-line);
+        border-radius: 14px;
+        background: var(--umu-surface-strong);
+        color: var(--umu-ink);
+    }
+
+    body.is-dashboard .umu-table td {
+        display: grid;
+        grid-template-columns: minmax(5.5rem, 34%) 1fr;
+        gap: 0.55rem;
+        align-items: start;
+        padding: 0;
+        border: none;
+        font-size: 0.92rem;
+        color: var(--umu-ink);
+    }
+
+    body.is-dashboard .umu-table td::before {
+        content: attr(data-label);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--umu-ink) 48%, transparent);
+        padding-top: 0.15rem;
+    }
+
+    body.is-dashboard .umu-table td:not([data-label]) {
+        grid-template-columns: 1fr;
+    }
+
+    body.is-dashboard .umu-table td .dash-row-actions {
+        margin-top: 0.15rem;
+    }
+
+    body.is-dashboard .dash-order .umu-table tr {
+        margin-bottom: 0.55rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .dash-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.55rem;
+    }
+
+    .dash-stat {
+        padding: 0.75rem;
+    }
+
+    .dash-stat span {
+        font-size: 0.74rem;
+    }
+
+    .dash-stat strong {
+        font-size: 1.3rem;
+    }
+
+    .dash-quick {
+        grid-template-columns: 1fr;
+    }
+
+    .dash__top-actions .umu-btn {
+        flex: 1 1 100%;
+    }
+
+    body.is-dashboard .umu-table td {
+        grid-template-columns: 1fr;
+        gap: 0.2rem;
+    }
+
+    body.is-dashboard .umu-table td::before {
+        padding-top: 0;
     }
 }
 
@@ -3340,7 +3855,7 @@ body.is-dashboard .flash-message {
     padding: 0;
     border: 1px solid var(--umu-line);
     border-radius: 12px;
-    background: #fff;
+    background: var(--umu-surface-strong);
     color: var(--umu-ink);
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s, color 0.2s;
@@ -3349,7 +3864,7 @@ body.is-dashboard .flash-message {
 .dash__menu-toggle:hover,
 .dash__menu-toggle[aria-expanded="true"] {
     border-color: var(--umu-forest);
-    background: rgba(42, 69, 52, 0.08);
+    background: color-mix(in srgb, var(--umu-forest) 12%, transparent);
     color: var(--umu-forest);
 }
 
@@ -3418,7 +3933,7 @@ body.is-dashboard .flash-message {
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(26, 33, 28, 0.45);
+    color: var(--umu-muted-soft);
 }
 
 /* ---------- Responsive ---------- */
@@ -3466,6 +3981,13 @@ body.is-dashboard .flash-message {
         gap: 0.3rem;
     }
 
+    .umu-theme-toggle--float {
+        top: calc(var(--umu-nav-h) + 0.5rem);
+        right: 0.85rem;
+        width: 46px;
+        height: 46px;
+    }
+
     .umu-nav__panel-head,
     .umu-nav__mobile-account {
         display: block;
@@ -3486,12 +4008,13 @@ body.is-dashboard .flash-message {
         font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: rgba(26, 33, 28, 0.5);
+        color: var(--umu-muted-soft);
     }
 
     .umu-nav__panel-close {
         border: 1px solid var(--umu-line);
-        background: #fff;
+        background: var(--umu-surface-strong);
+        color: var(--umu-ink);
         width: 36px;
         height: 36px;
         border-radius: 8px;
@@ -3508,7 +4031,7 @@ body.is-dashboard .flash-message {
         background:
             radial-gradient(circle at 100% 0%, rgba(196, 163, 90, 0.12), transparent 40%),
             radial-gradient(circle at 0% 100%, rgba(42, 69, 52, 0.1), transparent 45%),
-            #f7f8f4;
+            var(--umu-paper);
         overflow: hidden;
         animation: umuNavOverlayIn 0.35s var(--ease-out);
     }
@@ -3620,8 +4143,9 @@ body.is-dashboard .flash-message {
         padding: 1rem 1rem;
         font-size: 1.12rem;
         border-radius: 14px;
-        background: rgba(255, 255, 255, 0.78);
-        border: 1px solid rgba(42, 69, 52, 0.08);
+        background: var(--umu-surface);
+        border: 1px solid var(--umu-line);
+        color: var(--umu-ink);
         box-shadow: 0 6px 18px rgba(26, 33, 28, 0.04);
         transition: transform 0.2s var(--ease-out), background 0.2s, border-color 0.2s, box-shadow 0.2s;
     }
@@ -3634,10 +4158,11 @@ body.is-dashboard .flash-message {
     .umu-nav__link.is-active,
     .umu-nav__mega-btn.is-active,
     .umu-nav__mega-btn:hover {
-        background: #fff;
-        border-color: rgba(42, 69, 52, 0.18);
-        box-shadow: 0 10px 24px rgba(26, 33, 28, 0.08);
+        background: var(--umu-surface-strong);
+        border-color: var(--umu-line);
+        box-shadow: var(--umu-shadow);
         transform: translateX(3px);
+        color: var(--umu-ink);
     }
 
     .umu-nav__search {
@@ -3671,10 +4196,11 @@ body.is-dashboard .flash-message {
         margin-top: 0.45rem;
         box-shadow: none;
         animation: umuMegaIn 0.3s var(--ease-out);
-        background: rgba(255, 255, 255, 0.7);
-        border: 1px solid rgba(42, 69, 52, 0.1);
+        background: var(--umu-surface);
+        border: 1px solid var(--umu-line);
         border-radius: 14px;
         padding: 0.85rem;
+        color: var(--umu-ink);
     }
 
     @keyframes umuMegaIn {
@@ -3854,7 +4380,8 @@ body.is-dashboard .flash-message {
         padding: 0.85rem;
         border: 1px solid var(--umu-line);
         border-radius: var(--umu-radius-sm);
-        background: rgba(255, 255, 255, 0.72);
+        background: var(--umu-surface);
+        color: var(--umu-ink);
     }
 
     .umu-cart-card__img {
@@ -3872,7 +4399,7 @@ body.is-dashboard .flash-message {
 
     .umu-cart-card__price {
         margin: 0 0 0.55rem;
-        color: rgba(26, 33, 28, 0.6);
+        color: var(--umu-muted);
         font-size: 0.9rem;
     }
 
@@ -3907,23 +4434,6 @@ body.is-dashboard .flash-message {
     .dash__top {
         flex-direction: column;
         align-items: stretch;
-    }
-
-    .dash__top-actions {
-        width: 100%;
-    }
-
-    .dash__top-actions .umu-btn {
-        flex: 1;
-        justify-content: center;
-    }
-
-    .dash-row-actions {
-        justify-content: flex-start;
-    }
-
-    .umu-table {
-        min-width: 520px;
     }
 }
 
@@ -4124,4 +4634,297 @@ body.is-dashboard .flash-message {
         opacity: 1;
         transform: none;
     }
+}
+
+/* ---------- Dark mode surfaces ---------- */
+html[data-theme="dark"] .umu-header,
+html[data-theme="dark"] .umu-nav__glass {
+    background: rgba(18, 24, 21, 0.88);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .umu-mega,
+html[data-theme="dark"] .umu-profile-menu__dropdown,
+html[data-theme="dark"] .umu-nav__panel {
+    background: var(--umu-surface-strong);
+    border-color: var(--umu-line);
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .umu-card,
+html[data-theme="dark"] .umu-contact__info,
+html[data-theme="dark"] .umu-contact__form,
+html[data-theme="dark"] .umu-contact__map,
+html[data-theme="dark"] .umu-content__block,
+html[data-theme="dark"] .dash-card,
+html[data-theme="dark"] .dash-stat,
+html[data-theme="dark"] .dash-panel,
+html[data-theme="dark"] .dash-quick__card,
+html[data-theme="dark"] .umu-auth,
+html[data-theme="dark"] .umu-modal__dialog,
+html[data-theme="dark"] .umu-cart-card,
+html[data-theme="dark"] .dash__sidebar {
+    background: var(--umu-surface);
+    border-color: var(--umu-line);
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .umu-footer {
+    background: rgba(12, 16, 14, 0.72);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .umu-btn--ghost {
+    background: transparent;
+    color: var(--umu-ink);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .umu-btn--ghost:hover {
+    background: rgba(143, 184, 154, 0.12);
+}
+
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .form-select,
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select {
+    background: rgba(12, 16, 14, 0.65);
+    color: var(--umu-ink);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .form-control::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+    color: rgba(232, 237, 232, 0.4);
+}
+
+html[data-theme="dark"] .umu-table-wrap {
+    background: var(--umu-surface);
+    border-color: var(--umu-line);
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .umu-table,
+html[data-theme="dark"] .umu-table th,
+html[data-theme="dark"] .umu-table td {
+    color: var(--umu-ink);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .umu-table th {
+    background: rgba(143, 184, 154, 0.1);
+    color: rgba(232, 237, 232, 0.62);
+}
+
+html[data-theme="dark"] body.is-dashboard .umu-table-wrap {
+    background: transparent;
+}
+
+html[data-theme="dark"] body.is-dashboard .umu-table tr {
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] body.is-dashboard .umu-table td {
+    background: transparent;
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] body.is-dashboard .umu-table td::before {
+    color: rgba(232, 237, 232, 0.48);
+}
+
+html[data-theme="dark"] .dash-order,
+html[data-theme="dark"] .dash-order__head h2,
+html[data-theme="dark"] .dash-order__products-title,
+html[data-theme="dark"] .dash-order__totals,
+html[data-theme="dark"] .dash-panel__head h2,
+html[data-theme="dark"] .dash__title,
+html[data-theme="dark"] .dash__brand-link,
+html[data-theme="dark"] .dash__brand-link strong,
+html[data-theme="dark"] .dash-card__section-title,
+html[data-theme="dark"] .dash-detail__value,
+html[data-theme="dark"] .dash-list strong {
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .dash-order__head p,
+html[data-theme="dark"] .dash-detail__label,
+html[data-theme="dark"] .dash__label,
+html[data-theme="dark"] .dash-card__hint,
+html[data-theme="dark"] .dash-form .form-text,
+html[data-theme="dark"] .dash-form .help-text {
+    color: rgba(232, 237, 232, 0.58);
+}
+
+html[data-theme="dark"] .dash__footer {
+    background: transparent;
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .dash__menu-toggle {
+    background: var(--umu-surface);
+    color: var(--umu-ink);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .dash-badge {
+    background: rgba(232, 237, 232, 0.1);
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .dash-badge--ok {
+    background: rgba(143, 184, 154, 0.18);
+    color: #a8d4b4;
+}
+
+html[data-theme="dark"] .dash-badge--warn {
+    background: rgba(212, 146, 90, 0.18);
+    color: #e0a574;
+}
+
+html[data-theme="dark"] .dash-badge--info {
+    background: rgba(111, 145, 122, 0.2);
+    color: #9ec2a8;
+}
+
+html[data-theme="dark"] .dash-badge--alert {
+    background: rgba(179, 58, 58, 0.22);
+    color: #f0a0a0;
+}
+
+html[data-theme="dark"] .dash-form .form-control,
+html[data-theme="dark"] .dash-form .form-select,
+html[data-theme="dark"] .dash-form select,
+html[data-theme="dark"] .dash-form textarea,
+html[data-theme="dark"] .dash-form input[type="text"],
+html[data-theme="dark"] .dash-form input[type="number"],
+html[data-theme="dark"] .dash-form input[type="email"],
+html[data-theme="dark"] .dash-form input[type="file"],
+html[data-theme="dark"] .dash-form input[type="url"] {
+    background: rgba(12, 16, 14, 0.72);
+    color: var(--umu-ink);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .umu-nav__link,
+html[data-theme="dark"] .umu-footer__links a,
+html[data-theme="dark"] .dash__link {
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .umu-card__desc,
+html[data-theme="dark"] .umu-footer__tagline,
+html[data-theme="dark"] .umu-content__lead,
+html[data-theme="dark"] .dash__subtitle {
+    color: rgba(232, 237, 232, 0.62);
+}
+
+html[data-theme="dark"] .umu-wa__btn {
+    background: rgba(37, 211, 102, 0.12);
+    border-color: rgba(37, 211, 102, 0.28);
+}
+
+html[data-theme="dark"] .umu-wa__meta strong {
+    color: #7ddea4;
+}
+
+html[data-theme="dark"] .umu-wa__meta small {
+    color: rgba(232, 237, 232, 0.5);
+}
+
+html[data-theme="dark"] body.is-dashboard {
+    background: #121816;
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .dash-form label,
+html[data-theme="dark"] .dash-form .form-label {
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .umu-auth__panel,
+html[data-theme="dark"] .umu-checkout__form,
+html[data-theme="dark"] .umu-checkout__summary,
+html[data-theme="dark"] .umu-profile,
+html[data-theme="dark"] .umu-cart__empty,
+html[data-theme="dark"] .umu-pagination a,
+html[data-theme="dark"] .umu-pagination span,
+html[data-theme="dark"] .umu-fav,
+html[data-theme="dark"] .umu-fav:hover,
+html[data-theme="dark"] .umu-fav.is-active,
+html[data-theme="dark"] .umu-btn-google,
+html[data-theme="dark"] .umu-modal__close,
+html[data-theme="dark"] .umu-product__thumb,
+html[data-theme="dark"] .umu-slider__btn,
+html[data-theme="dark"] .umu-nav__search input,
+html[data-theme="dark"] .dash-form__checks .form-check,
+html[data-theme="dark"] .dash-form__checks > div {
+    background: var(--umu-surface-strong);
+    border-color: var(--umu-line);
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .umu-auth__panel input,
+html[data-theme="dark"] .umu-auth__panel .form-control,
+html[data-theme="dark"] .umu-form .form-control,
+html[data-theme="dark"] .umu-form textarea,
+html[data-theme="dark"] .umu-checkout .form-control,
+html[data-theme="dark"] .umu-checkout select,
+html[data-theme="dark"] .umu-checkout input,
+html[data-theme="dark"] .umu-checkout textarea {
+    background: rgba(12, 16, 14, 0.72);
+    color: var(--umu-ink);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .umu-header.is-nav-open {
+    background:
+        radial-gradient(circle at 100% 0%, rgba(196, 163, 90, 0.1), transparent 40%),
+        radial-gradient(circle at 0% 100%, rgba(111, 145, 122, 0.12), transparent 45%),
+        var(--umu-paper);
+}
+
+html[data-theme="dark"] .umu-nav__link,
+html[data-theme="dark"] .umu-nav__mega-btn {
+    background: var(--umu-surface);
+    color: var(--umu-ink);
+    border-color: var(--umu-line);
+}
+
+html[data-theme="dark"] .umu-nav__link:hover,
+html[data-theme="dark"] .umu-nav__link.is-active,
+html[data-theme="dark"] .umu-nav__mega-btn.is-active,
+html[data-theme="dark"] .umu-nav__mega-btn:hover {
+    background: var(--umu-surface-strong);
+    color: var(--umu-ink);
+}
+
+html[data-theme="dark"] .umu-brand__text small,
+html[data-theme="dark"] .umu-section__lead,
+html[data-theme="dark"] .umu-page-title p,
+html[data-theme="dark"] .umu-product__info p,
+html[data-theme="dark"] .umu-product__likes,
+html[data-theme="dark"] .umu-modal-product__desc h3,
+html[data-theme="dark"] .umu-modal-product__desc p,
+html[data-theme="dark"] .umu-modal-product__details dt,
+html[data-theme="dark"] .umu-footer__muted,
+html[data-theme="dark"] .umu-footer__copy,
+html[data-theme="dark"] .umu-content__block p,
+html[data-theme="dark"] .umu-mega__empty,
+html[data-theme="dark"] .umu-auth__divider,
+html[data-theme="dark"] .umu-cart-card__price {
+    color: var(--umu-muted);
+}
+
+html[data-theme="dark"] .umu-tag {
+    background: rgba(143, 184, 154, 0.16);
+    color: var(--umu-forest);
+}
+
+html[data-theme="dark"] .flash-message,
+html[data-theme="dark"] .alert {
+    color: var(--umu-ink);
 }

@@ -1,0 +1,123 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Infos du site — Dashboard{% endblock %}
+{% block dash_title %}Informations du site{% endblock %}
+{% block dash_subtitle %}Marque, contact, WhatsApp, carte et page À propos — visibles sur toute la boutique.{% endblock %}
+
+{% block dash_actions %}
+    <a href="{{ path('app_contact') }}" class="umu-btn umu-btn--ghost umu-btn--sm" target="_blank" rel="noopener">Voir Contact</a>
+    <a href="{{ path('app_about') }}" class="umu-btn umu-btn--ghost umu-btn--sm" target="_blank" rel="noopener">Voir À propos</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="dash-panels dash-panels--split dash-panels--split-wide">
+    <section class="dash-card">
+        {{ form_start(form, { attr: { class: 'dash-form', 'data-turbo': 'false', enctype: 'multipart/form-data' } }) }}
+
+            <h2 class="dash-card__section-title">Marque</h2>
+            {{ form_row(form.brandName, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.brandTagline, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.logoFile, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.footerBlurb, { attr: { class: 'form-control' } }) }}
+
+            <h2 class="dash-card__section-title">Contact</h2>
+            {{ form_row(form.contactEmail, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.address, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.hours, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.responseSla, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.contactLead, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.contactInfoText, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.mapEmbedUrl, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.mapLinkUrl, { attr: { class: 'form-control' } }) }}
+
+            <h2 class="dash-card__section-title">WhatsApp</h2>
+            <p class="dash-card__hint">Ajoutez ou retirez des numéros. Le lien doit être au format https://wa.me/221XXXXXXXXX</p>
+            <div class="dash-collection"
+                 data-umu-collection
+                 data-prototype="{{ form_widget(form.whatsappNumbers.vars.prototype)|e('html_attr') }}"
+                 data-index="{{ form.whatsappNumbers|length }}">
+                <div class="dash-collection__list" data-umu-collection-list>
+                    {% for phoneForm in form.whatsappNumbers %}
+                        <div class="dash-collection__item" data-umu-collection-item>
+                            <div class="dash-collection__fields">
+                                {{ form_row(phoneForm.country, { attr: { class: 'form-control' } }) }}
+                                {{ form_row(phoneForm.label, { attr: { class: 'form-control' } }) }}
+                                {{ form_row(phoneForm.href, { attr: { class: 'form-control' } }) }}
+                            </div>
+                            <button type="button" class="umu-btn umu-btn--ghost umu-btn--sm" data-umu-collection-remove>Retirer</button>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="button" class="umu-btn umu-btn--ghost umu-btn--sm" data-umu-collection-add>+ Ajouter un numéro</button>
+            </div>
+            {% do form.whatsappNumbers.setRendered %}
+
+            <h2 class="dash-card__section-title">À propos</h2>
+            {{ form_row(form.aboutLead, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.aboutBlock1Title, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.aboutBlock1Text, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.aboutBlock2Title, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.aboutBlock2Text, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.aboutBlock3Title, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.aboutBlock3Text, { attr: { class: 'form-control' } }) }}
+
+            <div class="dash-form__actions">
+                <button type="submit" class="umu-btn umu-btn--primary">Enregistrer</button>
+            </div>
+        {{ form_end(form) }}
+    </section>
+
+    <aside class="dash-card">
+        <h2 style="margin:0 0 0.75rem;font-size:1.1rem;">Aperçu</h2>
+        <div class="dash-detail__media" style="width:100%;max-width:160px;margin-bottom:1rem;">
+            <img src="{{ asset(settings.brandLogoPath) }}" alt="{{ settings.brandName }}" style="aspect-ratio:1;object-fit:cover;width:100%;border-radius:10px;">
+        </div>
+        <p style="margin:0 0 0.25rem;font-weight:700;">{{ settings.brandName }}</p>
+        <p style="margin:0 0 0.75rem;color:rgba(26,33,28,0.65);">{{ settings.brandTagline }}</p>
+        <p class="dash-card__hint" style="margin:0;">
+            {{ settings.contactEmail }}<br>
+            {{ settings.address }}<br>
+            {{ settings.hours }}
+        </p>
+        <p class="dash-card__hint" style="margin:1rem 0 0;">
+            Pour afficher/masquer les colonnes du pied de page, utilisez aussi
+            <a href="{{ path('app_footer_settings') }}">Footer</a>.
+        </p>
+    </aside>
+</div>
+
+<script>
+(function () {
+    document.querySelectorAll('[data-umu-collection]').forEach(function (root) {
+        var list = root.querySelector('[data-umu-collection-list]');
+        var addBtn = root.querySelector('[data-umu-collection-add]');
+        var prototype = root.getAttribute('data-prototype') || '';
+        var index = parseInt(root.getAttribute('data-index') || '0', 10);
+
+        function bindRemove(item) {
+            var btn = item.querySelector('[data-umu-collection-remove]');
+            if (!btn) return;
+            btn.addEventListener('click', function () {
+                item.remove();
+            });
+        }
+
+        list.querySelectorAll('[data-umu-collection-item]').forEach(bindRemove);
+
+        if (addBtn) {
+            addBtn.addEventListener('click', function () {
+                var html = prototype.replace(/__name__/g, String(index));
+                index += 1;
+                var wrap = document.createElement('div');
+                wrap.className = 'dash-collection__item';
+                wrap.setAttribute('data-umu-collection-item', '');
+                wrap.innerHTML = '<div class="dash-collection__fields">' + html + '</div>'
+                    + '<button type="button" class="umu-btn umu-btn--ghost umu-btn--sm" data-umu-collection-remove>Retirer</button>';
+                list.appendChild(wrap);
+                bindRemove(wrap);
+            });
+        }
+    });
+})();
+</script>
+{% endblock %}

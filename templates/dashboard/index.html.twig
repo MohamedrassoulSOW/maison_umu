@@ -60,10 +60,10 @@
                     <tbody>
                         {% for order in recentOrders %}
                             <tr>
-                                <td>{{ order.id }}</td>
-                                <td>{{ order.firstName }} {{ order.lastName }}</td>
-                                <td>{{ order.totalPrice }} CFA</td>
-                                <td>
+                                <td data-label="#">{{ order.id }}</td>
+                                <td data-label="Client">{{ order.firstName }} {{ order.lastName }}</td>
+                                <td data-label="Total">{{ order.totalPrice }} CFA</td>
+                                <td data-label="Statut">
                                     {% if order.isComplted %}
                                         <span class="dash-badge dash-badge--ok">Livrée</span>
                                     {% elseif order.isPaymentCompleted %}
@@ -72,7 +72,7 @@
                                         <span class="dash-badge dash-badge--warn">En cours</span>
                                     {% endif %}
                                 </td>
-                                <td>{{ order.createdAt|date('d/m/Y H:i') }}</td>
+                                <td data-label="Date">{{ order.createdAt|date('d/m/Y H:i') }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -107,6 +107,10 @@
 </div>
 
 <div class="dash-quick">
+    <a class="dash-quick__card" href="{{ path('app_site_settings') }}">
+        <strong>Infos du site</strong>
+        <span>marque, contact, WhatsApp</span>
+    </a>
     <a class="dash-quick__card" href="{{ path('app_hero_edit') }}">
         <strong>Hero accueil</strong>
         <span>Modifier le bandeau</span>

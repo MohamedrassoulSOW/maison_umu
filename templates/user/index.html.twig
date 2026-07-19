@@ -20,11 +20,11 @@
         <tbody>
             {% for user in users %}
                 <tr>
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.lastName }}</td>
-                    <td>{{ user.firstName }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>
+                    <td data-label="ID">{{ user.id }}</td>
+                    <td data-label="Nom">{{ user.lastName }}</td>
+                    <td data-label="Prénom">{{ user.firstName }}</td>
+                    <td data-label="Email">{{ user.email }}</td>
+                    <td data-label="Rôle">
                         {% if 'ROLE_ADMIN' in user.roles %}
                             <span class="dash-badge dash-badge--info">Administrateur</span>
                         {% elseif 'ROLE_EDITOR' in user.roles %}
@@ -33,7 +33,7 @@
                             <span class="dash-badge">Utilisateur</span>
                         {% endif %}
                     </td>
-                    <td>
+                    <td data-label="Actions">
                         {% if 'ROLE_ADMIN' not in user.roles %}
                             <div class="dash-row-actions">
                                 {% if 'ROLE_EDITOR' not in user.roles %}
@@ -55,6 +55,8 @@
                                     <button type="submit" class="umu-btn umu-btn--danger umu-btn--sm">Supprimer</button>
                                 </form>
                             </div>
+                        {% else %}
+                            <span class="dash-empty">—</span>
                         {% endif %}
                     </td>
                 </tr>

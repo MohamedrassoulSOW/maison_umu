@@ -9,7 +9,6 @@
 
 {% block page_styles %}
     <style>
-        /* Après importmap : force pleine largeur mobile/tablette */
         html, body.is-dashboard {
             width: 100% !important;
             max-width: 100% !important;
@@ -20,11 +19,13 @@
         body.is-dashboard {
             padding-top: 0 !important;
         }
+        body.is-dashboard.dash-menu-open {
+            overflow: hidden !important;
+        }
         body.is-dashboard main.umu-main,
         body.is-dashboard .umu-main--dashboard,
         body.is-dashboard .dash,
         body.is-dashboard .dash--standalone,
-        body.is-dashboard .dash__sidebar,
         body.is-dashboard .dash__main,
         body.is-dashboard .dash__topbar,
         body.is-dashboard .dash-stats,
@@ -45,15 +46,18 @@
                 flex-direction: column !important;
             }
             body.is-dashboard .dash__sidebar {
-                position: relative !important;
+                position: sticky !important;
+                top: 0 !important;
                 inset: auto !important;
+                z-index: 80 !important;
+                width: 100% !important;
                 height: auto !important;
                 margin: 0 !important;
             }
             body.is-dashboard .dash__main {
                 margin: 0 !important;
                 margin-left: 0 !important;
-                padding: 1rem !important;
+                padding: 0.9rem 0.9rem 2.5rem !important;
             }
             body.is-dashboard .dash__menu-toggle {
                 display: inline-flex !important;
@@ -63,6 +67,10 @@
             }
             body.is-dashboard .dash__menu.is-open {
                 display: flex !important;
+            }
+            body.is-dashboard .dash-panels,
+            body.is-dashboard .dash-panels[style] {
+                grid-template-columns: 1fr !important;
             }
         }
         @media (min-width: 1025px) {
@@ -95,9 +103,9 @@
     <aside class="dash__sidebar" aria-label="Menu dashboard">
         <div class="dash__topbar">
             <a class="dash__brand-link" href="{{ path('app_dashboard') }}">
-                <img class="dash__brand-logo" src="{{ asset(brand_logo_path) }}" alt="Maison UMU">
+                <img class="dash__brand-logo" src="{{ asset(brand_logo_path) }}" alt="{{ brand_name }}">
                 <span>
-                    <small>Maison UMU</small>
+                    <small>{{ brand_name }}</small>
                     <strong>Dashboard</strong>
                 </span>
             </a>
@@ -123,7 +131,9 @@
                 </a>
 
                 <p class="dash__label">Boutique</p>
+                <a class="dash__link {% if currentRoute == 'app_site_settings' %}is-active{% endif %}" href="{{ path('app_site_settings') }}">Infos du site</a>
                 <a class="dash__link {% if currentRoute == 'app_hero_edit' or currentRoute == 'app_hero_remove_image' %}is-active{% endif %}" href="{{ path('app_hero_edit') }}">Hero accueil</a>
+                <a class="dash__link {% if currentRoute == 'app_footer_settings' %}is-active{% endif %}" href="{{ path('app_footer_settings') }}">Footer</a>
                 <a class="dash__link {% if currentRoute starts with 'app_product' %}is-active{% endif %}" href="{{ path('app_product_index') }}">Produits</a>
                 <a class="dash__link {% if currentRoute starts with 'app_city' %}is-active{% endif %}" href="{{ path('app_city_index') }}">Livraison</a>
 
@@ -149,9 +159,9 @@
 
     <section class="dash__main">
         <header class="dash__top">
-            <div>
+            <div class="dash__top-text">
                 <h1 class="dash__title">{% block dash_title %}Dashboard{% endblock %}</h1>
-                <p class="dash__subtitle">{% block dash_subtitle %}Pilotage Maison UMU{% endblock %}</p>
+                <p class="dash__subtitle">{% block dash_subtitle %}Pilotage {{ brand_name }}{% endblock %}</p>
             </div>
             <div class="dash__top-actions">
                 {% block dash_actions %}{% endblock %}

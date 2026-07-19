@@ -1,71 +1,69 @@
 <footer class="umu-footer">
     <div class="umu-footer__inner">
+        {% if footerSettings is not defined or footerSettings.showBrand %}
         <div class="umu-footer__brand-col">
             <a class="umu-footer__brand-link" href="{{ path('app_home_page') }}">
-                <img class="umu-footer__logo" src="{{ asset(brand_logo_path) }}" alt="Maison UMU">
+                <img class="umu-footer__logo" src="{{ asset(brand_logo_path) }}" alt="{{ brand_name }}">
             </a>
-            <div class="umu-footer__brand-text">
-                <p class="umu-footer__brand">Maison UMU</p>
-                <p>{{ brand_tagline }} — une sélection soignée pour votre quotidien.</p>
-                <p class="umu-footer__email"><a href="mailto:{{ contact_email }}">{{ contact_email }}</a></p>
-            </div>
+            <p class="umu-footer__brand">{{ brand_name }}</p>
+            <p class="umu-footer__tagline">{{ brand_tagline }}{% if site.footerBlurb %} — {{ site.footerBlurb }}{% endif %}</p>
+            <p class="umu-footer__email"><a href="mailto:{{ contact_email }}">{{ contact_email }}</a></p>
+            {% include 'leyouts/_whatsapp_links.html.twig' with { class: 'umu-wa--footer' } %}
         </div>
+        {% endif %}
 
-        <div class="umu-footer__menus">
-            <nav class="umu-footer__col" aria-label="Navigation">
-                <p class="umu-footer__title">Navigation</p>
-                <ul class="umu-footer__links">
-                    <li><a href="{{ path('app_home_page') }}">Boutique</a></li>
-                    <li><a href="{{ path('app_about') }}">À propos</a></li>
-                    <li><a href="{{ path('app_contact') }}">Contact</a></li>
-                    <li><a href="{{ path('app_search_engine') }}">Recherche</a></li>
-                </ul>
-            </nav>
+        {% if footerSettings is not defined or footerSettings.showNavigation %}
+        <nav class="umu-footer__col" aria-label="Navigation">
+            <p class="umu-footer__title">Navigation</p>
+            <ul class="umu-footer__links">
+                <li><a href="{{ path('app_home_page') }}">Boutique</a></li>
+                <li><a href="{{ path('app_about') }}">À propos</a></li>
+                <li><a href="{{ path('app_contact') }}">Contact</a></li>
+                <li><a href="{{ path('app_search_engine') }}">Recherche</a></li>
+            </ul>
+        </nav>
+        {% endif %}
 
-            <nav class="umu-footer__col" aria-label="Compte">
-                <p class="umu-footer__title">Compte</p>
-                <ul class="umu-footer__links">
-                    <li><a href="{{ path('app_favorites') }}">Favoris</a></li>
-                    <li><a href="{{ path('app_cart') }}">Panier</a></li>
-                    {% if app.user %}
-                        <li><a href="{{ path('app_profile') }}">Mon profil</a></li>
-                        {% if is_granted('ROLE_EDITOR') %}
-                            <li><a href="{{ path('app_dashboard') }}">Dashboard</a></li>
-                        {% endif %}
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <li><a href="{{ path('app_user') }}">Utilisateurs</a></li>
-                        {% endif %}
-                        <li><a class="umu-footer__logout" href="{{ path('app_logout') }}">Déconnexion</a></li>
-                    {% else %}
-                        <li><a href="{{ path('app_login') }}">Connexion</a></li>
-                        <li><a href="{{ path('app_register') }}">Inscription</a></li>
+        {% if footerSettings is not defined or footerSettings.showAccount %}
+        <nav class="umu-footer__col" aria-label="Compte">
+            <p class="umu-footer__title">Compte</p>
+            <ul class="umu-footer__links">
+                <li><a href="{{ path('app_favorites') }}">Favoris</a></li>
+                <li><a href="{{ path('app_cart') }}">Panier</a></li>
+                {% if app.user %}
+                    <li><a href="{{ path('app_profile') }}">Mon profil</a></li>
+                    {% if is_granted('ROLE_EDITOR') %}
+                        <li><a href="{{ path('app_dashboard') }}">Dashboard</a></li>
                     {% endif %}
-                </ul>
-            </nav>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li><a href="{{ path('app_user') }}">Utilisateurs</a></li>
+                    {% endif %}
+                    <li><a class="umu-footer__logout" href="{{ path('app_logout') }}">Déconnexion</a></li>
+                {% else %}
+                    <li><a href="{{ path('app_login') }}">Connexion</a></li>
+                    <li><a href="{{ path('app_register') }}">Inscription</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
 
-            {% if categories is defined and categories|length > 0 %}
-                <nav class="umu-footer__col umu-footer__col--categories" aria-label="Catégories">
-                    <p class="umu-footer__title">Catégories</p>
-                    <div class="umu-footer__cats">
-                        {% for category in categories %}
-                            <div class="umu-footer__cat">
-                                <p class="umu-footer__cat-name">{{ category.name }}</p>
-                                <ul class="umu-footer__links umu-footer__links--inline">
-                                    {% for subCategory in category.subCategories %}
-                                        <li>
-                                            <a href="{{ path('app_home_product_filter', {'id': subCategory.id}) }}">{{ subCategory.name }}</a>
-                                        </li>
-                                    {% else %}
-                                        <li><span class="umu-footer__muted">Aucune sous-catégorie</span></li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
+        {% if (footerSettings is not defined or footerSettings.showCategories) and categories is defined %}
+            {% for category in categories %}
+                <nav class="umu-footer__col umu-footer__col--cat" aria-label="{{ category.name }}">
+                    <p class="umu-footer__title umu-footer__title--cat">{{ category.name }}</p>
+                    <ul class="umu-footer__links">
+                        {% for subCategory in category.subCategories %}
+                            <li>
+                                <a href="{{ path('app_home_product_filter', {'id': subCategory.id}) }}">{{ subCategory.name }}</a>
+                            </li>
+                        {% else %}
+                            <li><span class="umu-footer__muted">Aucune sous-catégorie</span></li>
                         {% endfor %}
-                    </div>
+                    </ul>
                 </nav>
-            {% endif %}
-        </div>
+            {% endfor %}
+        {% endif %}
 
-        <p class="umu-footer__copy">© {{ "now"|date("Y") }} Maison UMU — Tous droits réservés</p>
+        <p class="umu-footer__copy">© {{ "now"|date("Y") }} {{ brand_name }} — Tous droits réservés</p>
     </div>
 </footer>

@@ -1,0 +1,31 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block title %}Footer — Dashboard{% endblock %}
+{% block dash_title %}Pied de page{% endblock %}
+{% block dash_subtitle %}Choisissez les blocs à afficher dans le footer de la boutique.{% endblock %}
+
+{% block dash_actions %}
+    <a href="{{ path('app_home_page') }}" class="umu-btn umu-btn--ghost umu-btn--sm" target="_blank" rel="noopener">Voir la boutique</a>
+{% endblock %}
+
+{% block dash_body %}
+<div class="dash-card dash-card--narrow">
+    <p class="dash-card__hint">
+        Les liens du menu (Navigation, Compte) et les catégories s’affichent dans le footer.
+        Vous pouvez aussi activer le bloc marque (logo, slogan, email).
+    </p>
+
+    {{ form_start(form, { attr: { class: 'dash-form', 'data-turbo': 'false' } }) }}
+        <div class="dash-form__checks">
+            {{ form_row(form.showBrand) }}
+            {{ form_row(form.showNavigation) }}
+            {{ form_row(form.showAccount) }}
+            {{ form_row(form.showCategories) }}
+        </div>
+
+        <div class="dash-form__actions">
+            <button type="submit" class="umu-btn umu-btn--primary">Enregistrer le footer</button>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

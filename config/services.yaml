@@ -6,6 +6,7 @@
 parameters:
     image_dir: '%kernel.project_dir%/public/uploads/images'
     hero_image_dir: '%kernel.project_dir%/public/uploads/hero'
+    brand_logo_dir: '%kernel.project_dir%/public/uploads/brand'
     mailer.from_email: '%env(MAILER_FROM_EMAIL)%'
     mailer.from_name: '%env(MAILER_FROM_NAME)%'
 services:

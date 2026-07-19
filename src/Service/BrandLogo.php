@@ -2,16 +2,26 @@
 
 namespace App\Service;
 
+use App\Repository\SiteSettingsRepository;
+
 final class BrandLogo
 {
     public const CID = 'brand_logo';
 
-    public function __construct(private string $projectDir)
-    {
+    public function __construct(
+        private string $projectDir,
+        private SiteSettingsRepository $siteSettingsRepository,
+    ) {
     }
 
     public function getPath(): ?string
     {
+        $configured = $this->siteSettingsRepository->getCurrent()->getBrandLogoPath();
+        $configuredPath = $this->projectDir.'/public/'.ltrim($configured, '/');
+        if (is_file($configuredPath)) {
+            return $configuredPath;
+        }
+
         foreach ([
             $this->projectDir.'/public/images/logo.jpeg',
             $this->projectDir.'/public/images/logo.jpg',
@@ -65,6 +75,6 @@ final class BrandLogo
 
     public function getPublicPath(): string
     {
-        return 'images/logo.jpeg';
+        return $this->siteSettingsRepository->getCurrent()->getBrandLogoPath();
     }
 }

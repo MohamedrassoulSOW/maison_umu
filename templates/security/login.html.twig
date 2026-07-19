@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Connexion — Maison UMU{% endblock %}
+{% block title %}Connexion — {{ brand_name }}{% endblock %}
 
 {% block body %}
 <div class="umu-auth">
     <form method="post" class="umu-auth__panel" action="{{ path('app_login') }}" data-turbo="false">
         <div class="umu-auth__brand">
-            <img src="{{ asset(brand_logo_path) }}" alt="Maison UMU">
+            <img src="{{ asset(brand_logo_path|default('images/logo.jpeg')) }}" alt="{{ brand_name }}">
         </div>
         <h1>Connexion</h1>
 

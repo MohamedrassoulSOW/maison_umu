@@ -22,10 +22,10 @@
         <tbody>
         {% for sub_category in sub_categories %}
             <tr>
-                <td>{{ sub_category.id }}</td>
-                <td><strong>{{ sub_category.name }}</strong></td>
-                <td>{{ sub_category.category.name }}</td>
-                <td>
+                <td data-label="ID">{{ sub_category.id }}</td>
+                <td data-label="Nom"><strong>{{ sub_category.name }}</strong></td>
+                <td data-label="Catégorie">{{ sub_category.category.name }}</td>
+                <td data-label="Actions">
                     <div class="dash-row-actions">
                         <a href="{{ path('app_sub_category_show', {'id': sub_category.id}) }}" class="umu-btn umu-btn--ghost umu-btn--sm">Voir</a>
                         <a href="{{ path('app_sub_category_edit', {'id': sub_category.id}) }}" class="umu-btn umu-btn--primary umu-btn--sm">Modifier</a>

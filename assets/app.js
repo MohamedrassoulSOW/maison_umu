@@ -66,6 +66,13 @@ function onDocumentClick(event) {
 
     if (!(target instanceof Element)) return;
 
+    const themeBtn = target.closest('[data-umu-theme-toggle]');
+    if (themeBtn) {
+        event.preventDefault();
+        applyTheme(getTheme() === 'dark' ? 'light' : 'dark');
+        return;
+    }
+
     // Menu open/close is handled by the inline script in base.html.twig
     if (
         target.closest('[data-umu-nav-toggle]')
@@ -340,6 +347,34 @@ function onProductModalClick(event) {
     }
 }
 
+const THEME_KEY = 'umu-theme';
+
+function getTheme() {
+    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+    const next = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.dataset.theme = next;
+    document.documentElement.style.colorScheme = next;
+    try {
+        localStorage.setItem(THEME_KEY, next);
+    } catch (e) {
+        /* ignore */
+    }
+
+    document.querySelectorAll('[data-umu-theme-toggle]').forEach((btn) => {
+        const dark = next === 'dark';
+        btn.setAttribute('aria-label', dark ? 'Activer le mode clair' : 'Activer le mode sombre');
+        btn.setAttribute('title', dark ? 'Mode clair' : 'Mode sombre');
+        btn.classList.toggle('is-dark', dark);
+    });
+}
+
+function initThemeToggle() {
+    applyTheme(getTheme());
+}
+
 function bootUi() {
     onScroll();
     setNavOpen(false);
@@ -350,6 +385,7 @@ function bootUi() {
     initSlider();
     initCheckoutShipping();
     initProductGallery();
+    initThemeToggle();
 }
 
 // Event delegation: works even after Turbo replaces the nav fragment

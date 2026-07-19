@@ -25,9 +25,9 @@
         <tbody>
         {% for item in productsAdded %}
             <tr>
-                <td>{{ item.id }}</td>
-                <td><span class="dash-badge dash-badge--ok">+{{ item.qte }}</span></td>
-                <td>{{ item.createdAt|date('d/m/Y H:i') }}</td>
+                <td data-label="ID">{{ item.id }}</td>
+                <td data-label="Quantité"><span class="dash-badge dash-badge--ok">+{{ item.qte }}</span></td>
+                <td data-label="Date">{{ item.createdAt|date('d/m/Y H:i') }}</td>
             </tr>
         {% else %}
             <tr>

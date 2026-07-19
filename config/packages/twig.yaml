@@ -1,9 +1,5 @@
 twig:
     file_name_pattern: '*.twig'
-    globals:
-        brand_logo_path: 'images/logo.jpeg'
-        brand_tagline: "L'art des senteurs"
-        contact_email: '%env(MAILER_FROM_EMAIL)%'
 
 when@test:
     twig:

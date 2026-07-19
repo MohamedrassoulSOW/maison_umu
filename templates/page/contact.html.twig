@@ -1,27 +1,26 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Contact — Maison UMU{% endblock %}
+{% block title %}Contact — {{ brand_name }}{% endblock %}
 
 {% block body %}
 <section class="umu-content umu-content--contact">
     <header class="umu-content__intro">
         <p class="umu-content__eyebrow">Échange</p>
         <h1>Contact</h1>
-        <p class="umu-content__lead">
-            Une question, une commande ou une demande particulière ? Écrivez-nous, nous vous répondons rapidement.
-        </p>
+        <p class="umu-content__lead">{{ site.contactLead }}</p>
     </header>
 
     <div class="umu-contact">
         <div class="umu-contact__info">
-            <h2>Maison UMU</h2>
-            <p>Service client disponible pour vos demandes boutique et suivi de commande.</p>
+            <h2>{{ brand_name }}</h2>
+            <p>{{ site.contactInfoText }}</p>
             <ul class="umu-contact__list">
                 <li><strong>Email</strong><span><a href="mailto:{{ contact_email }}">{{ contact_email }}</a></span></li>
-                <li><strong>Adresse</strong><span>Dakar, Sénégal</span></li>
-                <li><strong>Horaires</strong><span>Lun — Sam, 9h — 18h</span></li>
-                <li><strong>Réponse</strong><span>Sous 24 à 48 heures</span></li>
+                <li><strong>Adresse</strong><span>{{ site.address }}</span></li>
+                <li><strong>Horaires</strong><span>{{ site.hours }}</span></li>
+                <li><strong>Réponse</strong><span>{{ site.responseSla }}</span></li>
             </ul>
+            {% include 'leyouts/_whatsapp_links.html.twig' with { class: 'umu-wa--contact' } %}
         </div>
 
         <div class="umu-contact__main">
@@ -51,23 +50,27 @@
                 {{ form_end(contactForm) }}
             </div>
 
+            {% if site.mapEmbedUrl %}
             <div class="umu-contact__map">
                 <div class="umu-contact__map-frame">
                     <iframe
-                        title="Localisation Maison UMU — Dakar"
+                        title="Localisation {{ brand_name }} — {{ site.address }}"
                         loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade"
-                        src="https://www.openstreetmap.org/export/embed.html?bbox=-17.4805%2C14.6680%2C-17.4205%2C14.7160&amp;layer=mapnik&amp;marker=14.6928%2C-17.4467"
+                        src="{{ site.mapEmbedUrl }}"
                         allowfullscreen>
                     </iframe>
                 </div>
+                {% if site.mapLinkUrl %}
                 <a class="umu-contact__map-link"
-                   href="https://www.openstreetmap.org/?mlat=14.6928&amp;mlon=-17.4467#map=14/14.6928/-17.4467"
+                   href="{{ site.mapLinkUrl }}"
                    target="_blank"
                    rel="noopener noreferrer">
                     Ouvrir la carte
                 </a>
+                {% endif %}
             </div>
+            {% endif %}
         </div>
     </div>
 </section>

@@ -23,7 +23,7 @@
         <tbody>
         {% for product in products %}
             <tr>
-                <td>
+                <td data-label="Produit">
                     <div class="dash-product-cell">
                         {% if product.coverImage %}
                             <img src="{{ asset('uploads/images/' ~ product.coverImage) }}" alt="{{ product.name }}">
@@ -34,9 +34,9 @@
                         </div>
                     </div>
                 </td>
-                <td>{{ product.description|slice(0, 60) }}{% if product.description|length > 60 %}…{% endif %}</td>
-                <td>{{ product.price }} CFA</td>
-                <td>
+                <td data-label="Description">{{ product.description|slice(0, 60) }}{% if product.description|length > 60 %}…{% endif %}</td>
+                <td data-label="Prix">{{ product.price }} CFA</td>
+                <td data-label="Stock">
                     {% if product.stock > 5 %}
                         <span class="dash-badge dash-badge--ok">{{ product.stock }}</span>
                     {% elseif product.stock > 0 %}
@@ -45,7 +45,7 @@
                         <span class="dash-badge dash-badge--alert">Épuisé</span>
                     {% endif %}
                 </td>
-                <td>
+                <td data-label="Actions">
                     <div class="dash-row-actions">
                         <a href="{{ path('app_product_stock_add', {'id': product.id}) }}" class="umu-btn umu-btn--ghost umu-btn--sm">Stock</a>
                         <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="umu-btn umu-btn--primary umu-btn--sm">Modifier</a>

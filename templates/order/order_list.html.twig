@@ -48,10 +48,10 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ order.firstName }} {{ order.lastName }}</td>
-                            <td>{{ order.phone }}</td>
-                            <td>{{ order.adress }}</td>
-                            <td>{{ order.city.name }}</td>
+                            <td data-label="Client">{{ order.firstName }} {{ order.lastName }}</td>
+                            <td data-label="Téléphone">{{ order.phone }}</td>
+                            <td data-label="Adresse">{{ order.adress }}</td>
+                            <td data-label="Ville">{{ order.city.name }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -73,14 +73,14 @@
                     <tbody>
                         {% for line in order.orderProducts %}
                             <tr>
-                                <td>
+                                <td data-label="Image">
                                     <img class="umu-thumb" src="{{ asset('uploads/images/' ~ (line.product ? line.product.coverImage : '')) }}" alt="{{ line.product ? line.product.name : '' }}">
                                 </td>
-                                <td>{{ line.product.name }}</td>
-                                <td>{{ line.product.description|slice(0, 100) }}{% if line.product.description|length > 100 %}…{% endif %}</td>
-                                <td>{{ line.product.price }} CFA</td>
-                                <td>{{ line.qte }}</td>
-                                <td>{{ (line.product.price * line.qte) }} CFA</td>
+                                <td data-label="Produit">{{ line.product.name }}</td>
+                                <td data-label="Description">{{ line.product.description|slice(0, 100) }}{% if line.product.description|length > 100 %}…{% endif %}</td>
+                                <td data-label="Prix">{{ line.product.price }} CFA</td>
+                                <td data-label="Qté">{{ line.qte }}</td>
+                                <td data-label="Sous-total">{{ (line.product.price * line.qte) }} CFA</td>
                             </tr>
                         {% endfor %}
                     </tbody>

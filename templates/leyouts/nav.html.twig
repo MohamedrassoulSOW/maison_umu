@@ -11,10 +11,10 @@
   <div class="umu-nav__glass" aria-hidden="true"></div>
 
   <div class="umu-nav__inner">
-    <a class="umu-brand" href="{{ path('app_home_page') }}" aria-label="Maison UMU">
-      <img class="umu-brand__logo" src="{{ asset(brand_logo_path) }}" alt="Maison UMU">
+    <a class="umu-brand" href="{{ path('app_home_page') }}" aria-label="{{ brand_name }}">
+      <img class="umu-brand__logo" src="{{ asset(brand_logo_path) }}" alt="{{ brand_name }}">
       <span class="umu-brand__text">
-        <strong>Maison UMU</strong>
+        <strong>{{ brand_name }}</strong>
         <small>{{ brand_tagline }}</small>
       </span>
     </a>
