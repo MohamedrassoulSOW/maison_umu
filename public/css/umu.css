@@ -723,6 +723,9 @@ body.is-dashboard .umu-theme-toggle--float {
     top: calc(100% + 0.65rem);
     left: 0;
     min-width: min(720px, 88vw);
+    max-width: min(920px, calc(100vw - 2rem));
+    overflow: auto;
+    max-height: min(70vh, 520px);
     background: rgba(250, 251, 248, 0.98);
     border: 1px solid var(--umu-line);
     border-radius: calc(var(--umu-radius) + 2px);
@@ -1479,6 +1482,9 @@ body.is-dashboard .umu-theme-toggle--float {
 
 .umu-welcome {
     z-index: 1250;
+    align-items: center !important;
+    place-items: center;
+    padding: 1rem;
 }
 
 .umu-welcome__dialog {
@@ -1757,13 +1763,13 @@ body.umu-modal-open {
     overflow: hidden;
 }
 
-@media (max-width: 800px) {
-    .umu-modal {
+@media (max-width: 900px) {
+    .umu-modal:not(.umu-welcome) {
         padding: 0.5rem;
         align-items: end;
     }
 
-    .umu-modal__dialog {
+    .umu-modal:not(.umu-welcome) .umu-modal__dialog {
         width: 100%;
         max-height: 92dvh;
         border-radius: 18px 18px 10px 10px;
@@ -1776,6 +1782,12 @@ body.umu-modal-open {
 
     .umu-modal-product__media {
         aspect-ratio: 1 / 1;
+    }
+
+    .umu-welcome__dialog {
+        width: min(440px, 100%);
+        max-height: none;
+        border-radius: calc(var(--umu-radius) + 6px);
     }
 }
 
@@ -2363,6 +2375,7 @@ html[data-theme="dark"] .umu-alert--success {
 
 .umu-cart--empty-wrap {
     max-width: 520px;
+    margin: 0 auto;
 }
 
 .umu-cart__empty {
@@ -2658,13 +2671,13 @@ html[data-theme="dark"] .umu-alert--success {
 
 @media (max-width: 560px) {
     .umu-checkout__grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 0.75rem 0.65rem;
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
     }
 
     .umu-checkout__field label,
     .umu-checkout-form label {
-        font-size: 0.8rem;
+        font-size: 0.85rem;
     }
 
     .umu-checkout__field .form-control,
@@ -2672,9 +2685,9 @@ html[data-theme="dark"] .umu-alert--success {
     .umu-checkout select,
     .umu-checkout input:not([type="radio"]):not([type="checkbox"]),
     .umu-checkout textarea {
-        padding: 0.65rem 0.7rem;
+        padding: 0.7rem 0.8rem;
         border-radius: 10px;
-        font-size: 0.92rem;
+        font-size: 1rem; /* évite le zoom iOS */
     }
 
     .umu-checkout__form,
@@ -2820,19 +2833,23 @@ html[data-theme="dark"] .umu-alert--success {
     height: 36px;
 }
 
-@media (max-width: 420px) {
-    .umu-pay__name {
-        font-size: 0.72rem;
-    }
-
-    .umu-pay__icon svg {
-        width: 34px;
-        height: 34px;
+@media (max-width: 560px) {
+    .umu-pay__list {
+        grid-template-columns: 1fr;
+        gap: 0.55rem;
     }
 
     .umu-pay__card {
-        padding: 0.7rem 0.35rem 0.55rem;
-        min-height: 88px;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 0.75rem;
+        min-height: 0;
+        padding: 0.75rem 0.9rem;
+        text-align: left;
+    }
+
+    .umu-pay__name {
+        font-size: 0.92rem;
     }
 }
 
@@ -4805,11 +4822,13 @@ body.is-dashboard .flash-message {
 /* ---------- Responsive ---------- */
 @media (max-width: 1024px) {
     .umu-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
-}
 
-@media (max-width: 900px) {
+    body {
+        background-attachment: scroll;
+    }
+
     :root {
         --umu-nav-h: 64px;
     }
@@ -5107,7 +5126,7 @@ body.is-dashboard .flash-message {
 
     .umu-hero {
         min-height: clamp(360px, 52svh, 480px);
-        max-height: 56svh;
+        max-height: none;
         align-items: flex-end;
         justify-content: flex-end;
     }
@@ -5264,7 +5283,7 @@ body.is-dashboard .flash-message {
     }
 }
 
-@media (min-width: 901px) {
+@media (min-width: 1025px) {
     .umu-nav__toggle,
     .umu-nav__panel-head,
     .umu-nav__mobile-account {
@@ -5364,6 +5383,13 @@ body.is-dashboard .flash-message {
 
 }
 
+@media (max-width: 900px) {
+    .umu-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.9rem;
+    }
+}
+
 @media (max-width: 720px) {
     .umu-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -5421,7 +5447,7 @@ body.is-dashboard .flash-message {
 @media (max-width: 480px) {
     .umu-hero {
         min-height: clamp(320px, 48svh, 420px);
-        max-height: 52svh;
+        max-height: none;
     }
 
     .umu-hero__media-logo {
@@ -5805,7 +5831,7 @@ html[data-theme="dark"] .umu-nav__mega-btn:hover {
 }
 
 /* Menu mobile ouvert : cartes de liens lisibles */
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
     html[data-theme="dark"] .umu-header.is-nav-open .umu-nav__link,
     html[data-theme="dark"] .umu-header.is-nav-open .umu-nav__mega-btn {
         background: rgba(28, 36, 32, 0.92);

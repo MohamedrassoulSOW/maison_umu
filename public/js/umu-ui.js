@@ -11,7 +11,7 @@
     window.__umuUiBound = true;
 
     function isMobileNav() {
-        return window.matchMedia('(max-width: 900px)').matches;
+        return window.matchMedia('(max-width: 1024px)').matches;
     }
 
     function getNavEls() {

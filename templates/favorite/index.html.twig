@@ -3,23 +3,27 @@
 {% block title %}Favoris — Maison UMU{% endblock %}
 
 {% block body %}
-<div class="umu-page-title">
-    <h1>Vos favoris</h1>
-    <p>Les pièces que vous avez aimées, à portée de main.</p>
-</div>
+<section class="umu-section">
+    <div class="umu-section__head">
+        <div>
+            <h1 class="umu-section__title">Vos favoris</h1>
+            <p class="umu-section__lead">Les pièces que vous avez aimées, à portée de main.</p>
+        </div>
+    </div>
 
-{% if products is empty %}
-    <div class="umu-cart__empty">
-        <p>Vous n’avez pas encore de favoris.</p>
-        <a class="umu-btn umu-btn--primary" href="{{ path('app_home_page') }}" style="margin-top: 1rem;">
-            Découvrir la boutique
-        </a>
-    </div>
-{% else %}
-    <div class="umu-grid">
-        {% for product in products %}
-            {% include 'leyouts/_product_card.html.twig' with { product: product } %}
-        {% endfor %}
-    </div>
-{% endif %}
+    {% if products is empty %}
+        <div class="umu-cart__empty umu-cart--empty-wrap">
+            <p>Vous n’avez pas encore de favoris.</p>
+            <a class="umu-btn umu-btn--primary" href="{{ path('app_home_page') }}" style="margin-top: 1rem;">
+                Découvrir la boutique
+            </a>
+        </div>
+    {% else %}
+        <div class="umu-grid">
+            {% for product in products %}
+                {% include 'leyouts/_product_card.html.twig' with { product: product } %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
 {% endblock %}
