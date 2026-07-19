@@ -1,92 +1,79 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Panier — Maison UMU{% endblock %}
+{% block title %}Panier — {{ brand_name|default('Maison UMU') }}{% endblock %}
 
 {% block body %}
 <div class="umu-page-title">
     <h1>Votre panier</h1>
-    <p>Vérifiez vos articles avant de finaliser la commande.</p>
+    <p>{% if items is empty %}Il n’y a encore rien ici.{% else %}{{ items|length }} article{{ items|length > 1 ? 's' : '' }} — vérifiez avant de commander.{% endif %}</p>
 </div>
 
-<div class="umu-cart">
-    {% if items is empty %}
+{% if items is empty %}
+    <div class="umu-cart umu-cart--empty-wrap">
         <div class="umu-cart__empty">
-            <p>Votre panier est vide.</p>
-            <a class="umu-btn umu-btn--primary" href="{{ path('app_home_page') }}" style="margin-top: 1rem;">
-                Continuer vos achats
-            </a>
+            <span class="umu-cart__empty-icon" aria-hidden="true">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 7h14l-1.5 9h-12L5 4H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="10" cy="20" r="1.4" fill="currentColor"/>
+                    <circle cx="18" cy="20" r="1.4" fill="currentColor"/>
+                </svg>
+            </span>
+            <h2>Votre panier est vide</h2>
+            <p>Parcourez la collection et ajoutez vos pièces préférées.</p>
+            <a class="umu-btn umu-btn--primary" href="{{ path('app_home_page') }}">Découvrir la boutique</a>
         </div>
-    {% else %}
-        <div class="umu-table-wrap umu-cart__desktop">
-            <table class="umu-table">
-                <thead>
-                    <tr>
-                        <th>Produit</th>
-                        <th>Prix</th>
-                        <th>Quantité</th>
-                        <th>Total</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for item in items %}
-                    <tr>
-                        <td>
-                            <div class="umu-cart__product">
-                                <img class="umu-thumb" src="{{ asset('uploads/images/' ~ item.product.coverImage) }}" alt="{{ item.product.name }}">
-                                <span>{{ item.product.name }}</span>
-                            </div>
-                        </td>
-                        <td>{{ item.product.price }} CFA</td>
-                        <td>
-                            <div class="umu-qty">
-                                <a href="{{ path('app_cart_decrease', {id: item.product.id}) }}" aria-label="Diminuer">−</a>
-                                <span>{{ item.quantity }}</span>
-                                <a href="{{ path('app_cart_add', {id: item.product.id}) }}" aria-label="Augmenter">+</a>
-                            </div>
-                        </td>
-                        <td>{{ item.product.price * item.quantity }} CFA</td>
-                        <td>
-                            <a href="{{ path('app_cart_product_remove', {'id': item.product.id}) }}" class="umu-btn umu-btn--danger umu-btn--sm">Retirer</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <div class="umu-cart__mobile">
+    </div>
+{% else %}
+    <div class="umu-cart umu-cart--filled">
+        <div class="umu-cart__list">
             {% for item in items %}
-                <article class="umu-cart-card">
-                    <img class="umu-cart-card__img" src="{{ asset('uploads/images/' ~ item.product.coverImage) }}" alt="{{ item.product.name }}">
-                    <div class="umu-cart-card__body">
-                        <h3>{{ item.product.name }}</h3>
-                        <p class="umu-cart-card__price">{{ item.product.price }} CFA</p>
-                        <div class="umu-cart-card__row">
-                            <div class="umu-qty">
+                <article class="umu-cart-line">
+                    <a class="umu-cart-line__media" href="{{ path('app_home_product_show', {id: item.product.id}) }}">
+                        <img src="{{ asset('uploads/images/' ~ item.product.coverImage) }}" alt="{{ item.product.name }}">
+                    </a>
+                    <div class="umu-cart-line__body">
+                        <div class="umu-cart-line__top">
+                            <div>
+                                <h2>
+                                    <a href="{{ path('app_home_product_show', {id: item.product.id}) }}">{{ item.product.name }}</a>
+                                </h2>
+                                <p class="umu-cart-line__unit">{{ item.product.price|number_format(0, ',', ' ') }} CFA / unité</p>
+                            </div>
+                            <a class="umu-cart-line__remove" href="{{ path('app_cart_product_remove', {id: item.product.id}) }}" aria-label="Retirer {{ item.product.name }}">
+                                Retirer
+                            </a>
+                        </div>
+                        <div class="umu-cart-line__bottom">
+                            <div class="umu-qty" role="group" aria-label="Quantité">
                                 <a href="{{ path('app_cart_decrease', {id: item.product.id}) }}" aria-label="Diminuer">−</a>
                                 <span>{{ item.quantity }}</span>
                                 <a href="{{ path('app_cart_add', {id: item.product.id}) }}" aria-label="Augmenter">+</a>
                             </div>
-                            <strong>{{ item.product.price * item.quantity }} CFA</strong>
+                            <strong class="umu-cart-line__sum">{{ (item.product.price * item.quantity)|number_format(0, ',', ' ') }} CFA</strong>
                         </div>
-                        <a href="{{ path('app_cart_product_remove', {'id': item.product.id}) }}" class="umu-btn umu-btn--danger umu-btn--sm">Retirer</a>
                     </div>
                 </article>
             {% endfor %}
         </div>
 
-        <div class="umu-cart__footer">
-            <p class="umu-cart__total">Total : <span>{{ total }} CFA</span></p>
-            <div class="umu-cart__actions">
-                <a data-turbo="false" href="{{ path('app_order') }}" class="umu-btn umu-btn--primary">
-                    Valider la commande
-                </a>
-                <a href="{{ path('app_cart_remove') }}" class="umu-btn umu-btn--ghost">
-                    Vider le panier
-                </a>
+        <aside class="umu-cart__summary">
+            <h2>Récapitulatif</h2>
+            <div class="umu-cart__summary-row">
+                <span>Articles</span>
+                <strong>{{ items|length }}</strong>
             </div>
-        </div>
-    {% endif %}
-</div>
+            <div class="umu-cart__summary-row umu-cart__summary-row--total">
+                <span>Total</span>
+                <strong>{{ total|number_format(0, ',', ' ') }} CFA</strong>
+            </div>
+            <p class="umu-cart__summary-note">Les frais de livraison sont calculés à l’étape suivante.</p>
+            <a data-turbo="false" href="{{ path('app_order') }}" class="umu-btn umu-btn--primary umu-cart__checkout">
+                Valider la commande
+            </a>
+            <a href="{{ path('app_home_page') }}" class="umu-btn umu-btn--ghost umu-cart__continue">
+                Continuer vos achats
+            </a>
+        </aside>
+    </div>
+{% endif %}
 {% endblock %}

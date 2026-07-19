@@ -1973,17 +1973,215 @@ html[data-theme="dark"] .umu-alert--success {
 }
 
 .umu-cart {
-    width: min(1100px, calc(100% - 2rem));
+    width: min(1080px, calc(100% - 2rem));
     margin: 0 auto 3.5rem;
 }
 
-.umu-cart__empty {
-    padding: 3rem 1.5rem;
-    text-align: center;
-    border: 1px dashed var(--umu-line);
-    border-radius: var(--umu-radius);
+.umu-cart--filled {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.9fr);
+    gap: 1.35rem;
+    align-items: start;
+}
+
+.umu-cart__list {
+    display: grid;
+    gap: 0.85rem;
+}
+
+.umu-cart-line {
+    display: grid;
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 1.1rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--umu-line);
+    border-radius: calc(var(--umu-radius) + 2px);
     background: var(--umu-surface);
+    box-shadow: 0 10px 28px rgba(26, 33, 28, 0.04);
     color: var(--umu-ink);
+}
+
+.umu-cart-line__media {
+    display: block;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--umu-mist);
+    aspect-ratio: 1;
+}
+
+.umu-cart-line__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s var(--ease-out);
+}
+
+.umu-cart-line:hover .umu-cart-line__media img {
+    transform: scale(1.04);
+}
+
+.umu-cart-line__body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.85rem;
+    min-width: 0;
+}
+
+.umu-cart-line__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.umu-cart-line__top h2 {
+    margin: 0 0 0.3rem;
+    font-size: 1.1rem;
+    font-weight: 750;
+    line-height: 1.25;
+}
+
+.umu-cart-line__top h2 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.umu-cart-line__top h2 a:hover {
+    color: var(--umu-forest);
+}
+
+.umu-cart-line__unit {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--umu-muted);
+}
+
+.umu-cart-line__remove {
+    flex-shrink: 0;
+    font-size: 0.82rem;
+    font-weight: 650;
+    color: var(--umu-muted);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.umu-cart-line__remove:hover {
+    color: #8a2424;
+}
+
+.umu-cart-line__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.umu-cart-line__sum {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--umu-ink);
+}
+
+.umu-cart__summary {
+    position: sticky;
+    top: calc(var(--umu-nav-h) + 1rem);
+    padding: 1.35rem 1.3rem;
+    border: 1px solid var(--umu-line);
+    border-radius: calc(var(--umu-radius) + 4px);
+    background: var(--umu-surface);
+    box-shadow: 0 12px 32px rgba(26, 33, 28, 0.05);
+    color: var(--umu-ink);
+}
+
+.umu-cart__summary h2 {
+    margin: 0 0 1rem;
+    font-size: 1.2rem;
+}
+
+.umu-cart__summary-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.umu-cart__summary-row span {
+    color: var(--umu-muted);
+    font-weight: 600;
+}
+
+.umu-cart__summary-row--total {
+    margin-top: 0.85rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--umu-line);
+    margin-bottom: 0.5rem;
+}
+
+.umu-cart__summary-row--total strong {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    color: var(--umu-copper);
+    font-weight: 800;
+}
+
+.umu-cart__summary-note {
+    margin: 0 0 1.15rem;
+    font-size: 0.82rem;
+    color: var(--umu-muted);
+    line-height: 1.4;
+}
+
+.umu-cart__checkout,
+.umu-cart__continue {
+    width: 100%;
+    justify-content: center;
+    min-height: 46px;
+}
+
+.umu-cart__checkout {
+    margin-bottom: 0.55rem;
+}
+
+.umu-cart--empty-wrap {
+    max-width: 520px;
+}
+
+.umu-cart__empty {
+    padding: 2.75rem 1.75rem;
+    text-align: center;
+    border: 1px solid var(--umu-line);
+    border-radius: calc(var(--umu-radius) + 4px);
+    background:
+        radial-gradient(600px 240px at 50% 0%, color-mix(in srgb, var(--umu-forest) 12%, transparent), transparent 70%),
+        var(--umu-surface);
+    color: var(--umu-ink);
+    box-shadow: 0 12px 32px rgba(26, 33, 28, 0.05);
+}
+
+.umu-cart__empty-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    margin-bottom: 1rem;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--umu-forest) 12%, transparent);
+    color: var(--umu-forest);
+}
+
+.umu-cart__empty h2 {
+    margin: 0 0 0.45rem;
+    font-size: 1.35rem;
+}
+
+.umu-cart__empty p {
+    margin: 0 0 1.25rem;
+    color: var(--umu-muted);
 }
 
 .umu-table-wrap {
@@ -2029,44 +2227,37 @@ html[data-theme="dark"] .umu-alert--success {
 
 .umu-qty {
     display: inline-flex;
+    align-items: center;
     border: 1px solid var(--umu-line);
-    border-radius: 8px;
+    border-radius: 999px;
     overflow: hidden;
+    background: var(--umu-surface-strong);
 }
 
 .umu-qty a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
     color: var(--umu-ink);
     background: transparent;
     font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
 }
 
 .umu-qty a:hover {
     background: var(--umu-forest);
-    color: #fff;
+    color: var(--umu-on-primary);
 }
 
-.umu-cart__footer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 1.5rem;
-}
-
-.umu-cart__total {
-    font-family: var(--font-display);
-    font-size: 1.6rem;
-    margin: 0;
-}
-
-.umu-cart__total span {
-    color: var(--umu-copper);
+.umu-qty span {
+    min-width: 2rem;
+    text-align: center;
+    line-height: 36px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
 }
 
 /* ---------- Checkout ---------- */
@@ -4301,8 +4492,7 @@ body.is-dashboard .flash-message {
 
 /* ---------- Mobile helpers (default desktop) ---------- */
 .umu-nav__panel-head,
-.umu-nav__mobile-account,
-.umu-cart__mobile {
+.umu-nav__mobile-account {
     display: none;
 }
 
@@ -4359,24 +4549,6 @@ body.is-dashboard .flash-message {
     transform: translateY(-6px) rotate(-45deg);
 }
 
-.umu-cart__product {
-    display: flex;
-    align-items: center;
-    gap: 0.85rem;
-}
-
-.umu-qty span {
-    min-width: 2rem;
-    text-align: center;
-    line-height: 34px;
-    font-weight: 600;
-}
-
-.umu-cart__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.65rem;
-}
 
 .umu-nav__link--danger {
     color: #8a2424 !important;
@@ -4825,67 +4997,28 @@ body.is-dashboard .flash-message {
         grid-template-columns: 1fr;
     }
 
-    .umu-cart__desktop {
-        display: none;
+    .umu-cart--filled {
+        grid-template-columns: 1fr;
+        gap: 1rem;
     }
 
-    .umu-cart__mobile {
-        display: grid;
-        gap: 0.75rem;
+    .umu-cart__summary {
+        position: static;
+        order: -1;
     }
 
-    .umu-cart-card {
-        display: grid;
-        grid-template-columns: 88px 1fr;
+    .umu-cart-line {
+        grid-template-columns: 88px minmax(0, 1fr);
         gap: 0.85rem;
         padding: 0.85rem;
-        border: 1px solid var(--umu-line);
-        border-radius: var(--umu-radius-sm);
-        background: var(--umu-surface);
-        color: var(--umu-ink);
     }
 
-    .umu-cart-card__img {
-        width: 88px;
-        height: 88px;
-        object-fit: cover;
-        border-radius: 10px;
-        background: var(--umu-mist);
-    }
-
-    .umu-cart-card__body h3 {
-        margin: 0 0 0.25rem;
+    .umu-cart-line__top h2 {
         font-size: 1rem;
     }
 
-    .umu-cart-card__price {
-        margin: 0 0 0.55rem;
-        color: var(--umu-muted);
-        font-size: 0.9rem;
-    }
-
-    .umu-cart-card__row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.75rem;
-        margin-bottom: 0.65rem;
-    }
-
-    .umu-cart__footer {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.85rem;
-    }
-
-    .umu-cart__actions {
-        flex-direction: column;
-    }
-
-    .umu-cart__actions .umu-btn {
-        width: 100%;
-        justify-content: center;
-        min-height: 46px;
+    .umu-cart-line__sum {
+        font-size: 1.05rem;
     }
 
     .dash__label {
@@ -4901,8 +5034,7 @@ body.is-dashboard .flash-message {
 @media (min-width: 901px) {
     .umu-nav__toggle,
     .umu-nav__panel-head,
-    .umu-nav__mobile-account,
-    .umu-cart__mobile {
+    .umu-nav__mobile-account {
         display: none !important;
     }
 }
@@ -4997,9 +5129,6 @@ body.is-dashboard .flash-message {
         display: none !important;
     }
 
-    .umu-cart__desktop {
-        display: block;
-    }
 }
 
 @media (max-width: 720px) {
@@ -5067,15 +5196,6 @@ body.is-dashboard .flash-message {
 
     .umu-brand__text {
         display: none;
-    }
-
-    .umu-cart-card {
-        grid-template-columns: 72px 1fr;
-    }
-
-    .umu-cart-card__img {
-        width: 72px;
-        height: 72px;
     }
 
     .umu-slider__btn {
@@ -5157,7 +5277,8 @@ html[data-theme="dark"] .dash-panel,
 html[data-theme="dark"] .dash-quick__card,
 html[data-theme="dark"] .umu-auth,
 html[data-theme="dark"] .umu-modal__dialog,
-html[data-theme="dark"] .umu-cart-card,
+html[data-theme="dark"] .umu-cart-line,
+html[data-theme="dark"] .umu-cart__summary,
 html[data-theme="dark"] .dash__sidebar {
     background: var(--umu-surface);
     border-color: var(--umu-line);
@@ -5445,7 +5566,7 @@ html[data-theme="dark"] .umu-footer__copy,
 html[data-theme="dark"] .umu-content__block p,
 html[data-theme="dark"] .umu-mega__empty,
 html[data-theme="dark"] .umu-auth__divider,
-html[data-theme="dark"] .umu-cart-card__price {
+html[data-theme="dark"] .umu-cart-line__unit {
     color: var(--umu-muted);
 }
 
