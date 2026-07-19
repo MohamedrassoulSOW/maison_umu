@@ -12,6 +12,12 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class OrderTrackingController extends AbstractController
 {
+    #[Route('/suivi', name: 'app_order_track_help', methods: ['GET'])]
+    public function help(): Response
+    {
+        return $this->render('order/track_help.html.twig');
+    }
+
     #[Route('/suivi/{token}', name: 'app_order_track', methods: ['GET', 'POST'], requirements: ['token' => '[a-f0-9]{64}'])]
     public function track(
         string $token,

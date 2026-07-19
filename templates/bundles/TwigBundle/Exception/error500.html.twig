@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Erreur serveur — {{ brand_name|default('Maison UMU') }}{% endblock %}
+
+{% block body %}
+<div class="umu-auth">
+    <div class="umu-auth__panel" style="text-align:center;">
+        <div class="umu-auth__brand">
+            <img src="{{ asset(brand_logo_path|default('images/logo.jpeg')) }}" alt="{{ brand_name|default('Maison UMU') }}">
+        </div>
+        <h1>Service temporairement indisponible</h1>
+        <div class="umu-alert umu-alert--danger">
+            Une erreur interne s’est produite. Réessayez dans un instant.
+        </div>
+        <a class="umu-btn umu-btn--primary" href="{{ path('app_home_page') }}">Retour à la boutique</a>
+    </div>
+</div>
+{% endblock %}

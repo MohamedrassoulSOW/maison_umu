@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Suivi de commande — {{ brand_name|default('Maison UMU') }}{% endblock %}
+
+{% block body %}
+<div class="umu-auth">
+    <div class="umu-auth__panel" style="text-align:center;">
+        <div class="umu-auth__brand">
+            <img src="{{ asset(brand_logo_path|default('images/logo.jpeg')) }}" alt="{{ brand_name|default('Maison UMU') }}">
+        </div>
+        <h1>Suivi de commande</h1>
+        <p style="color:var(--umu-muted);margin:0 0 1.25rem;">
+            Ouvrez le lien de suivi reçu par e-mail après votre commande.
+            Il ressemble à&nbsp;: <code>/suivi/…</code>
+        </p>
+        <a class="umu-btn umu-btn--primary" href="{{ path('app_home_page') }}">Retour à la boutique</a>
+        <a class="umu-btn umu-btn--ghost" href="{{ path('app_contact') }}" style="margin-top:0.65rem;">Nous contacter</a>
+    </div>
+</div>
+{% endblock %}

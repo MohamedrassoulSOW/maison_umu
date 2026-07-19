@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Erreur {{ status_code }} — {{ brand_name|default('Maison UMU') }}{% endblock %}
+
+{% block body %}
+<div class="umu-auth">
+    <div class="umu-auth__panel" style="text-align:center;">
+        <div class="umu-auth__brand">
+            <img src="{{ asset(brand_logo_path|default('images/logo.jpeg')) }}" alt="{{ brand_name|default('Maison UMU') }}">
+        </div>
+        <h1>Une erreur est survenue</h1>
+        <div class="umu-alert umu-alert--danger">
+            {{ status_text|default('Nous ne pouvons pas traiter votre demande pour le moment.') }}
+        </div>
+        <p style="color:var(--umu-muted);margin:0 0 1.25rem;">Si le problème continue, contactez-nous — nous vous aiderons volontiers.</p>
+        <a class="umu-btn umu-btn--primary" href="{{ path('app_home_page') }}">Retour à la boutique</a>
+    </div>
+</div>
+{% endblock %}

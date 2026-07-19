@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Page introuvable — {{ brand_name|default('Maison UMU') }}{% endblock %}
+
+{% block body %}
+<div class="umu-auth">
+    <div class="umu-auth__panel" style="text-align:center;">
+        <div class="umu-auth__brand">
+            <img src="{{ asset(brand_logo_path|default('images/logo.jpeg')) }}" alt="{{ brand_name|default('Maison UMU') }}">
+        </div>
+        <h1>Page introuvable</h1>
+        <div class="umu-alert umu-alert--danger">
+            Cette page n’existe pas ou le lien n’est plus valide.
+        </div>
+        <p style="color:var(--umu-muted);margin:0 0 1.25rem;">Pour le suivi de commande, utilisez le lien reçu par e-mail.</p>
+        <a class="umu-btn umu-btn--primary" href="{{ path('app_home_page') }}">Retour à la boutique</a>
+    </div>
+</div>
+{% endblock %}
