@@ -102,7 +102,7 @@
                 {% if order.mobileMoney and not order.isPaymentCompleted %}
                     <form method="post" action="{{ path('app_order_payment_confirm', {'id': order.id}) }}" style="display:inline;">
                         <input type="hidden" name="_token" value="{{ csrf_token('order_payment' ~ order.id) }}">
-                        <button type="submit" class="umu-btn umu-btn--primary umu-btn--sm">Confirmer le paiement + e-mail client</button>
+                        <button type="submit" class="umu-btn umu-btn--primary umu-btn--sm">Confirmer réception du paiement</button>
                     </form>
                 {% endif %}
                 {% if not order.isComplted %}

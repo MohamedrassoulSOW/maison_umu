@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Commande validée — Maison UMU</title>
+    <title>Confirmation de commande — Maison UMU</title>
 </head>
 <body style="margin:0;padding:0;background:#f4f1ea;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;">
     <div style="max-width:640px;margin:24px auto;background:#ffffff;border:1px solid #e5dfd0;overflow:hidden;">
@@ -10,27 +10,23 @@
 
         <div style="padding:28px 24px;">
             <h1 style="margin:0 0 12px;font-size:22px;color:#0d0d0d;">
-                {% if order.isPaymentCompleted or order.paymentMethod == 'cod' %}
+                {% if order.isPaymentCompleted %}
                     Votre commande est bien validée
                 {% else %}
-                    Confirmation de commande
+                    Confirmation de votre commande
                 {% endif %}
             </h1>
             <p style="margin:0 0 16px;line-height:1.55;">
                 Bonjour {{ order.firstName }} {{ order.lastName }},
             </p>
             <p style="margin:0 0 16px;line-height:1.55;">
-                {% if order.isPaymentCompleted and order.mobileMoney %}
-                    Nous avons bien reçu votre paiement
-                    <strong>{{ order.paymentMethodLabel }}</strong>.
+                {% if order.isPaymentCompleted %}
                     Votre commande <strong>n° {{ '%05d'|format(order.id) }}</strong>
                     du {{ order.createdAt|date('d/m/Y à H:i') }} est <strong>validée</strong>.
-                {% elseif order.isPaymentCompleted %}
-                    Votre paiement pour la commande <strong>n° {{ '%05d'|format(order.id) }}</strong>
-                    a bien été confirmé. Votre commande est <strong>validée</strong>.
                 {% else %}
                     Merci pour votre commande <strong>n° {{ '%05d'|format(order.id) }}</strong>
                     du {{ order.createdAt|date('d/m/Y à H:i') }}.
+                    Voici le récapitulatif. {% if order.mobileMoney %}Merci d’effectuer le paiement ensuite selon les instructions ci-dessous.{% endif %}
                 {% endif %}
             </p>
 
@@ -61,12 +57,20 @@
             <p style="margin:0 0 8px;"><strong>Paiement :</strong> {{ order.paymentMethodLabel }}{% if order.isPaymentCompleted %} — payé{% endif %}</p>
             <p style="margin:0 0 20px;font-size:18px;color:#0d0d0d;"><strong>Total :</strong> {{ order.totalPrice|number_format(0, ',', ' ') }} CFA</p>
 
-            {% if order.paymentMethod == 'cod' or (order.payOnDelivery and not order.isPaymentCompleted) %}
+            {% if order.mobileMoney and not order.isPaymentCompleted %}
+                <div style="margin:0 0 20px;padding:14px 16px;background:#f7faf7;border:1px solid #cfe3d4;border-radius:8px;">
+                    <p style="margin:0 0 8px;font-weight:700;">À payer — {{ order.paymentMethodLabel }}</p>
+                    <p style="margin:0 0 6px;">Envoyez <strong>{{ order.totalPrice|number_format(0, ',', ' ') }} CFA</strong> au numéro :</p>
+                    <p style="margin:0 0 8px;font-size:20px;font-weight:800;color:#2a4534;">{{ mobileMoneyPhone|default('+221 77 450 78 08') }}</p>
+                    <p style="margin:0 0 6px;font-size:13px;color:#6b6558;">Référence à indiquer : <strong>CMD{{ '%05d'|format(order.id) }}</strong></p>
+                    <p style="margin:0;font-size:13px;color:#6b6558;">Dès réception de votre transfert, nous validerons votre commande.</p>
+                </div>
+            {% elseif order.paymentMethod == 'cod' and not order.isPaymentCompleted %}
                 <p style="margin:0 0 20px;color:#6b6558;font-size:14px;">Paiement à la livraison.</p>
             {% endif %}
 
             <p style="margin:0;color:#6b6558;font-size:13px;line-height:1.5;">
-                Nous préparons votre colis avec soin. Merci pour votre confiance.
+                Merci pour votre confiance.
             </p>
         </div>
 

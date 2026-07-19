@@ -8,11 +8,13 @@
     <div style="max-width:640px;margin:24px auto;background:#ffffff;border:1px solid #e5dfd0;overflow:hidden;">
         {% include 'mail/_mail_header.html.twig' %}
         <div style="padding:28px 24px;">
-            <h1 style="margin:0 0 12px;font-size:22px;color:#0d0d0d;">Paiement confirmé</h1>
+            <h1 style="margin:0 0 12px;font-size:22px;color:#0d0d0d;">Paiement reçu — commande validée</h1>
             <p style="margin:0 0 16px;line-height:1.55;">Bonjour {{ order.firstName }} {{ order.lastName }},</p>
             <p style="margin:0 0 16px;line-height:1.55;">
-                Votre paiement pour la commande <strong>n° {{ '%05d'|format(order.id) }}</strong>
-                a bien été reçu. Nous préparons votre colis.
+                Nous avons bien reçu votre paiement
+                <strong>{{ order.paymentMethodLabel }}</strong>
+                pour la commande <strong>n° {{ '%05d'|format(order.id) }}</strong>.
+                Votre commande est <strong>validée</strong> ; nous préparons votre colis.
             </p>
             <p style="margin:0 0 8px;font-size:18px;"><strong>Total payé :</strong> {{ order.totalPrice|number_format(0, ',', ' ') }} CFA</p>
             <p style="margin:16px 0 0;color:#6b6558;font-size:13px;">Merci pour votre achat sur Maison UMU.</p>

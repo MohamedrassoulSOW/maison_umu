@@ -16,6 +16,7 @@ class OrderMailer
         private Environment $twig,
         private BrandLogo $brandLogo,
         private LoggerInterface $logger,
+        private MobileMoneyConfig $mobileMoney,
         private string $fromEmail,
         private string $fromName,
     ) {
@@ -66,7 +67,10 @@ class OrderMailer
             return;
         }
 
-        $html = $this->twig->render($template, ['order' => $order]);
+        $html = $this->twig->render($template, [
+            'order' => $order,
+            'mobileMoneyPhone' => $this->mobileMoney->getDisplayPhone(),
+        ]);
 
         $email = (new Email())
             ->from(new Address($this->fromEmail, $this->fromName))

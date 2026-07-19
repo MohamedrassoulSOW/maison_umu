@@ -111,7 +111,7 @@ class MobileMoneyConfig
                 'secondaryUrl' => $this->orangeAppUrl(),
                 'ussd' => sprintf('#144#21*%s*%d#', $this->getLocalPhone(), $amountInt),
                 'label' => 'Orange Money',
-                'autoOpen' => true,
+                'autoOpen' => false,
             ];
         }
 
@@ -123,7 +123,7 @@ class MobileMoneyConfig
             'secondaryUrl' => $this->waveStoreUrl(),
             'ussd' => null,
             'label' => 'Wave',
-            'autoOpen' => true,
+            'autoOpen' => false,
         ];
     }
 }

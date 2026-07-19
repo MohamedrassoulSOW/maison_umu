@@ -97,18 +97,14 @@ final class OrderController extends AbstractController
                 $session->set('cart', []);
                 $session->set('last_order_id', $order->getId());
 
-                // Wave / OM : e-mail uniquement après validation du paiement (dashboard).
-                // COD : confirmation immédiate.
-                if ($order->getPaymentMethod() === 'cod') {
-                    try {
-                        $this->orderMailer->sendOrderConfirmation($order);
-                    } catch (\Throwable) {
-                        // Order is saved even if mail fails
-                    }
-                    $this->addFlash('success', 'Votre commande a été passée avec succès !');
-                } else {
-                    $this->addFlash('success', 'Commande enregistrée — ouvrez votre application pour payer.');
+                // E-mail de validation immédiat (détails + consignes de paiement Wave/OM).
+                // Le client paie ensuite ; le dashboard confirme la réception du transfert.
+                try {
+                    $this->orderMailer->sendOrderConfirmation($order);
+                } catch (\Throwable) {
+                    // Order is saved even if mail fails
                 }
+                $this->addFlash('success', 'Votre commande a été passée avec succès ! Consultez votre e-mail.');
 
                 return $this->redirectToRoute('app_order-ok-message');
             }
@@ -181,8 +177,8 @@ final class OrderController extends AbstractController
         $entityManager->flush();
 
         try {
-            $this->orderMailer->sendOrderConfirmation($order);
-            $this->addFlash('success', 'Paiement confirmé. Un e-mail détaillé a été envoyé au client.');
+            $this->orderMailer->sendPaymentConfirmed($order);
+            $this->addFlash('success', 'Paiement confirmé. Un e-mail a été envoyé au client.');
         } catch (\Throwable) {
             $this->addFlash('success', 'Paiement confirmé.');
             $this->addFlash('danger', 'La confirmation est enregistrée, mais l’e-mail n’a pas pu être envoyé.');
