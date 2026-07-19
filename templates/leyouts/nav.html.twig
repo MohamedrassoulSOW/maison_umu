@@ -4,8 +4,12 @@
   {% set initials = (app.user.firstName|default('U')|slice(0,1) ~ app.user.lastName|default('')|slice(0,1))|upper %}
 {% endif %}
 {% set cartCount = app.session.get('cart') is defined ? app.session.get('cart')|length : 0 %}
+{% set favCount = app.session.get('favorites')|default([])|length %}
 
-<nav class="umu-nav" data-umu-nav>
+<header class="umu-header" data-umu-nav>
+  {# Flou isolé : ne doit PAS être un ancêtre du panneau mobile (sinon position:fixed se casse) #}
+  <div class="umu-nav__glass" aria-hidden="true"></div>
+
   <div class="umu-nav__inner">
     <a class="umu-brand" href="{{ path('app_home_page') }}" aria-label="Maison UMU">
       <img class="umu-brand__logo" src="{{ asset(brand_logo_path) }}" alt="Maison UMU">
@@ -15,7 +19,12 @@
       </span>
     </a>
 
-    <div class="umu-nav__panel" id="umuNavPanel" data-umu-nav-panel>
+    <nav class="umu-nav__panel" id="umuNavPanel" data-umu-nav-panel aria-label="Menu">
+      <div class="umu-nav__panel-head">
+        <p>Navigation</p>
+        <button type="button" class="umu-nav__panel-close" data-umu-nav-close aria-label="Fermer le menu">✕</button>
+      </div>
+
       <ul class="umu-nav__links">
         <li>
           <a class="umu-nav__link {% if currentRoute == 'app_home_page' %}is-active{% endif %}" href="{{ path('app_home_page') }}">Boutique</a>
@@ -57,12 +66,40 @@
       </ul>
 
       <form data-turbo="false" class="umu-nav__search" role="search" method="GET" action="{{ path('app_search_engine') }}">
-        <input type="search" name="word" placeholder="Rechercher…" aria-label="Rechercher un produit" required>
-        <button class="umu-btn umu-btn--ghost umu-btn--sm" type="submit">OK</button>
+        <input type="search" name="word" placeholder="Rechercher un produit…" aria-label="Rechercher un produit" required>
+        <button class="umu-btn umu-btn--primary umu-btn--sm" type="submit">OK</button>
       </form>
-    </div>
+
+      <div class="umu-nav__mobile-account">
+        {% if app.user %}
+          <p class="umu-nav__mobile-account-label">Mon compte</p>
+          <a class="umu-nav__link" href="{{ path('app_profile') }}">Mon profil</a>
+          {% if is_granted('ROLE_EDITOR') %}
+            <a class="umu-nav__link" href="{{ path('app_dashboard') }}">Dashboard</a>
+          {% endif %}
+          <a class="umu-nav__link umu-nav__link--danger" href="{{ path('app_logout') }}">Déconnexion</a>
+        {% else %}
+          <p class="umu-nav__mobile-account-label">Compte</p>
+          <div class="umu-nav__mobile-auth">
+            <a class="umu-btn umu-btn--ghost" href="{{ path('app_login') }}">Connexion</a>
+            <a class="umu-btn umu-btn--copper" href="{{ path('app_register') }}">Inscription</a>
+          </div>
+        {% endif %}
+      </div>
+    </nav>
 
     <div class="umu-nav__toolbar">
+      <a class="umu-nav__cart umu-nav__fav" href="{{ path('app_favorites') }}" aria-label="Favoris ({{ favCount }})" data-umu-fav-nav>
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+        </svg>
+        {% if favCount > 0 %}
+          <span class="umu-cart-count" data-umu-fav-count>{{ favCount }}</span>
+        {% else %}
+          <span class="umu-cart-count" data-umu-fav-count hidden>0</span>
+        {% endif %}
+      </a>
+
       <a class="umu-nav__cart" href="{{ path('app_cart') }}" aria-label="Panier ({{ cartCount }})">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
           <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
@@ -73,7 +110,7 @@
       </a>
 
       {% if app.user %}
-        <div class="umu-profile-menu" data-umu-profile>
+        <div class="umu-profile-menu umu-profile-menu--desktop" data-umu-profile>
           <button type="button" class="umu-avatar" data-umu-profile-btn aria-expanded="false" aria-haspopup="true" aria-controls="umuProfileMenu" title="{{ app.user.firstName }} {{ app.user.lastName }}">
             <span>{{ initials }}</span>
           </button>
@@ -107,17 +144,22 @@
           </div>
         </div>
       {% else %}
-        <div class="umu-nav__auth">
+        <div class="umu-nav__auth umu-nav__auth--desktop">
           <a class="umu-btn umu-btn--ghost umu-btn--sm" href="{{ path('app_login') }}">Connexion</a>
           <a class="umu-btn umu-btn--copper umu-btn--sm" href="{{ path('app_register') }}">Inscription</a>
         </div>
       {% endif %}
 
       <button class="umu-nav__toggle" type="button" data-umu-nav-toggle aria-expanded="false" aria-controls="umuNavPanel" aria-label="Ouvrir le menu">
-        <span class="umu-nav__burger" aria-hidden="true"></span>
-        <span data-umu-nav-toggle-label>Menu</span>
+        <span class="umu-nav__burger" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+        <span class="umu-nav__toggle-label" data-umu-nav-toggle-label>Menu</span>
       </button>
     </div>
   </div>
-</nav>
-<div class="umu-nav__backdrop" data-umu-nav-backdrop hidden></div>
+
+  <div class="umu-nav__backdrop" data-umu-nav-backdrop hidden></div>
+</header>

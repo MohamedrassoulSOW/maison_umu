@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Order;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
@@ -14,6 +15,7 @@ class OrderMailer
         private MailerInterface $mailer,
         private Environment $twig,
         private BrandLogo $brandLogo,
+        private LoggerInterface $logger,
         private string $fromEmail,
         private string $fromName,
     ) {
@@ -24,7 +26,8 @@ class OrderMailer
         $this->send(
             $order,
             'Confirmation de votre commande — Maison UMU',
-            'mail/order_confirme.html.twig'
+            'mail/order_confirme.html.twig',
+            'order_confirmation'
         );
     }
 
@@ -33,7 +36,8 @@ class OrderMailer
         $this->send(
             $order,
             'Votre commande a été livrée — Maison UMU',
-            'mail/order_delivered.html.twig'
+            'mail/order_delivered.html.twig',
+            'order_delivered'
         );
     }
 
@@ -42,13 +46,19 @@ class OrderMailer
         $this->send(
             $order,
             'Paiement confirmé — Maison UMU',
-            'mail/order_payment.html.twig'
+            'mail/order_payment.html.twig',
+            'payment_confirmed'
         );
     }
 
-    private function send(Order $order, string $subject, string $template): void
+    private function send(Order $order, string $subject, string $template, string $type): void
     {
         if (!$order->getEmail()) {
+            $this->logger->warning('Order mail skipped: missing customer email', [
+                'orderId' => $order->getId(),
+                'type' => $type,
+            ]);
+
             return;
         }
 
@@ -56,15 +66,42 @@ class OrderMailer
 
         $email = (new Email())
             ->from(new Address($this->fromEmail, $this->fromName))
+            ->replyTo($this->fromEmail)
             ->to($order->getEmail())
             ->subject($subject)
-            ->html($html);
+            ->html($html)
+            ->text(sprintf(
+                "Maison UMU\n\nBonjour %s %s,\n\n%s\nCommande n° %s\nTotal : %s CFA\n",
+                $order->getFirstName() ?? '',
+                $order->getLastName() ?? '',
+                $subject,
+                $order->getId(),
+                $order->getTotalPrice()
+            ));
 
         $logoPath = $this->brandLogo->getPath();
         if ($logoPath) {
             $email->embedFromPath($logoPath, BrandLogo::CID);
         }
 
-        $this->mailer->send($email);
+        try {
+            $this->mailer->send($email);
+            $this->logger->info('Order mail sent', [
+                'orderId' => $order->getId(),
+                'to' => $order->getEmail(),
+                'type' => $type,
+                'from' => $this->fromEmail,
+            ]);
+        } catch (\Throwable $e) {
+            $this->logger->error('Order mail failed: '.$e->getMessage(), [
+                'orderId' => $order->getId(),
+                'to' => $order->getEmail(),
+                'type' => $type,
+                'from' => $this->fromEmail,
+                'exception' => $e,
+            ]);
+
+            throw $e;
+        }
     }
 }

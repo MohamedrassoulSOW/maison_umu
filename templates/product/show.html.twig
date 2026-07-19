@@ -13,12 +13,20 @@
 {% block dash_body %}
 <div class="dash-card">
     <div class="dash-detail">
-        {% if product.image %}
+        {% if product.images|length > 0 or product.coverImage %}
             <div class="dash-detail__row">
-                <div class="dash-detail__label">Image</div>
+                <div class="dash-detail__label">Images</div>
                 <div class="dash-detail__value">
-                    <div class="dash-detail__media">
-                        <img src="{{ asset('uploads/images/' ~ product.image) }}" alt="{{ product.name }}">
+                    <div class="dash-gallery">
+                        {% for image in product.images %}
+                            <figure class="dash-gallery__item">
+                                <img src="{{ asset('uploads/images/' ~ image.filename) }}" alt="{{ product.name }}">
+                            </figure>
+                        {% else %}
+                            <figure class="dash-gallery__item">
+                                <img src="{{ asset('uploads/images/' ~ product.coverImage) }}" alt="{{ product.name }}">
+                            </figure>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

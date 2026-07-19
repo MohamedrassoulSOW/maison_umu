@@ -63,10 +63,10 @@ final class ResetPasswordController extends AbstractController
                     'resetUrl' => $resetUrl,
                 ]);
 
-                try {
-                    $fromEmail = (string) $this->getParameter('mailer.from_email');
-                    $fromName = (string) $this->getParameter('mailer.from_name');
+                $fromEmail = (string) $this->getParameter('mailer.from_email');
+                $fromName = (string) $this->getParameter('mailer.from_name');
 
+                try {
                     $emailMessage = (new Email())
                         ->from(new Address($fromEmail, $fromName))
                         ->replyTo($fromEmail)
@@ -85,9 +85,14 @@ final class ResetPasswordController extends AbstractController
                     }
 
                     $mailer->send($emailMessage);
-
+                    $logger->info('Password reset mail sent', [
+                        'to' => $user->getEmail(),
+                        'from' => $fromEmail,
+                    ]);
                 } catch (\Throwable $e) {
                     $logger->error('Password reset mail failed: '.$e->getMessage(), [
+                        'to' => $user->getEmail(),
+                        'from' => $fromEmail,
                         'exception' => $e,
                     ]);
                 }

@@ -2,7 +2,7 @@
 
 {% block title %}Hero — Dashboard{% endblock %}
 {% block dash_title %}Page d’accueil — Hero{% endblock %}
-{% block dash_subtitle %}Modifiez le bandeau principal visible sur la boutique.{% endblock %}
+{% block dash_subtitle %}Modifiez le bandeau principal : textes, photo ou vidéo.{% endblock %}
 
 {% block dash_actions %}
     <a href="{{ path('app_home_page') }}" class="umu-btn umu-btn--ghost umu-btn--sm" target="_blank" rel="noopener">Voir la boutique</a>
@@ -11,9 +11,9 @@
 {% block dash_body %}
 <div class="dash-panels" style="grid-template-columns: 1.2fr 0.8fr;">
     <section class="dash-card">
-        <p class="dash-card__hint">Ces contenus s’affichent en haut de la page d’accueil.</p>
+        <p class="dash-card__hint">Ces contenus s’affichent en haut de la page d’accueil. Vous pouvez uploader une photo ou une vidéo en fond.</p>
 
-        {{ form_start(form, { attr: { class: 'dash-form', 'data-turbo': 'false' } }) }}
+        {{ form_start(form, { attr: { class: 'dash-form', 'data-turbo': 'false', enctype: 'multipart/form-data' } }) }}
             {{ form_row(form.brandLabel, { attr: { class: 'form-control' } }) }}
             {{ form_row(form.headline, { attr: { class: 'form-control' } }) }}
             {{ form_row(form.text, { attr: { class: 'form-control' } }) }}
@@ -21,7 +21,7 @@
             {{ form_row(form.primaryCtaUrl, { attr: { class: 'form-control' } }) }}
             {{ form_row(form.secondaryCtaLabel, { attr: { class: 'form-control' } }) }}
             {{ form_row(form.secondaryCtaUrl, { attr: { class: 'form-control' } }) }}
-            {{ form_row(form.imageFile, { attr: { class: 'form-control' } }) }}
+            {{ form_row(form.mediaFile, { attr: { class: 'form-control' } }) }}
 
             <div class="dash-form__actions">
                 <button type="submit" class="umu-btn umu-btn--primary">Enregistrer le hero</button>
@@ -30,18 +30,26 @@
     </section>
 
     <aside class="dash-card">
-        <h2 style="margin:0 0 0.75rem;font-size:1.1rem;">Aperçu image</h2>
-        {% if hero.image %}
+        <h2 style="margin:0 0 0.75rem;font-size:1.1rem;">Aperçu média</h2>
+        {% if hero.hasMedia %}
             <div class="dash-detail__media" style="width:100%;max-width:100%;">
-                <img src="{{ asset('uploads/hero/' ~ hero.image) }}" alt="Hero actuel" style="aspect-ratio:16/10;">
+                {% if hero.videoMedia %}
+                    <video src="{{ asset('uploads/hero/' ~ hero.media) }}"
+                           controls muted playsinline
+                           style="width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;background:#0d0d0d;"></video>
+                    <p class="dash-card__hint" style="margin:0.5rem 0 0;">Vidéo actuelle</p>
+                {% else %}
+                    <img src="{{ asset('uploads/hero/' ~ hero.media) }}" alt="Hero actuel" style="aspect-ratio:16/10;object-fit:cover;width:100%;border-radius:10px;">
+                    <p class="dash-card__hint" style="margin:0.5rem 0 0;">Photo actuelle</p>
+                {% endif %}
             </div>
             <form method="post" action="{{ path('app_hero_remove_image') }}" style="margin-top:1rem;"
-                  onsubmit="return confirm('Supprimer l’image du hero ?');">
+                  onsubmit="return confirm('Supprimer le média du hero ?');">
                 <input type="hidden" name="_token" value="{{ csrf_token('hero_remove_image') }}">
-                <button type="submit" class="umu-btn umu-btn--danger umu-btn--sm">Supprimer l’image</button>
+                <button type="submit" class="umu-btn umu-btn--danger umu-btn--sm">Supprimer le média</button>
             </form>
         {% else %}
-            <p class="dash-empty">Aucune image personnalisée. Un fond par défaut sera utilisé (ou le logo).</p>
+            <p class="dash-empty">Aucun média personnalisé. Un fond par défaut sera utilisé (ou le logo).</p>
             <div class="dash-detail__media" style="width:100%;max-width:100%;margin-top:0.75rem;">
                 <img src="{{ asset(brand_logo_path) }}" alt="Logo Maison UMU" style="aspect-ratio:1;object-fit:cover;">
             </div>

@@ -49,16 +49,27 @@ class HeroSettingsType extends AbstractType
                 'help' => 'Ex. /cart ou /contact',
                 'constraints' => [new NotBlank(), new Length(max: 255)],
             ])
-            ->add('imageFile', FileType::class, [
-                'label' => 'Image du hero',
+            ->add('mediaFile', FileType::class, [
+                'label' => 'Média du hero (photo ou vidéo)',
                 'mapped' => false,
                 'required' => false,
-                'help' => 'JPG, PNG ou WEBP — max 4 Mo. Laissez vide pour conserver l’image actuelle.',
+                'help' => 'Photo : JPG, PNG, WEBP (max 8 Mo). Vidéo : MP4, WEBM (max 40 Mo). Laissez vide pour conserver le média actuel.',
+                'attr' => [
+                    'accept' => 'image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime',
+                ],
                 'constraints' => [
                     new File([
-                        'maxSize' => '4M',
-                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'],
-                        'mimeTypesMessage' => 'Choisissez une image valide (JPG, PNG ou WEBP).',
+                        'maxSize' => '40M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/webp',
+                            'video/mp4',
+                            'video/webm',
+                            'video/quicktime',
+                            'video/ogg',
+                        ],
+                        'mimeTypesMessage' => 'Choisissez une photo (JPG, PNG, WEBP) ou une vidéo (MP4, WEBM).',
                     ]),
                 ],
             ]);

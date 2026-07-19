@@ -8,10 +8,10 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\All;
+use Symfony\Component\Validator\Constraints\Count;
 use Symfony\Component\Validator\Constraints\File;
-
 
 class ProductType extends AbstractType
 {
@@ -22,18 +22,30 @@ class ProductType extends AbstractType
             ->add('description')
             ->add('Price')
             ->add('stock')
-            ->add('image', FileType::class, [
-                'label' => 'image du produit',
+            ->add('images', FileType::class, [
+                'label' => 'Images du produit',
                 'mapped' => false,
                 'required' => false,
+                'multiple' => true,
+                'attr' => [
+                    'accept' => 'image/jpeg,image/png,image/webp,image/gif',
+                    'multiple' => 'multiple',
+                ],
+                'help' => 'Vous pouvez sélectionner plusieurs photos (JPG, PNG, WEBP — max 2 Mo chacune, 12 max).',
                 'constraints' => [
-                    new File([
-                        'maxSize' => '1024k',
-                        'mimeTypes' => [
-                            'image/*'
-                        ],
-                        'mimeTypesMessage' => 'Please upload a valid image file.',
-                    ])
+                    new Count(max: 12, maxMessage: 'Maximum {{ limit }} images à la fois.'),
+                    new All([
+                        new File([
+                            'maxSize' => '2M',
+                            'mimeTypes' => [
+                                'image/jpeg',
+                                'image/png',
+                                'image/webp',
+                                'image/gif',
+                            ],
+                            'mimeTypesMessage' => 'Chaque fichier doit être une image valide (JPG, PNG, WEBP).',
+                        ]),
+                    ]),
                 ],
             ])
             ->add('subcategories', EntityType::class, [

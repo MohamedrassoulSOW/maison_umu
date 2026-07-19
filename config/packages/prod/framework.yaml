@@ -1,0 +1,5 @@
+framework:
+    # Absolute URLs (password-reset links, Stripe redirects) use DEFAULT_URI
+    router:
+        strict_requirements: null
+        default_uri: '%env(DEFAULT_URI)%'

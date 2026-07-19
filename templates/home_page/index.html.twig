@@ -3,10 +3,14 @@
 {% block title %}Maison UMU — Boutique{% endblock %}
 
 {% block body %}
-<section class="umu-hero">
+<section class="umu-hero {% if hero.videoMedia %}umu-hero--video{% endif %}">
     <div class="umu-hero__media" aria-hidden="true">
-        {% if hero.image %}
-            <img src="{{ asset('uploads/hero/' ~ hero.image) }}" alt="">
+        {% if hero.videoMedia %}
+            <video class="umu-hero__video"
+                   src="{{ asset('uploads/hero/' ~ hero.media) }}"
+                   autoplay muted loop playsinline preload="metadata"></video>
+        {% elseif hero.imageMedia %}
+            <img src="{{ asset('uploads/hero/' ~ hero.media) }}" alt="">
         {% else %}
             <img src="{{ asset(brand_logo_path) }}" alt="" class="umu-hero__media-logo">
         {% endif %}

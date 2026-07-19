@@ -38,12 +38,17 @@ when@prod:
                 handler: nested
                 excluded_http_codes: [404, 405]
                 channels: ["!deprecation"]
-                buffer_size: 50 # How many messages should be saved? Prevent memory leaks
+                buffer_size: 50
             nested:
                 type: stream
-                path: php://stderr
+                # Hostinger / shared hosting: readable file logs
+                path: "%kernel.logs_dir%/prod.log"
                 level: debug
-                formatter: monolog.formatter.json
+            mailer_log:
+                type: stream
+                path: "%kernel.logs_dir%/mailer.log"
+                level: info
+                channels: ["mailer", "app"]
             console:
                 type: console
                 process_psr_3_messages: false
@@ -51,5 +56,5 @@ when@prod:
             deprecation:
                 type: stream
                 channels: [deprecation]
-                path: php://stderr
-                formatter: monolog.formatter.json
+                path: "%kernel.logs_dir%/deprecation.log"
+

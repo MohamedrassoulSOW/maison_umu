@@ -10,13 +10,39 @@
 {% endblock %}
 
 {% block dash_body %}
-<div class="dash-card dash-card--narrow">
-    {{ include('product/_form.html.twig', { button_label: 'Enregistrer les modifications' }) }}
-    <div class="dash-form__actions" style="border-top: none; padding-top: 0; margin-top: 0.5rem;">
-        <form method="post" action="{{ path('app_product_delete', { id: product.id }) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce produit ?');">
-            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
-            <button type="submit" class="umu-btn umu-btn--danger umu-btn--sm">Supprimer le produit</button>
-        </form>
-    </div>
+<div class="dash-panels" style="grid-template-columns: 1.1fr 0.9fr;">
+    <section class="dash-card">
+        {{ include('product/_form.html.twig', { button_label: 'Enregistrer les modifications' }) }}
+        <div class="dash-form__actions" style="border-top: none; padding-top: 0; margin-top: 0.5rem;">
+            <form method="post" action="{{ path('app_product_delete', { id: product.id }) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce produit ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                <button type="submit" class="umu-btn umu-btn--danger umu-btn--sm">Supprimer le produit</button>
+            </form>
+        </div>
+    </section>
+
+    <aside class="dash-card">
+        <h2 style="margin:0 0 0.75rem;font-size:1.1rem;">Galerie ({{ product.images|length }})</h2>
+        {% if product.images|length > 0 %}
+            <div class="dash-gallery">
+                {% for image in product.images %}
+                    <figure class="dash-gallery__item">
+                        <img src="{{ asset('uploads/images/' ~ image.filename) }}" alt="{{ product.name }} — image {{ loop.index }}">
+                        {% if loop.first %}
+                            <span class="dash-gallery__badge">Couverture</span>
+                        {% endif %}
+                        <form method="post" action="{{ path('app_product_image_delete', { id: product.id, imageId: image.id }) }}"
+                              onsubmit="return confirm('Supprimer cette image ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_product_image' ~ image.id) }}">
+                            <button type="submit" class="umu-btn umu-btn--danger umu-btn--sm">Supprimer</button>
+                        </form>
+                    </figure>
+                {% endfor %}
+            </div>
+            <p class="dash-card__hint" style="margin-top:0.85rem;">La première image sert de couverture (liste, panier, cartes).</p>
+        {% else %}
+            <p class="dash-empty">Aucune image pour l’instant. Ajoutez-en via le formulaire.</p>
+        {% endif %}
+    </aside>
 </div>
 {% endblock %}

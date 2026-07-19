@@ -32,6 +32,11 @@ services:
         arguments:
             $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
 
+    App\Service\GoogleOAuthClient:
+        arguments:
+            $clientId: '%env(default::GOOGLE_CLIENT_ID)%'
+            $clientSecret: '%env(default::GOOGLE_CLIENT_SECRET)%'
+
     App\Controller\StripeController:
         arguments:
             $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'

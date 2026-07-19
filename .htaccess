@@ -1,0 +1,7 @@
+# Hostinger: if the domain points to the project root (not /public),
+# forward all requests into the Symfony public/ folder.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^$ public/ [L]
+    RewriteRule (.*) public/$1 [L]
+</IfModule>

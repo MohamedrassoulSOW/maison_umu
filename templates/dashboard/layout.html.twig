@@ -2,13 +2,98 @@
 
 {% set currentRoute = app.request.attributes.get('_route') %}
 
+{% block body_class %}is-dashboard{% endblock %}
+{% block main_class %}umu-main--dashboard{% endblock %}
 {% block nav %}{% endblock %}
 {% block footer %}{% endblock %}
+
+{% block page_styles %}
+    <style>
+        /* Après importmap : force pleine largeur mobile/tablette */
+        html, body.is-dashboard {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow-x: hidden !important;
+        }
+        body.is-dashboard {
+            padding-top: 0 !important;
+        }
+        body.is-dashboard main.umu-main,
+        body.is-dashboard .umu-main--dashboard,
+        body.is-dashboard .dash,
+        body.is-dashboard .dash--standalone,
+        body.is-dashboard .dash__sidebar,
+        body.is-dashboard .dash__main,
+        body.is-dashboard .dash__topbar,
+        body.is-dashboard .dash-stats,
+        body.is-dashboard .dash__top {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        body.is-dashboard main.umu-main,
+        body.is-dashboard .dash,
+        body.is-dashboard .dash--standalone {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        @media (max-width: 1024px) {
+            body.is-dashboard .dash {
+                display: flex !important;
+                flex-direction: column !important;
+            }
+            body.is-dashboard .dash__sidebar {
+                position: relative !important;
+                inset: auto !important;
+                height: auto !important;
+                margin: 0 !important;
+            }
+            body.is-dashboard .dash__main {
+                margin: 0 !important;
+                margin-left: 0 !important;
+                padding: 1rem !important;
+            }
+            body.is-dashboard .dash__menu-toggle {
+                display: inline-flex !important;
+            }
+            body.is-dashboard .dash__menu {
+                display: none !important;
+            }
+            body.is-dashboard .dash__menu.is-open {
+                display: flex !important;
+            }
+        }
+        @media (min-width: 1025px) {
+            body.is-dashboard .dash__sidebar {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                bottom: 0 !important;
+                width: 260px !important;
+                max-width: 260px !important;
+                height: 100vh !important;
+            }
+            body.is-dashboard .dash__main {
+                width: calc(100% - 260px) !important;
+                max-width: none !important;
+                margin-left: 260px !important;
+            }
+            body.is-dashboard .dash__menu-toggle {
+                display: none !important;
+            }
+            body.is-dashboard .dash__menu {
+                display: flex !important;
+            }
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
 <div class="dash dash--standalone">
     <aside class="dash__sidebar" aria-label="Menu dashboard">
-        <div class="dash__brand">
+        <div class="dash__topbar">
             <a class="dash__brand-link" href="{{ path('app_dashboard') }}">
                 <img class="dash__brand-logo" src="{{ asset(brand_logo_path) }}" alt="Maison UMU">
                 <span>
@@ -16,34 +101,49 @@
                     <strong>Dashboard</strong>
                 </span>
             </a>
+
+            <button type="button"
+                    class="dash__menu-toggle"
+                    data-dash-menu-toggle
+                    aria-expanded="false"
+                    aria-controls="dashMenu"
+                    aria-label="Ouvrir le menu">
+                <span class="dash__burger" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </button>
         </div>
 
-        <nav class="dash__nav" aria-label="Navigation dashboard">
-            <a class="dash__link {% if currentRoute == 'app_dashboard' %}is-active{% endif %}" href="{{ path('app_dashboard') }}">
-                Vue d’ensemble
-            </a>
+        <div class="dash__menu" id="dashMenu" data-dash-nav>
+            <nav class="dash__nav" aria-label="Navigation dashboard">
+                <a class="dash__link {% if currentRoute == 'app_dashboard' %}is-active{% endif %}" href="{{ path('app_dashboard') }}">
+                    Vue d’ensemble
+                </a>
 
-            <p class="dash__label">Boutique</p>
-            <a class="dash__link {% if currentRoute == 'app_hero_edit' or currentRoute == 'app_hero_remove_image' %}is-active{% endif %}" href="{{ path('app_hero_edit') }}">Hero accueil</a>
-            <a class="dash__link {% if currentRoute starts with 'app_product' %}is-active{% endif %}" href="{{ path('app_product_index') }}">Produits</a>
-            <a class="dash__link {% if currentRoute starts with 'app_city' %}is-active{% endif %}" href="{{ path('app_city_index') }}">Livraison</a>
+                <p class="dash__label">Boutique</p>
+                <a class="dash__link {% if currentRoute == 'app_hero_edit' or currentRoute == 'app_hero_remove_image' %}is-active{% endif %}" href="{{ path('app_hero_edit') }}">Hero accueil</a>
+                <a class="dash__link {% if currentRoute starts with 'app_product' %}is-active{% endif %}" href="{{ path('app_product_index') }}">Produits</a>
+                <a class="dash__link {% if currentRoute starts with 'app_city' %}is-active{% endif %}" href="{{ path('app_city_index') }}">Livraison</a>
 
-            <p class="dash__label">Commandes</p>
-            <a class="dash__link {% if currentRoute == 'app_order_show' and app.request.attributes.get('type') == 'not-Complted' %}is-active{% endif %}" href="{{ path('app_order_show', {type: 'not-Complted'}) }}">À traiter</a>
-            <a class="dash__link {% if currentRoute == 'app_order_show' and app.request.attributes.get('type') == 'pay-on-line-not-delivered' %}is-active{% endif %}" href="{{ path('app_order_show', {type: 'pay-on-line-not-delivered'}) }}">Payées non livrées</a>
-            <a class="dash__link {% if currentRoute == 'app_order_show' and app.request.attributes.get('type') == 'is-Complted' %}is-active{% endif %}" href="{{ path('app_order_show', {type: 'is-Complted'}) }}">Livrées</a>
+                <p class="dash__label">Commandes</p>
+                <a class="dash__link {% if currentRoute == 'app_order_show' and app.request.attributes.get('type') == 'not-Complted' %}is-active{% endif %}" href="{{ path('app_order_show', {type: 'not-Complted'}) }}">À traiter</a>
+                <a class="dash__link {% if currentRoute == 'app_order_show' and app.request.attributes.get('type') == 'pay-on-line-not-delivered' %}is-active{% endif %}" href="{{ path('app_order_show', {type: 'pay-on-line-not-delivered'}) }}">Payées non livrées</a>
+                <a class="dash__link {% if currentRoute == 'app_order_show' and app.request.attributes.get('type') == 'is-Complted' %}is-active{% endif %}" href="{{ path('app_order_show', {type: 'is-Complted'}) }}">Livrées</a>
 
-            {% if is_granted('ROLE_ADMIN') %}
-                <p class="dash__label">Administration</p>
-                <a class="dash__link {% if currentRoute starts with 'app_category' %}is-active{% endif %}" href="{{ path('app_category') }}">Catégories</a>
-                <a class="dash__link {% if currentRoute starts with 'app_sub_category' %}is-active{% endif %}" href="{{ path('app_sub_category_index') }}">Sous-catégories</a>
-                <a class="dash__link {% if currentRoute starts with 'app_user' %}is-active{% endif %}" href="{{ path('app_user') }}">Utilisateurs</a>
-            {% endif %}
-        </nav>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <p class="dash__label">Administration</p>
+                    <a class="dash__link {% if currentRoute starts with 'app_category' %}is-active{% endif %}" href="{{ path('app_category') }}">Catégories</a>
+                    <a class="dash__link {% if currentRoute starts with 'app_sub_category' %}is-active{% endif %}" href="{{ path('app_sub_category_index') }}">Sous-catégories</a>
+                    <a class="dash__link {% if currentRoute starts with 'app_user' %}is-active{% endif %}" href="{{ path('app_user') }}">Utilisateurs</a>
+                {% endif %}
+            </nav>
 
-        <div class="dash__footer">
-            <a class="dash__back" href="{{ path('app_home_page') }}">← Retour boutique</a>
-            <a class="dash__logout" href="{{ path('app_logout') }}">Déconnexion</a>
+            <div class="dash__footer">
+                <a class="dash__back" href="{{ path('app_home_page') }}">← Retour boutique</a>
+                <a class="dash__logout" href="{{ path('app_logout') }}">Déconnexion</a>
+            </div>
         </div>
     </aside>
 

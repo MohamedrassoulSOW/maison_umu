@@ -21,7 +21,8 @@ framework:
             messenger.bus.default: []
 
         routing:
-            # Emails are sent synchronously so reset/order mails work without a worker
+            # CRITICAL (Hostinger): keep emails SYNC — no worker needed for
+            # password-reset + order confirmation / payment / delivered mails.
             # Symfony\Component\Mailer\Messenger\SendEmailMessage: async
             Symfony\Component\Notifier\Message\ChatMessage: async
             Symfony\Component\Notifier\Message\SmsMessage: async

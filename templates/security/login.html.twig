@@ -21,6 +21,9 @@
             </div>
         {% endif %}
 
+        {% include 'leyouts/_google_login_button.html.twig' %}
+        <div class="umu-auth__divider"><span>ou</span></div>
+
         <label for="inputEmail">Email</label>
         <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
 

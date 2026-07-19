@@ -10,6 +10,9 @@
         </div>
         <h1>Inscription</h1>
 
+        {% include 'leyouts/_google_login_button.html.twig' %}
+        <div class="umu-auth__divider"><span>ou</span></div>
+
         {{ form_errors(registrationForm) }}
 
         {{ form_start(registrationForm, { attr: { 'data-turbo': 'false' } }) }}

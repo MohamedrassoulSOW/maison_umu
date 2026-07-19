@@ -13,15 +13,16 @@
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
+        {% block page_styles %}{% endblock %}
     </head>
-    <body>
+    <body class="{% block body_class %}{% endblock %}">
         {% block nav %}
             {{ render(path('app_menu')) }}
         {% endblock %}
 
         {% include 'leyouts/_flash_message.html.twig' %}
 
-        <main class="umu-main">
+        <main class="umu-main {% block main_class %}{% endblock %}">
             {% block body %}{% endblock %}
         </main>
 
@@ -29,19 +30,34 @@
             {% include 'leyouts/footer.html.twig' %}
         {% endblock %}
 
+        {% include 'leyouts/_product_modal_shell.html.twig' %}
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
         <script>
             (function () {
-                function closeMenu() {
+                function setMenuOpen(open) {
+                    var header = document.querySelector('[data-umu-nav]');
                     var panel = document.querySelector('[data-umu-nav-panel]');
                     var toggle = document.querySelector('[data-umu-nav-toggle]');
                     var backdrop = document.querySelector('[data-umu-nav-backdrop]');
                     var label = document.querySelector('[data-umu-nav-toggle-label]');
-                    if (panel) panel.classList.remove('is-open');
-                    if (toggle) toggle.setAttribute('aria-expanded', 'false');
-                    if (backdrop) { backdrop.hidden = true; backdrop.classList.remove('is-visible'); }
-                    if (label) label.textContent = 'Menu';
-                    document.body.classList.remove('umu-nav-open');
+                    if (header) header.classList.toggle('is-nav-open', open);
+                    if (panel) panel.classList.toggle('is-open', open);
+                    if (toggle) {
+                        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                        toggle.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+                        toggle.classList.toggle('is-open', open);
+                    }
+                    if (backdrop) {
+                        backdrop.hidden = true;
+                        backdrop.classList.remove('is-visible');
+                    }
+                    if (label) label.textContent = open ? 'Fermer' : 'Menu';
+                    document.body.classList.toggle('umu-nav-open', open);
+                }
+
+                function closeMenu() {
+                    setMenuOpen(false);
                 }
 
                 document.addEventListener('click', function (e) {
@@ -69,24 +85,26 @@
                     if (t.closest('[data-umu-nav-toggle]')) {
                         e.preventDefault();
                         var panel = document.querySelector('[data-umu-nav-panel]');
-                        var toggle = document.querySelector('[data-umu-nav-toggle]');
-                        var backdrop = document.querySelector('[data-umu-nav-backdrop]');
-                        var label = document.querySelector('[data-umu-nav-toggle-label]');
-                        if (!panel || !toggle) return;
-                        var open = !panel.classList.contains('is-open');
-                        panel.classList.toggle('is-open', open);
-                        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-                        document.body.classList.toggle('umu-nav-open', open);
-                        if (backdrop) {
-                            backdrop.hidden = !open;
-                            backdrop.classList.toggle('is-visible', open);
-                        }
-                        if (label) label.textContent = open ? 'Fermer' : 'Menu';
+                        if (!panel) return;
+                        setMenuOpen(!panel.classList.contains('is-open'));
                         return;
                     }
 
-                    if (t.closest('[data-umu-nav-backdrop]')) {
+                    if (t.closest('[data-umu-nav-close]') || t.closest('[data-umu-nav-backdrop]')) {
+                        e.preventDefault();
                         closeMenu();
+                    }
+
+                    var dashToggle = t.closest('[data-dash-menu-toggle]');
+                    if (dashToggle) {
+                        e.preventDefault();
+                        var dashMenu = document.querySelector('[data-dash-nav]');
+                        if (!dashMenu) return;
+                        var dashOpen = !dashMenu.classList.contains('is-open');
+                        dashMenu.classList.toggle('is-open', dashOpen);
+                        dashToggle.setAttribute('aria-expanded', dashOpen ? 'true' : 'false');
+                        dashToggle.setAttribute('aria-label', dashOpen ? 'Fermer le menu' : 'Ouvrir le menu');
+                        dashToggle.classList.toggle('is-open', dashOpen);
                     }
                 }, true);
             })();

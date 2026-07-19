@@ -22,16 +22,19 @@ function getNavEls() {
 }
 
 function setNavOpen(open) {
-    const { toggle, panel, backdrop, label } = getNavEls();
+    const { nav, toggle, panel, backdrop, label } = getNavEls();
     if (!panel || !toggle) return;
 
+    if (nav) nav.classList.toggle('is-nav-open', open);
     panel.classList.toggle('is-open', open);
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+    toggle.classList.toggle('is-open', open);
     document.body.classList.toggle('umu-nav-open', open);
 
     if (backdrop) {
-        backdrop.hidden = !open;
-        backdrop.classList.toggle('is-visible', open);
+        backdrop.hidden = true;
+        backdrop.classList.remove('is-visible');
     }
 
     if (label) {
@@ -64,8 +67,13 @@ function onDocumentClick(event) {
     if (!(target instanceof Element)) return;
 
     // Menu open/close is handled by the inline script in base.html.twig
-    if (target.closest('[data-umu-nav-toggle]') || target.closest('[data-umu-nav-backdrop]')) {
+    if (
+        target.closest('[data-umu-nav-toggle]')
+        || target.closest('[data-umu-nav-backdrop]')
+        || target.closest('[data-umu-nav-close]')
+    ) {
         setProfileOpen(false);
+        setMegaOpen(false);
         return;
     }
 
@@ -111,6 +119,7 @@ function onKeydown(event) {
         setMegaOpen(false);
         setProfileOpen(false);
         setNavOpen(false);
+        closeProductModal();
     }
 }
 
@@ -195,20 +204,159 @@ function initCheckoutShipping() {
     citySelector.addEventListener('change', () => fetchShipping(citySelector.value));
 }
 
+function initProductGallery(root = document) {
+    root.querySelectorAll('[data-umu-gallery]').forEach((gallery) => {
+        if (gallery.dataset.bound === '1') return;
+        gallery.dataset.bound = '1';
+
+        const main = gallery.querySelector('[data-umu-gallery-main]');
+        const thumbs = gallery.querySelectorAll('[data-umu-gallery-thumb]');
+        if (!main || !thumbs.length) return;
+
+        thumbs.forEach((thumb) => {
+            thumb.addEventListener('click', () => {
+                const src = thumb.getAttribute('data-src');
+                if (!src) return;
+                main.src = src;
+                thumbs.forEach((t) => t.classList.toggle('is-active', t === thumb));
+            });
+        });
+    });
+}
+
+function getProductModal() {
+    return document.querySelector('[data-umu-product-modal]');
+}
+
+function closeProductModal() {
+    const modal = getProductModal();
+    if (!modal) return;
+    modal.hidden = true;
+    document.body.classList.remove('umu-modal-open');
+    const body = modal.querySelector('[data-umu-product-modal-body]');
+    if (body) body.innerHTML = '';
+}
+
+function openProductModal(card) {
+    const modal = getProductModal();
+    const body = modal?.querySelector('[data-umu-product-modal-body]');
+    const template = card?.querySelector('[data-umu-product-template]');
+    if (!modal || !body || !template) return;
+
+    body.innerHTML = '';
+    body.appendChild(template.content.cloneNode(true));
+    modal.hidden = false;
+    document.body.classList.toggle('umu-modal-open', true);
+    initProductGallery(body);
+
+    const closeBtn = modal.querySelector('.umu-modal__close');
+    closeBtn?.focus({ preventScroll: true });
+}
+
+function updateFavoriteUi(productId, liked, favoritesCount, likesCount) {
+    const id = String(productId);
+    document.querySelectorAll(`[data-umu-favorite][data-product-id="${id}"]`).forEach((btn) => {
+        btn.classList.toggle('is-active', liked);
+        btn.setAttribute('aria-pressed', liked ? 'true' : 'false');
+        const likesLabel = `${likesCount} j’aime`;
+        btn.setAttribute(
+            'aria-label',
+            `${liked ? 'Retirer des favoris' : 'Ajouter aux favoris'} — ${likesLabel}`
+        );
+        btn.setAttribute('title', liked ? 'Retirer des favoris' : 'Ajouter aux favoris');
+        btn.querySelectorAll('[data-umu-likes-count]').forEach((el) => {
+            el.textContent = String(likesCount);
+        });
+    });
+
+    document.querySelectorAll(`[data-umu-likes-count][data-product-id="${id}"]`).forEach((el) => {
+        el.textContent = String(likesCount);
+    });
+
+    document.querySelectorAll('[data-umu-fav-count]').forEach((badge) => {
+        badge.textContent = String(favoritesCount);
+        badge.hidden = favoritesCount <= 0;
+    });
+
+    document.querySelectorAll('[data-umu-fav-nav]').forEach((link) => {
+        link.setAttribute('aria-label', `Favoris (${favoritesCount})`);
+        link.classList.toggle('is-active', favoritesCount > 0);
+    });
+}
+
+async function toggleFavorite(btn) {
+    const url = btn.getAttribute('data-favorite-url');
+    if (!url || btn.disabled) return;
+
+    btn.disabled = true;
+    try {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            credentials: 'same-origin',
+        });
+        if (!res.ok) throw new Error('favorite toggle failed');
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.message || 'favorite toggle failed');
+        updateFavoriteUi(
+            data.productId,
+            Boolean(data.liked),
+            Number(data.count) || 0,
+            Number(data.likesCount) || 0
+        );
+    } catch (err) {
+        console.error(err);
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+function onProductModalClick(event) {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const favBtn = target.closest('[data-umu-favorite]');
+    if (favBtn) {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleFavorite(favBtn);
+        return;
+    }
+
+    const openBtn = target.closest('[data-umu-product-open]');
+    if (openBtn) {
+        event.preventDefault();
+        const card = openBtn.closest('[data-umu-product-card]');
+        if (card) openProductModal(card);
+        return;
+    }
+
+    if (target.closest('[data-umu-product-modal-close]')) {
+        event.preventDefault();
+        closeProductModal();
+    }
+}
+
 function bootUi() {
     onScroll();
     setNavOpen(false);
     setMegaOpen(false);
     setProfileOpen(false);
+    closeProductModal();
     initReveal();
     initSlider();
     initCheckoutShipping();
+    initProductGallery();
 }
 
 // Event delegation: works even after Turbo replaces the nav fragment
 if (!window.__umuNavBound) {
     window.__umuNavBound = true;
     document.addEventListener('click', onDocumentClick, true);
+    document.addEventListener('click', onProductModalClick);
     document.addEventListener('keydown', onKeydown);
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', () => {

@@ -17,7 +17,7 @@
             </a>
         </div>
     {% else %}
-        <div class="umu-table-wrap">
+        <div class="umu-table-wrap umu-cart__desktop">
             <table class="umu-table">
                 <thead>
                     <tr>
@@ -32,8 +32,8 @@
                 {% for item in items %}
                     <tr>
                         <td>
-                            <div style="display:flex; align-items:center; gap:0.85rem;">
-                                <img class="umu-thumb" src="{{ asset('uploads/images/' ~ item.product.image) }}" alt="{{ item.product.name }}">
+                            <div class="umu-cart__product">
+                                <img class="umu-thumb" src="{{ asset('uploads/images/' ~ item.product.coverImage) }}" alt="{{ item.product.name }}">
                                 <span>{{ item.product.name }}</span>
                             </div>
                         </td>
@@ -41,7 +41,7 @@
                         <td>
                             <div class="umu-qty">
                                 <a href="{{ path('app_cart_decrease', {id: item.product.id}) }}" aria-label="Diminuer">−</a>
-                                <span style="min-width:2rem; text-align:center; line-height:34px; font-weight:600;">{{ item.quantity }}</span>
+                                <span>{{ item.quantity }}</span>
                                 <a href="{{ path('app_cart_add', {id: item.product.id}) }}" aria-label="Augmenter">+</a>
                             </div>
                         </td>
@@ -55,9 +55,30 @@
             </table>
         </div>
 
+        <div class="umu-cart__mobile">
+            {% for item in items %}
+                <article class="umu-cart-card">
+                    <img class="umu-cart-card__img" src="{{ asset('uploads/images/' ~ item.product.coverImage) }}" alt="{{ item.product.name }}">
+                    <div class="umu-cart-card__body">
+                        <h3>{{ item.product.name }}</h3>
+                        <p class="umu-cart-card__price">{{ item.product.price }} CFA</p>
+                        <div class="umu-cart-card__row">
+                            <div class="umu-qty">
+                                <a href="{{ path('app_cart_decrease', {id: item.product.id}) }}" aria-label="Diminuer">−</a>
+                                <span>{{ item.quantity }}</span>
+                                <a href="{{ path('app_cart_add', {id: item.product.id}) }}" aria-label="Augmenter">+</a>
+                            </div>
+                            <strong>{{ item.product.price * item.quantity }} CFA</strong>
+                        </div>
+                        <a href="{{ path('app_cart_product_remove', {'id': item.product.id}) }}" class="umu-btn umu-btn--danger umu-btn--sm">Retirer</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+
         <div class="umu-cart__footer">
             <p class="umu-cart__total">Total : <span>{{ total }} CFA</span></p>
-            <div style="display:flex; flex-wrap:wrap; gap:0.65rem;">
+            <div class="umu-cart__actions">
                 <a data-turbo="false" href="{{ path('app_order') }}" class="umu-btn umu-btn--primary">
                     Valider la commande
                 </a>

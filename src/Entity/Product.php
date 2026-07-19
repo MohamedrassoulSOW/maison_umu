@@ -32,11 +32,22 @@ class Product
     #[ORM\ManyToMany(targetEntity: SubCategory::class, inversedBy: 'products')]
     private Collection $subcategories;
 
+    /** Image de couverture (synchro avec la 1re image de la galerie). */
     #[ORM\Column(length: 191, nullable: true)]
     private ?string $image = null;
 
     #[ORM\Column]
     private ?int $stock = null;
+
+    #[ORM\Column(options: ['default' => 0])]
+    private int $likesCount = 0;
+
+    /**
+     * @var Collection<int, ProductImage>
+     */
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: ProductImage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    private Collection $images;
 
     /**
      * @var Collection<int, OrderProducts>
@@ -53,6 +64,7 @@ class Product
     public function __construct()
     {
         $this->subcategories = new ArrayCollection();
+        $this->images = new ArrayCollection();
         $this->orderProducts = new ArrayCollection();
         $this->addProductHistories = new ArrayCollection();
     }
@@ -125,6 +137,47 @@ class Product
         return $this;
     }
 
+    /**
+     * @return Collection<int, ProductImage>
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(ProductImage $image): static
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+            $image->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(ProductImage $image): static
+    {
+        if ($this->images->removeElement($image)) {
+            if ($image->getProduct() === $this) {
+                $image->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /** Nom de fichier à afficher (couverture ou 1re image galerie). */
+    public function getCoverImage(): ?string
+    {
+        if ($this->image) {
+            return $this->image;
+        }
+
+        $first = $this->images->first();
+
+        return $first instanceof ProductImage ? $first->getFilename() : null;
+    }
+
     public function getStock(): ?int
     {
         return $this->stock;
@@ -133,6 +186,32 @@ class Product
     public function setStock(int $stock): static
     {
         $this->stock = $stock;
+        return $this;
+    }
+
+    public function getLikesCount(): int
+    {
+        return $this->likesCount;
+    }
+
+    public function setLikesCount(int $likesCount): static
+    {
+        $this->likesCount = max(0, $likesCount);
+
+        return $this;
+    }
+
+    public function incrementLikesCount(): static
+    {
+        ++$this->likesCount;
+
+        return $this;
+    }
+
+    public function decrementLikesCount(): static
+    {
+        $this->likesCount = max(0, $this->likesCount - 1);
+
         return $this;
     }
 

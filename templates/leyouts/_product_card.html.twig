@@ -1,20 +1,112 @@
-<article class="umu-card">
-    <a class="umu-card__media" href="{{ path('app_home_product_show', {'id': product.id}) }}">
-        <img src="{{ asset('uploads/images/' ~ product.image) }}" alt="{{ product.name }}" loading="lazy">
-    </a>
+{% set cover = product.coverImage %}
+{% set gallery = product.images %}
+<article class="umu-card" data-umu-product-card>
+    <div class="umu-card__media-wrap">
+        <button type="button" class="umu-card__media umu-card__media-btn" data-umu-product-open aria-haspopup="dialog">
+            {% if cover %}
+                <img src="{{ asset('uploads/images/' ~ cover) }}" alt="{{ product.name }}" loading="lazy">
+            {% else %}
+                <img src="{{ asset(brand_logo_path) }}" alt="{{ product.name }}" loading="lazy" class="umu-card__media-fallback">
+            {% endif %}
+        </button>
+        {% include 'leyouts/_favorite_button.html.twig' with { product: product, class: 'umu-fav--card' } %}
+    </div>
     <div class="umu-card__body">
         <h3 class="umu-card__title">
-            <a href="{{ path('app_home_product_show', {'id': product.id}) }}">{{ product.name }}</a>
+            <button type="button" class="umu-card__title-btn" data-umu-product-open>{{ product.name }}</button>
         </h3>
-        <p class="umu-card__desc">{{ product.description|slice(0, 80) }}{% if product.description|length > 80 %}…{% endif %}</p>
+        <p class="umu-card__desc">{{ product.description|default('')|slice(0, 80) }}{% if product.description|default('')|length > 80 %}…{% endif %}</p>
         <div class="umu-card__meta">
             <span class="umu-price">{{ product.price }} CFA</span>
             <span class="umu-stock">Stock {{ product.stock }}</span>
         </div>
         <div class="umu-card__actions">
+            <button type="button" class="umu-btn umu-btn--ghost umu-btn--sm" data-umu-product-open>Voir le détail</button>
             <a href="{{ path('app_cart_new', {'id': product.id}) }}" class="umu-btn umu-btn--primary umu-btn--sm">
                 Ajouter au panier
             </a>
         </div>
     </div>
+
+    <template data-umu-product-template>
+        <div class="umu-modal-product" data-umu-gallery>
+            <div class="umu-modal-product__gallery">
+                <div class="umu-modal-product__media">
+                    {% if cover %}
+                        <img src="{{ asset('uploads/images/' ~ cover) }}" alt="{{ product.name }}" data-umu-gallery-main>
+                    {% else %}
+                        <img src="{{ asset(brand_logo_path) }}" alt="{{ product.name }}" class="umu-product__media-fallback" data-umu-gallery-main>
+                    {% endif %}
+                </div>
+                {% if gallery|length > 1 %}
+                    <div class="umu-product__thumbs" role="list">
+                        {% for image in gallery %}
+                            <button type="button"
+                                    class="umu-product__thumb {% if loop.first %}is-active{% endif %}"
+                                    data-umu-gallery-thumb
+                                    data-src="{{ asset('uploads/images/' ~ image.filename) }}"
+                                    aria-label="Voir l’image {{ loop.index }}">
+                                <img src="{{ asset('uploads/images/' ~ image.filename) }}" alt="" loading="lazy">
+                            </button>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="umu-modal-product__info">
+                <p class="umu-modal-product__eyebrow">Maison UMU</p>
+                <h2 class="umu-modal-product__title" id="umuProductModalTitle">{{ product.name }}</h2>
+
+                <div class="umu-modal-product__meta">
+                    <span class="umu-price">{{ product.price }} CFA</span>
+                    {% if product.stock > 0 %}
+                        <span class="umu-stock umu-stock--ok">En stock : {{ product.stock }}</span>
+                    {% else %}
+                        <span class="umu-stock umu-stock--alert">Rupture de stock</span>
+                    {% endif %}
+                    <span class="umu-product__likes">
+                        <span data-umu-likes-count data-product-id="{{ product.id }}">{{ product.likesCount|default(0) }}</span> j’aime
+                    </span>
+                </div>
+
+                {% if product.subcategories|length > 0 %}
+                    <div class="umu-modal-product__tags">
+                        {% for sub in product.subcategories %}
+                            <span class="umu-tag">{{ sub.name }}{% if sub.category %} · {{ sub.category.name }}{% endif %}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="umu-modal-product__desc">
+                    <h3>Description</h3>
+                    <p>{{ product.description|default('Aucune description pour ce produit.')|nl2br }}</p>
+                </div>
+
+                <dl class="umu-modal-product__details">
+                    <div>
+                        <dt>Référence</dt>
+                        <dd>#{{ product.id }}</dd>
+                    </div>
+                    <div>
+                        <dt>Prix</dt>
+                        <dd>{{ product.price }} CFA</dd>
+                    </div>
+                    <div>
+                        <dt>Disponibilité</dt>
+                        <dd>{% if product.stock > 0 %}{{ product.stock }} unité{{ product.stock > 1 ? 's' : '' }}{% else %}Indisponible{% endif %}</dd>
+                    </div>
+                </dl>
+
+                <div class="umu-modal-product__actions">
+                    {% if product.stock > 0 %}
+                        <a href="{{ path('app_cart_new', {'id': product.id}) }}" class="umu-btn umu-btn--primary">Ajouter au panier</a>
+                    {% else %}
+                        <button type="button" class="umu-btn umu-btn--primary" disabled>Indisponible</button>
+                    {% endif %}
+                    {% include 'leyouts/_favorite_button.html.twig' with { product: product, class: 'umu-fav--action' } %}
+                    <a href="{{ path('app_home_product_show', {'id': product.id}) }}" class="umu-btn umu-btn--ghost">Ouvrir la fiche</a>
+                </div>
+            </div>
+        </div>
+    </template>
 </article>

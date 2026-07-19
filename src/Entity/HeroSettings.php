@@ -132,10 +132,37 @@ class HeroSettings
         return $this->image;
     }
 
+    /** Alias sémantique : photo ou vidéo du hero. */
+    public function getMedia(): ?string
+    {
+        return $this->image;
+    }
+
     public function setImage(?string $image): static
     {
         $this->image = $image;
 
         return $this;
+    }
+
+    public function hasMedia(): bool
+    {
+        return $this->image !== null && $this->image !== '';
+    }
+
+    public function isVideoMedia(): bool
+    {
+        if (!$this->hasMedia()) {
+            return false;
+        }
+
+        $ext = strtolower((string) pathinfo($this->image, PATHINFO_EXTENSION));
+
+        return \in_array($ext, ['mp4', 'webm', 'ogg', 'mov'], true);
+    }
+
+    public function isImageMedia(): bool
+    {
+        return $this->hasMedia() && !$this->isVideoMedia();
     }
 }
