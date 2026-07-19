@@ -63,6 +63,8 @@
         </button>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        {# UI critique hors importmap : catégories, profil, favoris, thème — OK même sans asset-map:compile #}
+        <script src="{{ asset('js/umu-ui.js') }}" defer></script>
         <script>
             (function () {
                 function setMenuOpen(open) {

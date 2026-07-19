@@ -1116,7 +1116,13 @@ body.is-dashboard .umu-theme-toggle--float {
     border-radius: var(--umu-radius);
     overflow: hidden;
     color: var(--umu-ink);
-    transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out), border-color 0.35s;
+    transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out), border-color 0.35s, opacity 0.35s var(--ease-out);
+    opacity: 1;
+    transform: none;
+}
+
+/* Animation d’apparition uniquement si le JS a pu s’initialiser */
+.umu-card.js-reveal:not(.is-visible) {
     opacity: 0;
     transform: translateY(28px);
 }
@@ -4630,7 +4636,8 @@ body.is-dashboard .flash-message {
         transition: none !important;
     }
 
-    .umu-card {
+    .umu-card,
+    .umu-card.js-reveal:not(.is-visible) {
         opacity: 1;
         transform: none;
     }
