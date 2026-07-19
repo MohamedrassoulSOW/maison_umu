@@ -5,22 +5,36 @@ namespace App\Service;
 use App\Entity\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-/** Identifie l’admin principal (seul habilité à nommer d’autres admins). */
+/** Identifie les admins principaux (seuls habilités à nommer d’autres admins). */
 class PrimaryAdmin
 {
+    /** @var list<string> */
+    private readonly array $emails;
+
     public function __construct(
-        private readonly string $email = '',
+        string $email = '',
     ) {
+        $emails = [];
+        foreach (preg_split('/[\s,;]+/', $email) ?: [] as $part) {
+            $normalized = strtolower(trim($part));
+            if ($normalized !== '' && filter_var($normalized, FILTER_VALIDATE_EMAIL)) {
+                $emails[] = $normalized;
+            }
+        }
+        $this->emails = array_values(array_unique($emails));
     }
 
-    public function getEmail(): string
+    /**
+     * @return list<string>
+     */
+    public function getEmails(): array
     {
-        return strtolower(trim($this->email));
+        return $this->emails;
     }
 
     public function isConfigured(): bool
     {
-        return $this->getEmail() !== '' && filter_var($this->getEmail(), FILTER_VALIDATE_EMAIL);
+        return $this->emails !== [];
     }
 
     public function matches(?UserInterface $user): bool
@@ -29,7 +43,7 @@ class PrimaryAdmin
             return false;
         }
 
-        return strtolower($user->getEmail()) === $this->getEmail();
+        return \in_array(strtolower($user->getEmail()), $this->emails, true);
     }
 
     public function isPrimaryUser(User $user): bool
