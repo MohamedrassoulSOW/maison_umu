@@ -107,7 +107,7 @@
                                 {% if product.subcategories|length > 0 %}
                                     <div class="umu-modal-product__tags">
                                         {% for sub in product.subcategories %}
-                                            <span class="umu-tag">{{ sub.name }}{% if sub.category %} · {{ sub.category.name }}{% endif %}</span>
+                                            <span class="umu-tag">{{ sub.name }}</span>
                                         {% endfor %}
                                     </div>
                                 {% endif %}
