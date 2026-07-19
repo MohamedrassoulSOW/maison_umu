@@ -2,9 +2,25 @@
 
 {% block title %}Utilisateurs — Dashboard{% endblock %}
 {% block dash_title %}Utilisateurs{% endblock %}
-{% block dash_subtitle %}Gérez les comptes et les rôles.{% endblock %}
+{% block dash_subtitle %}Gérez les comptes, rôles et blocages.{% endblock %}
 
 {% block dash_body %}
+{% set me = app.user %}
+{% set iAmPrimary = is_primary_admin(me) %}
+
+{% if not primaryAdminConfigured %}
+    <div class="umu-alert umu-alert--danger" style="margin-bottom:1rem;">
+        Définissez <code>PRIMARY_ADMIN_EMAIL</code> dans <code>.env.local</code> pour activer la nomination d’admins.
+    </div>
+{% endif %}
+
+<div class="dash-user-legend" aria-hidden="true">
+    <span title="Promouvoir éditeur"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168z"/></svg> Éditeur</span>
+    <span title="Promouvoir admin"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg> Admin</span>
+    <span title="Bloquer"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M11.354 4.646a.5.5 0 0 0-.708 0l-6 6a.5.5 0 0 0 .708.708l6-6a.5.5 0 0 0 0-.708"/></svg> Bloquer</span>
+    <span title="Supprimer"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1z"/></svg> Supprimer</span>
+</div>
+
 <div class="umu-table-wrap">
     <table class="umu-table">
         <thead>
@@ -14,55 +30,117 @@
                 <th>Prénom</th>
                 <th>Email</th>
                 <th>Rôle</th>
+                <th>Statut</th>
                 <th class="text-end">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for user in users %}
-                <tr>
+                {% set isPrimary = is_primary_admin_user(user) %}
+                {% set isMe = me and me.userIdentifier == user.userIdentifier %}
+                <tr class="{% if user.isBlocked %}is-blocked{% endif %}">
                     <td data-label="ID">{{ user.id }}</td>
                     <td data-label="Nom">{{ user.lastName }}</td>
                     <td data-label="Prénom">{{ user.firstName }}</td>
-                    <td data-label="Email">{{ user.email }}</td>
+                    <td data-label="Email">
+                        {{ user.email }}
+                        {% if isPrimary %}<span class="dash-badge dash-badge--info" title="Admin principal">Principal</span>{% endif %}
+                        {% if isMe %}<span class="dash-badge">Vous</span>{% endif %}
+                    </td>
                     <td data-label="Rôle">
-                        {% if 'ROLE_ADMIN' in user.roles %}
+                        {% if user.isAdmin %}
                             <span class="dash-badge dash-badge--info">Administrateur</span>
-                        {% elseif 'ROLE_EDITOR' in user.roles %}
+                        {% elseif user.isEditor %}
                             <span class="dash-badge dash-badge--ok">Éditeur</span>
                         {% else %}
                             <span class="dash-badge">Utilisateur</span>
                         {% endif %}
                     </td>
+                    <td data-label="Statut">
+                        {% if user.isBlocked %}
+                            <span class="dash-badge dash-badge--alert">Bloqué</span>
+                        {% else %}
+                            <span class="dash-badge dash-badge--ok">Actif</span>
+                        {% endif %}
+                    </td>
                     <td data-label="Actions">
-                        {% if 'ROLE_ADMIN' not in user.roles %}
-                            <div class="dash-row-actions">
-                                {% if 'ROLE_EDITOR' not in user.roles %}
-                                    <form method="post" action="{{ path('app_user_to_editor', {'id': user.id}) }}" style="display:inline;"
-                                          onsubmit="return confirm('Promouvoir cet utilisateur en éditeur ?');">
+                        <div class="dash-icon-actions">
+                            {% if not isPrimary and not isMe %}
+                                {# Éditeur #}
+                                {% if not user.isAdmin and not user.isEditor %}
+                                    <form method="post" action="{{ path('app_user_to_editor', {id: user.id}) }}">
                                         <input type="hidden" name="_token" value="{{ csrf_token('user_editor' ~ user.id) }}">
-                                        <button type="submit" class="umu-btn umu-btn--primary umu-btn--sm">Éditeur</button>
+                                        <button type="submit" class="dash-icon-btn dash-icon-btn--ok" title="Promouvoir éditeur" aria-label="Promouvoir éditeur"
+                                                onclick="return confirm('Promouvoir cet utilisateur en éditeur ?');">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/></svg>
+                                        </button>
                                     </form>
-                                {% else %}
-                                    <form method="post" action="{{ path('app_user_remove_editor_role', {'id': user.id}) }}" style="display:inline;"
-                                          onsubmit="return confirm('Retirer le rôle éditeur ?');">
+                                {% elseif user.isEditor %}
+                                    <form method="post" action="{{ path('app_user_remove_editor_role', {id: user.id}) }}">
                                         <input type="hidden" name="_token" value="{{ csrf_token('user_remove_editor' ~ user.id) }}">
-                                        <button type="submit" class="umu-btn umu-btn--ghost umu-btn--sm">Retirer éditeur</button>
+                                        <button type="submit" class="dash-icon-btn" title="Retirer le rôle éditeur" aria-label="Retirer le rôle éditeur"
+                                                onclick="return confirm('Retirer le rôle éditeur ?');">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/></svg>
+                                        </button>
                                     </form>
                                 {% endif %}
-                                <form method="post" action="{{ path('app_user_remove', {'id': user.id}) }}" style="display:inline;"
-                                      onsubmit="return confirm('Supprimer cet utilisateur ?');">
+
+                                {# Admin — admin principal uniquement #}
+                                {% if iAmPrimary %}
+                                    {% if not user.isAdmin %}
+                                        <form method="post" action="{{ path('app_user_to_admin', {id: user.id}) }}">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('user_admin' ~ user.id) }}">
+                                            <button type="submit" class="dash-icon-btn dash-icon-btn--info" title="Promouvoir administrateur" aria-label="Promouvoir administrateur"
+                                                    onclick="return confirm('Nommer cet utilisateur administrateur ?');">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <form method="post" action="{{ path('app_user_remove_admin_role', {id: user.id}) }}">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('user_remove_admin' ~ user.id) }}">
+                                            <button type="submit" class="dash-icon-btn" title="Retirer le rôle administrateur" aria-label="Retirer le rôle administrateur"
+                                                    onclick="return confirm('Retirer le rôle administrateur ?');">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.866 14.85c-.048.049-.09.04-.146.028a.5.5 0 0 1-.172-.153L.173 9.765a.5.5 0 0 1 .283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696a.5.5 0 0 1 .282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256a.5.5 0 0 1-.612-.036zM8 12.027a1 1 0 0 0 .548.908l3.287 1.69-.622-3.546a1 1 0 0 1 .287-.887l2.64-2.516-3.673-.522A1 1 0 0 1 9.5 6.5 1 1 0 0 1 8.6 5.8L8 4.61 7.4 5.8a1 1 0 0 1-.967.654l-3.673.522 2.64 2.516a1 1 0 0 1 .287.887l-.622 3.546 3.287-1.69A1 1 0 0 0 8 12.027"/></svg>
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                {% endif %}
+
+                                {# Bloquer / débloquer #}
+                                {% if user.isBlocked %}
+                                    <form method="post" action="{{ path('app_user_unblock', {id: user.id}) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('user_unblock' ~ user.id) }}">
+                                        <button type="submit" class="dash-icon-btn dash-icon-btn--ok" title="Débloquer" aria-label="Débloquer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/></svg>
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form method="post" action="{{ path('app_user_block', {id: user.id}) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('user_block' ~ user.id) }}">
+                                        <button type="submit" class="dash-icon-btn dash-icon-btn--warn" title="Bloquer" aria-label="Bloquer"
+                                                onclick="return confirm('Bloquer cet utilisateur ? Il ne pourra plus se connecter.');">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M11.354 4.646a.5.5 0 0 0-.708 0l-6 6a.5.5 0 0 0 .708.708l6-6a.5.5 0 0 0 0-.708"/></svg>
+                                        </button>
+                                    </form>
+                                {% endif %}
+
+                                {# Supprimer #}
+                                <form method="post" action="{{ path('app_user_remove', {id: user.id}) }}">
                                     <input type="hidden" name="_token" value="{{ csrf_token('user_delete' ~ user.id) }}">
-                                    <button type="submit" class="umu-btn umu-btn--danger umu-btn--sm">Supprimer</button>
+                                    <button type="submit" class="dash-icon-btn dash-icon-btn--danger" title="Supprimer" aria-label="Supprimer"
+                                            onclick="return confirm('Supprimer définitivement cet utilisateur ?');">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
+                                    </button>
                                 </form>
-                            </div>
-                        {% else %}
-                            <span class="dash-empty">—</span>
-                        {% endif %}
+                            {% else %}
+                                <span class="dash-empty" title="Compte protégé">—</span>
+                            {% endif %}
+                        </div>
                     </td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="6">Aucun utilisateur trouvé.</td>
+                    <td colspan="7">Aucun utilisateur trouvé.</td>
                 </tr>
             {% endfor %}
         </tbody>

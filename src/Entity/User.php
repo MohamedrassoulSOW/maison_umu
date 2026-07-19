@@ -48,6 +48,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $resetTokenExpiresAt = null;
 
+    #[ORM\Column(options: ['default' => false])]
+    private bool $isBlocked = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -200,5 +203,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return hash_equals($this->resetToken, $token)
             && $this->resetTokenExpiresAt > new \DateTimeImmutable();
+    }
+
+    public function isBlocked(): bool
+    {
+        return $this->isBlocked;
+    }
+
+    public function setIsBlocked(bool $isBlocked): static
+    {
+        $this->isBlocked = $isBlocked;
+
+        return $this;
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return \in_array($role, $this->getRoles(), true);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('ROLE_ADMIN');
+    }
+
+    public function isEditor(): bool
+    {
+        return $this->hasRole('ROLE_EDITOR') && !$this->isAdmin();
     }
 }

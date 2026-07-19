@@ -11,6 +11,7 @@ parameters:
     mailer.from_name: '%env(MAILER_FROM_NAME)%'
     mobile_money_phone_default: '+221 77 450 78 08'
     wave_pay_link_default: ''
+    primary_admin_email_default: ''
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -35,6 +36,10 @@ services:
         arguments:
             $phone: '%env(default:mobile_money_phone_default:MOBILE_MONEY_PHONE)%'
             $wavePayLink: '%env(default:wave_pay_link_default:WAVE_PAY_LINK)%'
+
+    App\Service\PrimaryAdmin:
+        arguments:
+            $email: '%env(default:primary_admin_email_default:PRIMARY_ADMIN_EMAIL)%'
 
     App\Service\StripePayment:
         arguments:

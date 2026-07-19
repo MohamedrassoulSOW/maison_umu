@@ -101,6 +101,12 @@ class GoogleAuthController extends AbstractController
             $entityManager->persist($user);
         }
 
+        if ($user->isBlocked()) {
+            $this->addFlash('danger', 'Votre compte a été bloqué. Contactez la boutique pour plus d’informations.');
+
+            return $this->redirectToRoute('app_login');
+        }
+
         $user->setGoogleId($googleId);
         $user->setFirstName($googleUser['given_name'] ?? $user->getFirstName() ?? 'Client');
         $user->setLastName($googleUser['family_name'] ?? $user->getLastName() ?? 'UMU');
